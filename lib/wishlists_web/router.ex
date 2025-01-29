@@ -14,11 +14,24 @@ defmodule WishlistsWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :require_authenticated_user do
+    plug :ensure_authenticated
+  end
+
+  # Public routes
   scope "/", WishlistsWeb do
     pipe_through :browser
 
     live "/", PageLive, :home
     get "/hello", HelloController, :index
+  end
+
+  # Protected routes (require authentication)
+  scope "/", WishlistsWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live "/dashboard", DashboardLive, :home
+    # Add other protected routes here
   end
 
   # Other scopes may use custom stacks.
@@ -40,6 +53,17 @@ defmodule WishlistsWeb.Router do
 
       live_dashboard "/dashboard", metrics: WishlistsWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+    end
+  end
+
+  defp ensure_authenticated(conn, _opts) do
+    if conn.assigns[:current_user] do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must log in to access this page.")
+      |> redirect(to: "/")
+      |> halt()
     end
   end
 end
