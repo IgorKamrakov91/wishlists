@@ -17,7 +17,7 @@ defmodule WishlistsWeb.Router do
   scope "/", WishlistsWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", PageLive, :home
     get "/hello", HelloController, :index
   end
 
