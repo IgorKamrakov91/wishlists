@@ -44,3 +44,4 @@ npm-debug.log
 # Elixir language server files
 .elixir-tools/
 .elixir_ls/
+.DS_Store
