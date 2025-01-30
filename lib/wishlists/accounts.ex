@@ -15,22 +15,23 @@ defmodule Wishlists.Accounts do
 
   def get_user!(id), do: Repo.get!(User, id)
 
-  def authenticate_user(email, password) do
-    # Add debug logging
-    IO.inspect({email, password}, label: "Authentication attempt for")
-
+  def authenticate_user(email, password) when is_binary(email) and is_binary(password) do
     user = get_user_by_email(email)
-    IO.inspect(user, label: "Found user")
 
     cond do
       user && valid_password?(user, password) ->
+        # Add debug log
+        IO.puts("Authentication successful for user: #{user.email}")
         {:ok, user}
 
       user ->
+        # Add debug log
+        IO.puts("Invalid password for user: #{user.email}")
         {:error, :invalid_password}
 
       true ->
-        # Add delay to prevent timing attacks
+        # Add debug log
+        IO.puts("No user found with email: #{email}")
         Bcrypt.no_user_verify()
         {:error, :invalid_credentials}
     end

@@ -1,6 +1,8 @@
 defmodule WishlistsWeb.AuthComponent do
   use WishlistsWeb, :live_component
   alias Wishlists.Accounts
+  import Phoenix.HTML.Form
+  import Plug.Conn.Status, only: [get_csrf_token: 0]
 
   def mount(socket) do
     {:ok,
@@ -10,14 +12,7 @@ defmodule WishlistsWeb.AuthComponent do
      |> assign(form: to_form(%{}, as: :user))
      |> assign(error_message: nil)
      |> assign(password_focus: false)
-     |> assign(
-       password_requirements_met: %{
-         length: false,
-         uppercase: false,
-         lowercase: false,
-         special: false
-       }
-     )}
+     |> assign(password_requirement_met: false)}
   end
 
   def update(assigns, socket) do
@@ -49,7 +44,7 @@ defmodule WishlistsWeb.AuthComponent do
           form_data={@form_data}
           view={@view}
           password_focus={@password_focus}
-          password_requirements_met={@password_requirements_met}
+          password_requirement_met={@password_requirement_met}
           myself={@myself}
         />
         <.footer view={@view} myself={@myself} />
@@ -103,18 +98,54 @@ defmodule WishlistsWeb.AuthComponent do
 
   defp auth_form(assigns) do
     ~H"""
-    <.form for={@form} phx-submit="submit" phx-target={@myself} class="space-y-6">
-      <.email_input form_data={@form_data} myself={@myself} />
-      <.password_input
-        form_data={@form_data}
-        password_focus={@password_focus}
-        password_requirements_met={@password_requirements_met}
-        view={@view}
-        myself={@myself}
-      />
-      <.username_input :if={@view == :sign_up} form_data={@form_data} myself={@myself} />
-      <.submit_button view={@view} />
-    </.form>
+    <%= if @view == :sign_in do %>
+      <.form :let={_f} for={@form} action={~p"/login"} method="post" class="space-y-6">
+        <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <.icon name="hero-envelope" class="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="email"
+            name="user[email]"
+            value={@form_data["email"]}
+            required
+            class="pl-10 w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Email address"
+          />
+        </div>
+
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <.icon name="hero-lock-closed" class="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="password"
+            name="user[password]"
+            value={@form_data["password"]}
+            required
+            class="pl-10 w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+            placeholder="Password"
+          />
+        </div>
+
+        <.submit_button view={@view} />
+      </.form>
+    <% else %>
+      <.form for={@form} phx-submit="submit" phx-target={@myself} class="space-y-6">
+        <.email_input form_data={@form_data} myself={@myself} />
+        <.password_input
+          form_data={@form_data}
+          password_focus={@password_focus}
+          password_requirement_met={@password_requirement_met}
+          view={@view}
+          myself={@myself}
+        />
+        <.username_input form_data={@form_data} myself={@myself} />
+        <.submit_button view={@view} />
+      </.form>
+    <% end %>
     """
   end
 
@@ -165,7 +196,7 @@ defmodule WishlistsWeb.AuthComponent do
       ]}>
         <.password_requirements
           :if={@view == :sign_up}
-          password_requirements_met={@password_requirements_met}
+          password_requirement_met={@password_requirement_met}
         />
       </div>
     </div>
@@ -175,13 +206,8 @@ defmodule WishlistsWeb.AuthComponent do
   defp password_requirements(assigns) do
     ~H"""
     <div class="text-sm">
-      <p class="font-medium text-gray-700 mb-1">Password requirements:</p>
-      <ul class="space-y-1">
-        <.requirement_item met={@password_requirements_met.length} text="At least 8 characters" />
-        <.requirement_item met={@password_requirements_met.uppercase} text="One uppercase letter" />
-        <.requirement_item met={@password_requirements_met.lowercase} text="One lowercase letter" />
-        <.requirement_item met={@password_requirements_met.special} text="One special character" />
-      </ul>
+      <p class="font-medium text-gray-700 mb-1">Password requirement:</p>
+      <.requirement_item met={@password_requirement_met} text="At least 8 characters" />
     </div>
     """
   end
@@ -259,20 +285,15 @@ defmodule WishlistsWeb.AuthComponent do
              socket.assigns.form_data["password"]
            ) do
         {:ok, user} ->
+          # Add debug log
+          IO.puts("Login successful, sending login_user message")
           send(self(), {:login_user, user})
-          {:noreply, assign(socket, error_message: nil)}
+          {:noreply, socket}
 
-        {:error, :invalid_credentials} ->
+        {:error, _reason} ->
+          # Add debug log
+          IO.puts("Login failed")
           {:noreply, assign(socket, error_message: "Invalid email or password")}
-
-        {:error, :invalid_password} ->
-          {:noreply, assign(socket, error_message: "Invalid email or password")}
-
-        {:error, :not_confirmed} ->
-          {:noreply, assign(socket, error_message: "Please confirm your email address first")}
-
-        {:error, _} ->
-          {:noreply, assign(socket, error_message: "An error occurred. Please try again.")}
       end
     else
       case Accounts.register_user(socket.assigns.form_data) do
@@ -282,28 +303,18 @@ defmodule WishlistsWeb.AuthComponent do
 
         {:error, changeset} ->
           error_message = format_registration_errors(changeset)
-
-          {:noreply,
-           socket
-           |> assign(form: to_form(changeset, as: :user))
-           |> assign(error_message: error_message)}
+          {:noreply, assign(socket, error_message: error_message)}
       end
     end
   end
 
   def handle_event("validate_password", %{"value" => password}, socket) do
-    requirements_met = %{
-      length: String.length(password) >= 8,
-      uppercase: String.match?(password, ~r/[A-Z]/),
-      lowercase: String.match?(password, ~r/[a-z]/),
-      special: String.match?(password, ~r/[!@#$%^&*(),.?":{}|<>]/)
-    }
-
+    requirement_met = String.length(password) >= 8
     form_data = Map.put(socket.assigns.form_data, "password", password)
 
     {:noreply,
      socket
-     |> assign(password_requirements_met: requirements_met)
+     |> assign(password_requirement_met: requirement_met)
      |> assign(form_data: form_data)}
   end
 
@@ -356,14 +367,19 @@ defmodule WishlistsWeb.AuthComponent do
   end
 
   defp format_registration_errors(changeset) do
-    Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
-      Enum.reduce(opts, msg, fn {key, value}, acc ->
-        String.replace(acc, "%{#{key}}", to_string(value))
+    errors =
+      Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
+        Enum.reduce(opts, msg, fn {key, value}, acc ->
+          String.replace(acc, "%{#{key}}", to_string(value))
+        end)
       end)
-    end)
-    |> Enum.map(fn {key, errors} ->
-      errors = List.wrap(errors) |> Enum.join(", ")
-      "#{Phoenix.Naming.humanize(key)} #{errors}"
+
+    errors
+    |> Map.to_list()
+    |> Enum.map(fn {field, messages} ->
+      field_name = Phoenix.Naming.humanize(field)
+      messages = List.wrap(messages)
+      "#{field_name} #{Enum.join(messages, ", ")}"
     end)
     |> Enum.join(". ")
   end
