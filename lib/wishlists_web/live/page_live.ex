@@ -14,7 +14,7 @@ defmodule WishlistsWeb.PageLive do
     end
   end
 
-  def handle_info({:login_success, user, token}, socket) do
+  def handle_info({:login_success, _user, token}, socket) do
     {:noreply,
      socket
      |> clear_flash()

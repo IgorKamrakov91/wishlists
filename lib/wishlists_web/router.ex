@@ -35,5 +35,6 @@ defmodule WishlistsWeb.Router do
     pipe_through [:browser, :auth, :ensure_auth]
 
     live "/dashboard", DashboardLive, :home
+    live "/folders/:id", FolderLive.Show, :show
   end
 end

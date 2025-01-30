@@ -33,7 +33,7 @@ config :wishlists, Wishlists.Mailer, adapter: Swoosh.Adapters.Local
 
 config :wishlists, Wishlists.Accounts.Guardian,
   issuer: "wishlists",
-  secret_key: "guardian_secckskret",
+  secret_key: "I+sMorq0uVbUvUwt1abRmcs+UlBSbtSPWfkCohmYVx1VBrJt6EMcRCSC6o4Bdy8r",
   ttl: {30, :days}
 
 # Configure esbuild (the version is required)

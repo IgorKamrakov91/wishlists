@@ -2,7 +2,7 @@ defmodule WishlistsWeb.UserSessionController do
   use WishlistsWeb, :controller
 
   def create(conn, %{"user" => user_params}) do
-    %{"email" => email, "password" => password} = user_params
+    %{"email" => email, "password" => _password} = user_params
 
     if user = Wishlists.Accounts.get_user_by_email(email) do
       conn

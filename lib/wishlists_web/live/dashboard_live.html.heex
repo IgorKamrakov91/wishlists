@@ -1,0 +1,175 @@
+<div class="min-h-screen bg-gray-100">
+  <header class="bg-white shadow">
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-gray-900">
+        Welcome, {@current_user.email}!
+      </h1>
+
+      <.link
+        href={~p"/auth/sign_out"}
+        method="delete"
+        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Logout
+      </.link>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <!-- Folders Section with Horizontal Scroll -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center mb-4 px-4 sm:px-0">
+        <h2 class="text-2xl font-semibold text-gray-900">My Folders</h2>
+        <button
+          phx-click="new_folder"
+          class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+        >
+          New Folder
+        </button>
+      </div>
+
+      <div class="relative" id="folders-container" phx-hook="DragAndDrop">
+        <!-- Scroll Shadow Indicators -->
+        <div class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-100 to-transparent z-10">
+        </div>
+        <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-100 to-transparent z-10">
+        </div>
+
+<!-- Scrollable Folders Container -->
+        <div class="overflow-x-auto hide-scrollbar">
+          <div class="flex space-x-4 px-4 py-2 min-w-min">
+            <%= for folder <- @folders do %>
+              <div class="flex-none w-64">
+                <div
+                  class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-all duration-200"
+                  data-folder-id={folder.id}
+                >
+                  <h3 class="text-lg font-semibold text-gray-900 mb-2">{folder.name}</h3>
+                  <%= if folder.description do %>
+                    <p class="text-sm text-gray-600 mb-4 line-clamp-2">{folder.description}</p>
+                  <% end %>
+                  <div class="flex justify-end">
+                    <.link
+                      navigate={~p"/folders/#{folder.id}"}
+                      class="text-indigo-600 hover:text-indigo-800"
+                    >
+                      Open →
+                    </.link>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- Cards Section -->
+    <div class="px-4 sm:px-0">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-semibold text-gray-900">Available Cards</h2>
+        <button
+          phx-click="new_card"
+          class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+        >
+          New Card
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <%= for card <- @cards do %>
+          <div data-card-id={card.id} draggable="true" class="cursor-move">
+            <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-all duration-200 group">
+              <div class="relative">
+                <%= if card.image_url do %>
+                  <img
+                    src={card.image_url}
+                    alt=""
+                    class="w-full h-48 object-cover rounded-md mb-4"
+                  />
+                <% end %>
+                <!-- Drag Handle Overlay -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <div class="bg-black bg-opacity-50 rounded-md p-2 text-white">
+                    <.icon name="hero-arrows-pointing-out" class="h-6 w-6" />
+                  </div>
+                </div>
+              </div>
+
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">{card.title}</h3>
+              <%= if card.description do %>
+                <p class="text-sm text-gray-600 mb-4">{card.description}</p>
+              <% end %>
+
+              <div class="flex items-center justify-between mt-4">
+                <%= if card.link_url do %>
+                  <a
+                    href={card.link_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-indigo-600 hover:text-indigo-800 text-sm flex items-center"
+                  >
+                    Visit Link
+                    <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4 ml-1" />
+                  </a>
+                <% end %>
+
+                <div class="text-gray-400 text-sm flex items-center">
+                  <.icon name="hero-hand-raised" class="h-4 w-4 mr-1" /> Drag to add to folder
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </main>
+
+  <%= if @show_modal do %>
+    <%= case @modal_type do %>
+      <% :folder -> %>
+        <.live_component
+          module={WishlistsWeb.FolderLive.FolderFormComponent}
+          id="folder-form"
+          action={@action}
+          folder={@folder}
+          modal_title={@modal_title}
+          submit_button_text={@submit_button_text}
+          current_user={@current_user}
+        />
+      <% :card -> %>
+        <.live_component
+          module={WishlistsWeb.CardLive.CardFormComponent}
+          id="card-form"
+          action={@action}
+          card={@card}
+          modal_title={@modal_title}
+          submit_button_text={@submit_button_text}
+          current_user={@current_user}
+        />
+    <% end %>
+  <% end %>
+</div>
+
+<style>
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Drag and Drop styles */
+  [draggable="true"] {
+    @apply cursor-grab;
+  }
+
+  [draggable="true"]:active {
+    @apply cursor-grabbing;
+  }
+
+  [data-folder-id].bg-indigo-50 {
+    @apply ring-2 ring-indigo-400;
+  }
+</style>

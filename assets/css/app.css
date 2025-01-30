@@ -3,3 +3,19 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+
+[draggable="true"] {
+  @apply transition-opacity duration-200;
+}
+
+[draggable="true"]:active {
+  @apply cursor-grabbing;
+}
+
+[data-folder-id] {
+  @apply transition-colors duration-200;
+}
+
+[data-folder-id].drag-over {
+  @apply bg-indigo-50;
+}

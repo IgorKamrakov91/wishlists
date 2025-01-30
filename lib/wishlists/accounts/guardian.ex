@@ -1,6 +1,5 @@
 defmodule Wishlists.Accounts.Guardian do
-  use Guardian,
-    otp_app: :wishlists
+  use Guardian, otp_app: :wishlists
 
   alias Wishlists.Accounts
 

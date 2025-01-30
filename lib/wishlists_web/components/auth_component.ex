@@ -1,7 +1,6 @@
 defmodule WishlistsWeb.AuthComponent do
   use WishlistsWeb, :live_component
   alias Wishlists.Accounts
-  alias Phoenix.PubSub
 
   def mount(socket) do
     {:ok,

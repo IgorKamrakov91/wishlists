@@ -1,51 +1,118 @@
 defmodule WishlistsWeb.DashboardLive do
   use WishlistsWeb, :live_view
   alias Wishlists.Accounts.Guardian
+  alias Wishlists.{Folders, Cards}
+  alias Wishlists.Folders.Folder
+  alias Wishlists.Cards.Card
+  require Logger
 
-  on_mount {WishlistsWeb.UserAuth, :ensure_authenticated}
+  alias Phoenix.LiveView.JS
 
+  @impl true
   def mount(_params, session, socket) do
     case Guardian.decode_and_verify(session["guardian_default_token"]) do
       {:ok, claims} ->
         {:ok, user} = Guardian.resource_from_claims(claims)
-        {:ok, assign(socket, current_user: user)}
+        folders = Folders.list_user_folders(user.id)
+        cards = Cards.list_unassigned_cards(user.id)
 
-      _ ->
         {:ok,
          socket
-         |> put_flash(:error, "You must log in to access this page.")
-         |> redirect(to: ~p"/")}
+         |> assign(current_user: user)
+         |> assign(folders: folders)
+         |> assign(cards: cards)
+         |> assign(show_modal: false)
+         |> assign(modal_type: nil)}
     end
   end
 
-  def render(assigns) do
-    ~H"""
-    <div class="min-h-screen bg-gray-100">
-      <header class="bg-white shadow">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 class="text-3xl font-bold text-gray-900">
-            Welcome, {@current_user.email}!
-          </h1>
+  @impl true
+  def handle_event("new_folder", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:folder, %Folder{})
+     |> assign(:modal_title, "Create New Folder")
+     |> assign(:submit_button_text, "Create")
+     |> assign(:action, :new)
+     |> assign(:modal_type, :folder)
+     |> assign(:show_modal, true)}
+  end
 
-          <.link
-            href={~p"/auth/sign_out"}
-            method="delete"
-            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Logout
-          </.link>
-        </div>
-      </header>
+  @impl true
+  def handle_event("new_card", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:card, %Card{})
+     |> assign(:modal_title, "Create New Card")
+     |> assign(:submit_button_text, "Create")
+     |> assign(:action, :new)
+     |> assign(:modal_type, :card)
+     |> assign(:show_modal, true)}
+  end
 
-      <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <!-- Your dashboard content -->
-        <div class="px-4 py-6 sm:px-0">
-          <div class="border-4 border-dashed border-gray-200 rounded-lg h-96 flex items-center justify-center">
-            <p class="text-gray-500 text-xl">Your dashboard content will go here</p>
-          </div>
-        </div>
-      </main>
-    </div>
-    """
+  @impl true
+  def handle_event("assign_card", params, socket) do
+    Logger.info("Received assign_card event with params: #{inspect(params)}")
+
+    with {card_id, ""} <- Integer.parse(params["card_id"]),
+         {folder_id, ""} <- Integer.parse(params["folder_id"]) do
+      Logger.info("Attempting to assign card #{card_id} to folder #{folder_id}")
+
+      case Cards.assign_card_to_folder(card_id, folder_id) do
+        {:ok, folder_card} ->
+          Logger.info("Successfully assigned card: #{inspect(folder_card)}")
+          cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
+          folders = Folders.list_user_folders(socket.assigns.current_user.id)
+
+          {:noreply,
+           socket
+           |> assign(cards: cards)
+           |> assign(folders: folders)
+           |> put_flash(:info, "Card assigned to folder successfully")}
+
+        {:error, changeset} ->
+          Logger.error("Failed to assign card: #{inspect(changeset.errors)}")
+
+          {:noreply,
+           socket
+           |> put_flash(:error, "Could not assign card to folder")}
+      end
+    else
+      error ->
+        Logger.error("Failed to parse IDs: #{inspect(error)}")
+
+        {:noreply,
+         socket
+         |> put_flash(:error, "Could not assign card to folder")}
+    end
+  end
+
+  @impl true
+  def handle_info(:close_modal, socket) do
+    {:noreply, assign(socket, show_modal: false, modal_type: nil)}
+  end
+
+  @impl true
+  def handle_info({:folder_created}, socket) do
+    folders = Folders.list_user_folders(socket.assigns.current_user.id)
+
+    {:noreply,
+     socket
+     |> assign(folders: folders)
+     |> assign(show_modal: false)
+     |> assign(modal_type: nil)
+     |> put_flash(:info, "Folder created successfully")}
+  end
+
+  @impl true
+  def handle_info({:card_created}, socket) do
+    cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
+
+    {:noreply,
+     socket
+     |> assign(cards: cards)
+     |> assign(show_modal: false)
+     |> assign(modal_type: nil)
+     |> put_flash(:info, "Card created successfully")}
   end
 end

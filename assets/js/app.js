@@ -20,9 +20,12 @@ import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
+import DragAndDrop from "./hooks/drag_and_drop"
 import topbar from "../vendor/topbar"
 
-let Hooks = {}
+let Hooks = {
+  DragAndDrop
+}
 Hooks.UserToken = {
   mounted() {
     this.handleEvent("user-token", ({ token }) => {
