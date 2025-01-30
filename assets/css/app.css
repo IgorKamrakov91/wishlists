@@ -5,17 +5,27 @@
 /* This file is for your main application CSS */
 
 [draggable="true"] {
-  @apply transition-opacity duration-200;
+  @apply cursor-grab transition-transform duration-200;
 }
 
 [draggable="true"]:active {
-  @apply cursor-grabbing;
+  @apply cursor-grabbing scale-105;
 }
 
-[data-folder-id] {
-  @apply transition-colors duration-200;
+[data-folder-id] .drag-target {
+  @apply opacity-0;
 }
 
-[data-folder-id].drag-over {
-  @apply bg-indigo-50;
+[data-folder-id].drag-over .drag-target {
+  @apply opacity-100;
+}
+
+/* Hide scrollbar but allow scrolling */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }

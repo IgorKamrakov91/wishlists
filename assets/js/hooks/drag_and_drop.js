@@ -1,45 +1,66 @@
 const DragAndDrop = {
   mounted() {
     // Make cards draggable
-    const cards = this.el.querySelectorAll('[data-card-id]');
+    const cards = document.querySelectorAll('[data-card-id]');
     cards.forEach(card => {
       card.addEventListener("dragstart", e => {
         const cardId = e.target.closest('[data-card-id]').dataset.cardId;
-        console.log('Drag start - Card ID:', cardId); // Debug log
+        console.log('Drag start - Card ID:', cardId);
         e.dataTransfer.setData("application/x-card-id", cardId);
-        e.target.classList.add("opacity-50");
+        e.target.classList.add("opacity-50", "scale-105");
       });
 
       card.addEventListener("dragend", e => {
-        e.target.classList.remove("opacity-50");
+        e.target.classList.remove("opacity-50", "scale-105");
       });
     });
 
     // Handle folder drop zones
-    const folders = this.el.querySelectorAll('[data-folder-id]');
+    const folders = document.querySelectorAll('[data-folder-id]');
     folders.forEach(folder => {
+      let dragCounter = 0;
+
+      folder.addEventListener("dragenter", e => {
+        e.preventDefault();
+        dragCounter++;
+        if (dragCounter === 1) {
+          folder.classList.add("drag-over");
+        }
+      });
+
       folder.addEventListener("dragover", e => {
         e.preventDefault();
-        folder.classList.add("bg-indigo-50");
       });
 
       folder.addEventListener("dragleave", e => {
         e.preventDefault();
-        folder.classList.remove("bg-indigo-50");
+        dragCounter--;
+        if (dragCounter === 0) {
+          folder.classList.remove("drag-over");
+        }
       });
 
       folder.addEventListener("drop", e => {
         e.preventDefault();
+        dragCounter = 0;
+        folder.classList.remove("drag-over");
         const cardId = e.dataTransfer.getData("application/x-card-id");
         const folderId = folder.dataset.folderId;
-        console.log('Drop - Card ID:', cardId, 'Folder ID:', folderId); // Debug log
-        folder.classList.remove("bg-indigo-50");
 
         if (cardId && folderId) {
-          this.pushEvent("assign_card", {
-            card_id: cardId,
-            folder_id: folderId
-          });
+          // Prevent multiple rapid drops
+          if (!folder.dataset.processing) {
+            folder.dataset.processing = "true";
+            this.pushEventTo(folder, "assign_card", {
+              card_id: cardId,
+              folder_id: folderId
+            });
+
+            // Reset processing flag after a short delay
+            setTimeout(() => {
+              delete folder.dataset.processing;
+            }, 500);
+          }
         }
       });
     });

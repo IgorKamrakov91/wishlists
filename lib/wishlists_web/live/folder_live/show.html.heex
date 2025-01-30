@@ -38,9 +38,82 @@
 
   <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 sm:px-0">
-      <!-- We'll add items/cards here in the next step -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <p class="text-gray-500 text-center">No items in this folder yet</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <%= if Enum.empty?(@cards) do %>
+          <div class="col-span-full">
+            <div class="bg-white rounded-lg shadow p-6">
+              <div class="text-center">
+                <div class="mx-auto h-12 w-12 text-gray-400">
+                  <.icon name="hero-folder-open" class="h-12 w-12" />
+                </div>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No cards</h3>
+                <p class="mt-1 text-sm text-gray-500">
+                  Start by dragging cards from your dashboard to this folder
+                </p>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <%= for card <- @cards do %>
+            <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-all duration-200">
+              <div class="relative">
+                <%= if card.image_url do %>
+                  <img
+                    src={card.image_url}
+                    alt=""
+                    class="w-full h-48 object-cover rounded-md mb-4"
+                  />
+                <% end %>
+                <button
+                  phx-click="remove_card"
+                  phx-value-card-id={card.id}
+                  class="absolute top-2 right-2 p-1 bg-white rounded-full shadow-md hover:bg-gray-100"
+                  title="Remove from folder"
+                >
+                  <.icon name="hero-x-mark" class="h-4 w-4 text-gray-500" />
+                </button>
+              </div>
+
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">{card.title}</h3>
+              <%= if card.description do %>
+                <p class="text-sm text-gray-600 mb-4">{card.description}</p>
+              <% end %>
+
+              <div class="flex items-center justify-between mt-4">
+                <%= if card.link_url do %>
+                  <a
+                    href={card.link_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-indigo-600 hover:text-indigo-800 text-sm flex items-center"
+                  >
+                    Visit Link
+                    <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4 ml-1" />
+                  </a>
+                <% end %>
+
+                <div class="flex items-center space-x-2">
+                  <button
+                    phx-click="move_card_up"
+                    phx-value-card-id={card.id}
+                    class="p-1 text-gray-400 hover:text-gray-600"
+                    title="Move up"
+                  >
+                    <.icon name="hero-arrow-up" class="h-4 w-4" />
+                  </button>
+                  <button
+                    phx-click="move_card_down"
+                    phx-value-card-id={card.id}
+                    class="p-1 text-gray-400 hover:text-gray-600"
+                    title="Move down"
+                  >
+                    <.icon name="hero-arrow-down" class="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
       </div>
     </div>
   </main>

@@ -51,39 +51,20 @@ defmodule WishlistsWeb.DashboardLive do
   end
 
   @impl true
-  def handle_event("assign_card", params, socket) do
-    Logger.info("Received assign_card event with params: #{inspect(params)}")
+  def handle_event("assign_card", %{"card_id" => card_id, "folder_id" => folder_id}, socket) do
+    Logger.info("Received assign_card event with card_id: #{card_id}, folder_id: #{folder_id}")
 
-    with {card_id, ""} <- Integer.parse(params["card_id"]),
-         {folder_id, ""} <- Integer.parse(params["folder_id"]) do
-      Logger.info("Attempting to assign card #{card_id} to folder #{folder_id}")
-
-      case Cards.assign_card_to_folder(card_id, folder_id) do
-        {:ok, folder_card} ->
-          Logger.info("Successfully assigned card: #{inspect(folder_card)}")
-          cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
-          folders = Folders.list_user_folders(socket.assigns.current_user.id)
-
-          {:noreply,
-           socket
-           |> assign(cards: cards)
-           |> assign(folders: folders)
-           |> put_flash(:info, "Card assigned to folder successfully")}
-
-        {:error, changeset} ->
-          Logger.error("Failed to assign card: #{inspect(changeset.errors)}")
-
-          {:noreply,
-           socket
-           |> put_flash(:error, "Could not assign card to folder")}
-      end
-    else
-      error ->
-        Logger.error("Failed to parse IDs: #{inspect(error)}")
+    case Cards.assign_card_to_folder(card_id, folder_id) do
+      {:ok, _folder_card} ->
+        cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
 
         {:noreply,
          socket
-         |> put_flash(:error, "Could not assign card to folder")}
+         |> assign(cards: cards)
+         |> put_flash(:info, "Card assigned to folder successfully")}
+
+      {:error, _changeset} ->
+        {:noreply, socket}
     end
   end
 

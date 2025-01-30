@@ -11,6 +11,14 @@ defmodule Wishlists.Cards do
     |> Repo.all()
   end
 
+  def list_folder_cards(folder_id) do
+    Card
+    |> join(:inner, [c], fc in FolderCard, on: c.id == fc.card_id)
+    |> where([c, fc], fc.folder_id == ^folder_id)
+    |> order_by([c, fc], fc.position)
+    |> Repo.all()
+  end
+
   def list_unassigned_cards(user_id) do
     assigned_card_ids = Repo.all(from(fc in FolderCard, select: fc.card_id))
 
@@ -46,21 +54,29 @@ defmodule Wishlists.Cards do
   def assign_card_to_folder(card_id, folder_id, position \\ nil) do
     Logger.info("Assigning card #{card_id} to folder #{folder_id}")
 
-    %FolderCard{}
-    |> FolderCard.changeset(%{
-      card_id: card_id,
-      folder_id: folder_id,
-      position: position
-    })
-    |> Repo.insert()
-    |> case do
-      {:ok, folder_card} = result ->
-        Logger.info("Successfully created folder_card: #{inspect(folder_card)}")
-        result
+    # First check if the association already exists
+    case Repo.get_by(FolderCard, card_id: card_id, folder_id: folder_id) do
+      nil ->
+        %FolderCard{}
+        |> FolderCard.changeset(%{
+          card_id: card_id,
+          folder_id: folder_id,
+          position: position
+        })
+        |> Repo.insert()
+        |> case do
+          {:ok, folder_card} = result ->
+            Logger.info("Successfully created folder_card: #{inspect(folder_card)}")
+            result
 
-      {:error, changeset} = error ->
-        Logger.error("Failed to create folder_card: #{inspect(changeset.errors)}")
-        error
+          {:error, changeset} = error ->
+            Logger.error("Failed to create folder_card: #{inspect(changeset.errors)}")
+            error
+        end
+
+      folder_card ->
+        # If it already exists, return ok tuple
+        {:ok, folder_card}
     end
   end
 

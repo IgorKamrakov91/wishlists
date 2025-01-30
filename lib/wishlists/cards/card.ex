@@ -8,7 +8,10 @@ defmodule Wishlists.Cards.Card do
     field :image_url, :string
     field :link_url, :string
     belongs_to :user, Wishlists.Accounts.User
+
     many_to_many :folders, Wishlists.Folders.Folder, join_through: "folder_cards"
+
+    has_many :folder_cards, Wishlists.Cards.FolderCard
 
     timestamps()
   end

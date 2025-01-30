@@ -1,4 +1,5 @@
 defmodule WishlistsWeb.FolderLive.Show do
+  alias Wishlists.Cards
   use WishlistsWeb, :live_view
   alias Wishlists.Folders
   alias Wishlists.Accounts.Guardian
@@ -8,13 +9,17 @@ defmodule WishlistsWeb.FolderLive.Show do
     case Guardian.decode_and_verify(session["guardian_default_token"]) do
       {:ok, claims} ->
         {:ok, user} = Guardian.resource_from_claims(claims)
+        folder_id = String.to_integer(folder_id)
         folder = Folders.get_folder!(folder_id)
 
         if folder.user_id == user.id do
+          cards = Cards.list_folder_cards(folder_id)
+
           {:ok,
            socket
            |> assign(current_user: user)
            |> assign(folder: folder)
+           |> assign(cards: cards)
            |> assign(page_title: folder.name)
            |> assign(show_modal: false)}
         else

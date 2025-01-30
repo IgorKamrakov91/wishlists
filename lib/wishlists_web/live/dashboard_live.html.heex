@@ -41,9 +41,19 @@
             <%= for folder <- @folders do %>
               <div class="flex-none w-64">
                 <div
-                  class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-all duration-200"
+                  class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-all duration-200 cursor-pointer relative"
                   data-folder-id={folder.id}
+                  phx-hook="DragAndDrop"
+                  id={"folder-drop-target-#{folder.id}"}
                 >
+                  <!-- Add a visual indicator for drop zone that shows on dragover -->
+                  <div class="absolute inset-0 border-2 border-dashed border-indigo-500 rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none drag-target">
+                    <div class="absolute inset-0 bg-indigo-50 opacity-50"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <span class="text-indigo-500 font-medium">Drop card here</span>
+                    </div>
+                  </div>
+
                   <h3 class="text-lg font-semibold text-gray-900 mb-2">{folder.name}</h3>
                   <%= if folder.description do %>
                     <p class="text-sm text-gray-600 mb-4 line-clamp-2">{folder.description}</p>
