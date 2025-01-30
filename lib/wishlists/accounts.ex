@@ -14,6 +14,7 @@ defmodule Wishlists.Accounts do
   end
 
   def get_user!(id), do: Repo.get!(User, id)
+  def get_user(id), do: Repo.get(User, id)
 
   def authenticate_user(email, password) when is_binary(email) and is_binary(password) do
     user = get_user_by_email(email)

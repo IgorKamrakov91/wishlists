@@ -5,7 +5,6 @@ const DragAndDrop = {
     cards.forEach(card => {
       card.addEventListener("dragstart", e => {
         const cardId = e.target.closest('[data-card-id]').dataset.cardId;
-        console.log('Drag start - Card ID:', cardId);
         e.dataTransfer.setData("application/x-card-id", cardId);
         e.target.classList.add("opacity-50", "scale-105");
       });

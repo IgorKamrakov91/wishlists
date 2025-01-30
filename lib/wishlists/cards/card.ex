@@ -7,6 +7,7 @@ defmodule Wishlists.Cards.Card do
     field :description, :string
     field :image_url, :string
     field :link_url, :string
+    field :price, :float
     belongs_to :user, Wishlists.Accounts.User
 
     many_to_many :folders, Wishlists.Folders.Folder, join_through: "folder_cards"
@@ -18,7 +19,7 @@ defmodule Wishlists.Cards.Card do
 
   def changeset(card, attrs) do
     card
-    |> cast(attrs, [:title, :description, :image_url, :link_url, :user_id])
+    |> cast(attrs, [:title, :description, :image_url, :link_url, :user_id, :price])
     |> validate_required([:title, :user_id])
     |> validate_length(:title, min: 1, max: 100)
     |> validate_length(:description, max: 500)

@@ -7,6 +7,7 @@ defmodule Wishlists.Repo.Migrations.CreateCards do
       add :description, :text
       add :image_url, :string
       add :link_url, :string
+      add :price, :float, default: 0.0
       add :user_id, references(:users, on_delete: :delete_all), null: false
 
       timestamps()
