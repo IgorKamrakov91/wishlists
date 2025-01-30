@@ -19,6 +19,7 @@ defmodule Wishlists.Accounts.User do
     |> validate_required([:email, :password], message: "is required")
     |> validate_email()
     |> validate_password()
+    |> hash_password()
     |> put_account_username()
   end
 
@@ -38,11 +39,13 @@ defmodule Wishlists.Accounts.User do
   end
 
   defp hash_password(changeset) do
-    password = get_change(changeset, :password)
-
-    changeset
-    |> put_change(:hashed_password, Bcrypt.hash_pwd_salt(password))
-    |> delete_change(:password)
+    if password = get_change(changeset, :password) do
+      changeset
+      |> put_change(:hashed_password, Bcrypt.hash_pwd_salt(password))
+      |> delete_change(:password)
+    else
+      changeset
+    end
   end
 
   defp put_account_username(changeset) do
@@ -55,7 +58,6 @@ defmodule Wishlists.Accounts.User do
   end
 
   defp ensure_unique_username(base_username) do
-    # Add logic to ensure username uniqueness by adding number suffix if needed
     base_username
   end
 end

@@ -263,10 +263,16 @@ defmodule WishlistsWeb.AuthComponent do
           {:noreply, assign(socket, error_message: "Invalid email or password")}
       end
     else
-      case Wishlists.Accounts.register_user(socket.assigns.form_data) do
+      case Accounts.register_user(socket.assigns.form_data) do
         {:ok, user} ->
-          send(self(), {:login_user, user})
-          {:noreply, assign(socket, error_message: nil)}
+          case Wishlists.Accounts.Guardian.encode_and_sign(user) do
+            {:ok, token, _claims} ->
+              send(self(), {:login_success, user, token})
+              {:noreply, socket}
+
+            {:error, _reason} ->
+              {:noreply, assign(socket, error_message: "Authentication failed")}
+          end
 
         {:error, changeset} ->
           error_message = format_registration_errors(changeset)
@@ -334,19 +340,18 @@ defmodule WishlistsWeb.AuthComponent do
   end
 
   defp format_registration_errors(changeset) do
-    errors =
-      Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
-        Enum.reduce(opts, msg, fn {key, value}, acc ->
-          String.replace(acc, "%{#{key}}", to_string(value))
-        end)
-      end)
+    Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
+      Enum.reduce(opts, msg, fn
+        {key, value}, acc when is_list(value) ->
+          String.replace(acc, "%{#{key}}", Enum.join(value, ", "))
 
-    errors
-    |> Map.to_list()
-    |> Enum.map(fn {field, messages} ->
+        {key, value}, acc ->
+          String.replace(acc, "%{#{key}}", to_string(value))
+      end)
+    end)
+    |> Enum.map(fn {field, errors} ->
       field_name = Phoenix.Naming.humanize(field)
-      messages = List.wrap(messages)
-      "#{field_name} #{Enum.join(messages, ", ")}"
+      "#{field_name} #{Enum.join(errors, ", ")}"
     end)
     |> Enum.join(". ")
   end
