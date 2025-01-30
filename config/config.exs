@@ -31,6 +31,11 @@ config :wishlists, WishlistsWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :wishlists, Wishlists.Mailer, adapter: Swoosh.Adapters.Local
 
+config :wishlists, Wishlists.Accounts.Guardian,
+  issuer: "wishlists",
+  secret_key: "guardian_secckskret",
+  ttl: {30, :days}
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

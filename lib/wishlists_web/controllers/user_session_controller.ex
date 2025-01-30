@@ -4,18 +4,15 @@ defmodule WishlistsWeb.UserSessionController do
   def create(conn, %{"user" => user_params}) do
     %{"email" => email, "password" => password} = user_params
 
-    case Wishlists.Accounts.authenticate_user(email, password) do
-      {:ok, user} ->
-        conn
-        |> put_session(:user_id, user.id)
-        |> configure_session(renew: true)
-        |> put_flash(:info, "Welcome back!")
-        |> redirect(to: ~p"/dashboard")
-
-      {:error, _reason} ->
-        conn
-        |> put_flash(:error, "Invalid email or password")
-        |> redirect(to: ~p"/")
+    if user = Wishlists.Accounts.get_user_by_email(email) do
+      conn
+      |> put_session(:user_id, user.id)
+      |> configure_session(renew: true)
+      |> json(%{success: true})
+    else
+      conn
+      |> put_status(:unauthorized)
+      |> json(%{success: false})
     end
   end
 

@@ -1,10 +1,21 @@
 defmodule WishlistsWeb.DashboardLive do
   use WishlistsWeb, :live_view
+  alias Wishlists.Accounts.Guardian
 
   on_mount {WishlistsWeb.UserAuth, :ensure_authenticated}
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, page_title: "Dashboard")}
+  def mount(_params, session, socket) do
+    case Guardian.decode_and_verify(session["guardian_default_token"]) do
+      {:ok, claims} ->
+        {:ok, user} = Guardian.resource_from_claims(claims)
+        {:ok, assign(socket, current_user: user)}
+
+      _ ->
+        {:ok,
+         socket
+         |> put_flash(:error, "You must log in to access this page.")
+         |> redirect(to: ~p"/")}
+    end
   end
 
   def render(assigns) do
@@ -17,7 +28,7 @@ defmodule WishlistsWeb.DashboardLive do
           </h1>
 
           <.link
-            href="/logout"
+            href={~p"/auth/sign_out"}
             method="delete"
             class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
           >
@@ -27,7 +38,7 @@ defmodule WishlistsWeb.DashboardLive do
       </header>
 
       <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <!-- Replace this with your dashboard content -->
+        <!-- Your dashboard content -->
         <div class="px-4 py-6 sm:px-0">
           <div class="border-4 border-dashed border-gray-200 rounded-lg h-96 flex items-center justify-center">
             <p class="text-gray-500 text-xl">Your dashboard content will go here</p>

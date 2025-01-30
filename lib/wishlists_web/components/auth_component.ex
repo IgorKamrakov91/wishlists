@@ -1,8 +1,7 @@
 defmodule WishlistsWeb.AuthComponent do
   use WishlistsWeb, :live_component
   alias Wishlists.Accounts
-  import Phoenix.HTML.Form
-  import Plug.Conn.Status, only: [get_csrf_token: 0]
+  alias Phoenix.PubSub
 
   def mount(socket) do
     {:ok,
@@ -98,54 +97,20 @@ defmodule WishlistsWeb.AuthComponent do
 
   defp auth_form(assigns) do
     ~H"""
-    <%= if @view == :sign_in do %>
-      <.form :let={_f} for={@form} action={~p"/login"} method="post" class="space-y-6">
-        <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
-
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <.icon name="hero-envelope" class="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            type="email"
-            name="user[email]"
-            value={@form_data["email"]}
-            required
-            class="pl-10 w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
-            placeholder="Email address"
-          />
-        </div>
-
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <.icon name="hero-lock-closed" class="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            type="password"
-            name="user[password]"
-            value={@form_data["password"]}
-            required
-            class="pl-10 w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
-            placeholder="Password"
-          />
-        </div>
-
-        <.submit_button view={@view} />
-      </.form>
-    <% else %>
-      <.form for={@form} phx-submit="submit" phx-target={@myself} class="space-y-6">
-        <.email_input form_data={@form_data} myself={@myself} />
-        <.password_input
-          form_data={@form_data}
-          password_focus={@password_focus}
-          password_requirement_met={@password_requirement_met}
-          view={@view}
-          myself={@myself}
-        />
+    <.form :let={_f} for={@form} phx-submit="submit" phx-target={@myself} class="space-y-6">
+      <.email_input form_data={@form_data} myself={@myself} />
+      <.password_input
+        form_data={@form_data}
+        password_focus={@password_focus}
+        password_requirement_met={@password_requirement_met}
+        view={@view}
+        myself={@myself}
+      />
+      <%= if @view == :sign_up do %>
         <.username_input form_data={@form_data} myself={@myself} />
-        <.submit_button view={@view} />
-      </.form>
-    <% end %>
+      <% end %>
+      <.submit_button view={@view} />
+    </.form>
     """
   end
 
@@ -280,23 +245,25 @@ defmodule WishlistsWeb.AuthComponent do
 
   def handle_event("submit", _params, socket) do
     if socket.assigns.view == :sign_in do
-      case Accounts.authenticate_user(
+      case Wishlists.Accounts.authenticate_user(
              socket.assigns.form_data["email"],
              socket.assigns.form_data["password"]
            ) do
         {:ok, user} ->
-          # Add debug log
-          IO.puts("Login successful, sending login_user message")
-          send(self(), {:login_user, user})
-          {:noreply, socket}
+          case Wishlists.Accounts.Guardian.encode_and_sign(user) do
+            {:ok, token, _claims} ->
+              send(self(), {:login_success, user, token})
+              {:noreply, socket}
+
+            {:error, _reason} ->
+              {:noreply, assign(socket, error_message: "Authentication failed")}
+          end
 
         {:error, _reason} ->
-          # Add debug log
-          IO.puts("Login failed")
           {:noreply, assign(socket, error_message: "Invalid email or password")}
       end
     else
-      case Accounts.register_user(socket.assigns.form_data) do
+      case Wishlists.Accounts.register_user(socket.assigns.form_data) do
         {:ok, user} ->
           send(self(), {:login_user, user})
           {:noreply, assign(socket, error_message: nil)}
