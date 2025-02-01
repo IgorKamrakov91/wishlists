@@ -69,6 +69,19 @@ defmodule WishlistsWeb.DashboardLive do
     end
   end
 
+  def handle_event("edit_card", %{"id" => id}, socket) do
+    card = Cards.get_card!(id)
+
+    {:noreply,
+     socket
+     |> assign(:card, card)
+     |> assign(:modal_title, "Edit Card")
+     |> assign(:submit_button_text, "Save Changes")
+     |> assign(:action, :edit)
+     |> assign(:modal_type, :card)
+     |> assign(:show_modal, true)}
+  end
+
   @impl true
   def handle_info(:close_modal, socket) do
     {:noreply, assign(socket, show_modal: false, modal_type: nil)}
@@ -96,5 +109,17 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(show_modal: false)
      |> assign(modal_type: nil)
      |> put_flash(:info, "Card created successfully")}
+  end
+
+  @impl true
+  def handle_info({:card_updated}, socket) do
+    cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
+
+    {:noreply,
+     socket
+     |> assign(cards: cards)
+     |> assign(show_modal: false)
+     |> assign(modal_type: nil)
+     |> put_flash(:info, "Card updated successfully")}
   end
 end

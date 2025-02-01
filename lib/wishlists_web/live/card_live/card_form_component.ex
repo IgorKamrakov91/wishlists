@@ -2,13 +2,12 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
   use WishlistsWeb, :live_component
   alias Wishlists.Cards
 
-  @impl true
   def render(assigns) do
     ~H"""
     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-50">
       <div class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
-          <div class="relative bg-white rounded-lg px-4 pb-4 pt-5 shadow-xl sm:p-6">
+          <div class="relative bg-white rounded-lg px-6 pb-6 pt-5 shadow-xl sm:p-8 w-full max-w-2xl">
             <div class="absolute right-0 top-0 pr-4 pt-4">
               <button
                 type="button"
@@ -20,12 +19,12 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
               </button>
             </div>
 
-            <div class="mt-3 text-center sm:mt-0 sm:text-left">
-              <h3 class="text-lg font-semibold leading-6 text-gray-900 mb-4">
+            <div class="mt-3 sm:mt-0">
+              <h3 class="text-xl font-semibold leading-6 text-gray-900 mb-6">
                 {@modal_title}
               </h3>
 
-              <.form for={@form} phx-submit="fetch_data" phx-target={@myself}>
+              <.form :if={@action == :new} for={@form} phx-submit="fetch_data" phx-target={@myself}>
                 <div class="space-y-4">
                   <.input
                     field={@form[:link_url]}
@@ -50,6 +49,35 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                   </div>
                 </div>
               </.form>
+
+              <.form :if={@action == :edit} for={@form} phx-submit="save" phx-target={@myself}>
+                <div class="space-y-6">
+                  <!-- Product image preview if available -->
+                  <%= if @card.image_url do %>
+                    <div class="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                      <img src={@card.image_url} alt="" class="w-full h-full object-contain" />
+                    </div>
+                  <% end %>
+
+                  <.input field={@form[:title]} type="text" label="Title" />
+
+                  <.input field={@form[:description]} type="textarea" label="Description" rows="4" />
+
+                  <.input
+                    field={@form[:price]}
+                    type="number"
+                    label="Price"
+                    step="0.01"
+                    value={format_price(@card.price)}
+                  />
+
+                  <div class="flex justify-end pt-4">
+                    <.button type="submit" class="bg-indigo-600 w-full sm:w-auto">
+                      Save Changes
+                    </.button>
+                  </div>
+                </div>
+              </.form>
             </div>
           </div>
         </div>
@@ -58,7 +86,22 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
     """
   end
 
+  # Helper function to format price
+  defp format_price(nil), do: ""
+  defp format_price(price) when is_float(price), do: :erlang.float_to_binary(price, decimals: 2)
+  defp format_price(price), do: price
+
   @impl true
+  def update(%{card: card, action: :edit} = assigns, socket) do
+    changeset = Cards.change_card(card)
+
+    {:ok,
+     socket
+     |> assign(assigns)
+     |> assign(form: to_form(changeset))
+     |> assign(loading: false)}
+  end
+
   def update(%{card: _card} = assigns, socket) do
     changeset = Cards.change_card(%Cards.Card{})
 
@@ -67,6 +110,22 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
      |> assign(assigns)
      |> assign(form: to_form(changeset))
      |> assign(loading: false)}
+  end
+
+  @impl true
+  def handle_event("save", %{"card" => card_params}, socket) do
+    save_card(socket, socket.assigns.action, card_params)
+  end
+
+  defp save_card(socket, :edit, card_params) do
+    case Cards.update_card(socket.assigns.card, card_params) do
+      {:ok, _card} ->
+        send(self(), {:card_updated})
+        {:noreply, socket}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
   end
 
   @impl true
