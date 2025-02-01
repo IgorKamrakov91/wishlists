@@ -5,23 +5,23 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-50">
+    <div class="fixed inset-0 bg-gradient-to-b from-indigo-100/75 via-purple-50/75 to-pink-100/75 backdrop-blur-sm transition-opacity z-50">
       <div class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
-          <div class="relative bg-white rounded-lg px-6 pb-6 pt-5 shadow-xl sm:p-8 w-full max-w-2xl">
+          <div class="relative bg-white/80 backdrop-blur-sm rounded-2xl px-6 pb-6 pt-5 shadow-xl sm:p-8 w-full max-w-2xl transform transition-all">
             <div class="absolute right-0 top-0 pr-4 pt-4">
               <button
                 type="button"
-                class="text-gray-400 hover:text-gray-500"
+                class="text-gray-400 hover:text-gray-500 transition-colors duration-200"
                 phx-click="close_modal"
                 phx-target={@myself}
               >
-                <.icon name="hero-x-mark-solid" class="h-6 w-6" />
+                <.icon name="hero-x-mark" class="h-6 w-6" />
               </button>
             </div>
 
             <div class="mt-3 sm:mt-0">
-              <h3 class="text-xl font-semibold leading-6 text-gray-900 mb-6">
+              <h3 class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-6">
                 {@modal_title}
               </h3>
 
@@ -32,19 +32,25 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                     type="url"
                     label="Product URL"
                     placeholder="Paste product URL here"
+                    class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
                   <div class="flex justify-center">
-                    <.button type="submit" class="bg-indigo-600" disabled={@card_loading}>
+                    <.button
+                      type="submit"
+                      class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
+                      disabled={@card_loading}
+                    >
                       <%= if @card_loading do %>
-                        <div class="flex items-center">
-                          <div class="animate-spin mr-2">
+                        <div class="flex items-center space-x-2">
+                          <div class="animate-spin">
                             <.icon name="hero-arrow-path" class="h-5 w-5" />
                           </div>
-                          Fetching...
+                          <span>Fetching...</span>
                         </div>
                       <% else %>
-                        Wooosh!
+                        <.icon name="hero-sparkles" class="h-5 w-5" />
+                        <span>Wooosh!</span>
                       <% end %>
                     </.button>
                   </div>
@@ -53,16 +59,33 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
 
               <.form :if={@action == :edit} for={@form} phx-submit="save" phx-target={@myself}>
                 <div class="space-y-6">
-                  <!-- Product image preview if available -->
-                  <%= if @card.image_url do %>
-                    <div class="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                  <div class="relative w-full h-48 bg-[250,250,250] rounded-xl overflow-hidden">
+                    <%= if @card.image_url do %>
                       <img src={@card.image_url} alt="" class="w-full h-full object-contain" />
-                    </div>
-                  <% end %>
+                    <% end %>
+                    <.input
+                      field={@form[:image_url]}
+                      type="text"
+                      label="Image URL"
+                      class="absolute bottom-0 left-0 right-0 bg-black/50 text-white placeholder-white/70 border-none focus:ring-0 px-4 py-2"
+                      placeholder="Image URL"
+                    />
+                  </div>
 
-                  <.input field={@form[:title]} type="text" label="Title" />
+                  <.input
+                    field={@form[:title]}
+                    type="text"
+                    label="Title"
+                    class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
+                  />
 
-                  <.input field={@form[:description]} type="textarea" label="Description" rows="4" />
+                  <.input
+                    field={@form[:description]}
+                    type="textarea"
+                    label="Description"
+                    rows="4"
+                    class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
+                  />
 
                   <.input
                     field={@form[:price]}
@@ -71,11 +94,16 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                     value={format_price(@card.price)}
                     pattern="[0-9]*\.?[0-9]*"
                     inputmode="decimal"
+                    class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
                   <div class="flex justify-end pt-4">
-                    <.button type="submit" class="bg-indigo-600 w-full sm:w-auto">
-                      Save Changes
+                    <.button
+                      type="submit"
+                      class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
+                    >
+                      <.icon name="hero-sparkles" class="h-5 w-5" />
+                      <span>Save Changes</span>
                     </.button>
                   </div>
                 </div>
