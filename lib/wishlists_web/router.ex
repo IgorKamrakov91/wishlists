@@ -27,6 +27,7 @@ defmodule WishlistsWeb.Router do
     pipe_through [:browser, :auth]
 
     live "/", PageLive, :home
+    get "/login", SessionController, :new
     get "/auth/set_session", AuthController, :set_session
     delete "/auth/sign_out", AuthController, :sign_out
   end

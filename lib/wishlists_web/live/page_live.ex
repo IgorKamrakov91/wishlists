@@ -6,12 +6,28 @@ defmodule WishlistsWeb.PageLive do
 
   def mount(_params, session, socket) do
     case Guardian.decode_and_verify(session["guardian_default_token"]) do
-      {:ok, _claims} ->
-        {:ok, push_navigate(socket, to: "/dashboard")}
+      {:ok, claims} ->
+        case Guardian.resource_from_claims(claims) do
+          {:ok, _user} ->
+            {:ok, push_navigate(socket, to: "/dashboard")}
 
-      _ ->
-        {:ok, assign(socket, show_auth_modal: false)}
+          {:error, _reason} ->
+            {:ok,
+             socket
+             |> assign(show_auth_modal: false)
+             |> clear_flash()}
+        end
+
+      {:error, _reason} ->
+        {:ok,
+         socket
+         |> assign(show_auth_modal: false)
+         |> clear_flash()}
     end
+  end
+
+  def handle_info(:close_modal, socket) do
+    {:noreply, assign(socket, show_auth_modal: false)}
   end
 
   def handle_info({:login_success, _user, token}, socket) do
@@ -21,11 +37,15 @@ defmodule WishlistsWeb.PageLive do
      |> redirect(to: ~p"/auth/set_session?token=#{token}")}
   end
 
-  def handle_info(:close_modal, socket) do
-    {:noreply, assign(socket, show_auth_modal: false)}
-  end
-
   def handle_event("open_auth_modal", _, socket) do
     {:noreply, assign(socket, show_auth_modal: true)}
+  end
+
+  # Add error handling for auth failures
+  def handle_info({:login_error, message}, socket) do
+    {:noreply,
+     socket
+     |> put_flash(:error, message)
+     |> assign(show_auth_modal: true)}
   end
 end

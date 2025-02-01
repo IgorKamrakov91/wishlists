@@ -7,8 +7,13 @@ defmodule WishlistsWeb.UserAuth do
   def on_mount(:mount_current_user, _params, session, socket) do
     case Guardian.decode_and_verify(session["guardian_default_token"]) do
       {:ok, claims} ->
-        {:ok, user} = Guardian.resource_from_claims(claims)
-        {:cont, assign(socket, current_user: user)}
+        case Guardian.resource_from_claims(claims) do
+          {:ok, user} ->
+            {:cont, assign(socket, current_user: user)}
+
+          {:error, _reason} ->
+            {:cont, assign(socket, current_user: nil)}
+        end
 
       _ ->
         {:cont, assign(socket, current_user: nil)}
@@ -18,8 +23,16 @@ defmodule WishlistsWeb.UserAuth do
   def on_mount(:ensure_authenticated, _params, session, socket) do
     case Guardian.decode_and_verify(session["guardian_default_token"]) do
       {:ok, claims} ->
-        {:ok, user} = Guardian.resource_from_claims(claims)
-        {:cont, assign(socket, current_user: user)}
+        case Guardian.resource_from_claims(claims) do
+          {:ok, user} ->
+            {:cont, assign(socket, current_user: user)}
+
+          {:error, _reason} ->
+            {:halt,
+             socket
+             |> put_flash(:error, "You must log in to access this page.")
+             |> redirect(to: ~p"/")}
+        end
 
       _ ->
         {:halt,

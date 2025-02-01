@@ -39,7 +39,7 @@ defmodule Wishlists.MixProject do
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.0.0"},
-      {:floki, ">= 0.30.0", only: :test},
+      {:floki, ">= 0.30.0"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
@@ -62,7 +62,8 @@ defmodule Wishlists.MixProject do
       {:guardian, "~> 2.3"},
       # Optional, for token tracking
       {:guardian_db, "~> 2.0"},
-      {:jose, "~> 1.11"}
+      {:jose, "~> 1.11"},
+      {:req, "~> 0.5.0"},
     ]
   end
 

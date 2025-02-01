@@ -1,28 +1,29 @@
 defmodule WishlistsWeb.DashboardLive do
   use WishlistsWeb, :live_view
-  alias Wishlists.Accounts.Guardian
   alias Wishlists.{Folders, Cards}
   alias Wishlists.Folders.Folder
   alias Wishlists.Cards.Card
   require Logger
 
-  alias Phoenix.LiveView.JS
+  on_mount {WishlistsWeb.UserAuth, :ensure_authenticated}
 
   @impl true
-  def mount(_params, session, socket) do
-    case Guardian.decode_and_verify(session["guardian_default_token"]) do
-      {:ok, claims} ->
-        {:ok, user} = Guardian.resource_from_claims(claims)
-        folders = Folders.list_user_folders(user.id)
-        cards = Cards.list_unassigned_cards(user.id)
+  def mount(_params, _session, socket) do
+    if socket.assigns.current_user do
+      folders = Folders.list_user_folders(socket.assigns.current_user.id)
+      cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
 
-        {:ok,
-         socket
-         |> assign(current_user: user)
-         |> assign(folders: folders)
-         |> assign(cards: cards)
-         |> assign(show_modal: false)
-         |> assign(modal_type: nil)}
+      {:ok,
+       socket
+       |> assign(folders: folders)
+       |> assign(cards: cards)
+       |> assign(show_modal: false)
+       |> assign(modal_type: nil)}
+    else
+      {:ok,
+       socket
+       |> put_flash(:error, "Please log in to access this page")
+       |> redirect(to: ~p"/")}
     end
   end
 
