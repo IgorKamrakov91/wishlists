@@ -24,6 +24,14 @@ defmodule Wishlists.Folders do
     |> Repo.one!()
   end
 
+  def get_folder_card_count(folder_id) do
+    from(fc in "folder_cards",
+      where: fc.folder_id == ^folder_id,
+      select: count(fc.id)
+    )
+    |> Wishlists.Repo.one()
+  end
+
   def update_folder(%Folder{} = folder, attrs) do
     folder
     |> Folder.changeset(attrs)

@@ -57,7 +57,14 @@
                     <span class="inline-block animate-bounce">✨</span>
                   </div>
 
-                  <h3 class="text-xl font-bold text-indigo-900 mb-2">{folder.name}</h3>
+                  <div class="flex justify-between items-center mb-2">
+                    <!-- Changed items-start to items-center -->
+                    <h3 class="text-xl font-bold text-indigo-900">{folder.name}</h3>
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                      {folder.card_count} {if folder.card_count == 1, do: "item", else: "items"}
+                    </span>
+                  </div>
+
                   <%= if folder.description do %>
                     <p class="text-sm text-indigo-600 mb-4 line-clamp-2">{folder.description}</p>
                   <% end %>

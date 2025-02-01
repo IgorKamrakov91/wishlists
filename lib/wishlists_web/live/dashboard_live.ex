@@ -11,11 +11,18 @@ defmodule WishlistsWeb.DashboardLive do
   def mount(_params, _session, socket) do
     if socket.assigns.current_user do
       folders = Folders.list_user_folders(socket.assigns.current_user.id)
+
+      folders_with_counts =
+        Enum.map(folders, fn folder ->
+          card_count = Folders.get_folder_card_count(folder.id)
+          Map.put(folder, :card_count, card_count)
+        end)
+
       cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
 
       {:ok,
        socket
-       |> assign(folders: folders)
+       |> assign(folders: folders_with_counts)
        |> assign(cards: cards)
        |> assign(show_modal: false)
        |> assign(modal_type: nil)}
@@ -58,10 +65,18 @@ defmodule WishlistsWeb.DashboardLive do
     case Cards.assign_card_to_folder(card_id, folder_id) do
       {:ok, _folder_card} ->
         cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
+        folders = Folders.list_user_folders(socket.assigns.current_user.id)
+
+        folders_with_counts =
+          Enum.map(folders, fn folder ->
+            card_count = Folders.get_folder_card_count(folder.id)
+            Map.put(folder, :card_count, card_count)
+          end)
 
         {:noreply,
          socket
          |> assign(cards: cards)
+         |> assign(folders: folders_with_counts)
          |> put_flash(:info, "Card assigned to folder successfully")}
 
       {:error, _changeset} ->
@@ -91,9 +106,15 @@ defmodule WishlistsWeb.DashboardLive do
   def handle_info({:folder_created}, socket) do
     folders = Folders.list_user_folders(socket.assigns.current_user.id)
 
+    folders_with_counts =
+      Enum.map(folders, fn folder ->
+        card_count = Folders.get_folder_card_count(folder.id)
+        Map.put(folder, :card_count, card_count)
+      end)
+
     {:noreply,
      socket
-     |> assign(folders: folders)
+     |> assign(folders: folders_with_counts)
      |> assign(show_modal: false)
      |> assign(modal_type: nil)
      |> put_flash(:info, "Folder created successfully")}
