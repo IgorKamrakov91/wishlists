@@ -44,7 +44,7 @@ defmodule WishlistsWeb.DashboardLive do
     {:noreply,
      socket
      |> assign(:card, %Card{})
-     |> assign(:modal_title, "Create New Card")
+     |> assign(:modal_title, "Create A Wish!")
      |> assign(:submit_button_text, "Create")
      |> assign(:action, :new)
      |> assign(:modal_type, :card)

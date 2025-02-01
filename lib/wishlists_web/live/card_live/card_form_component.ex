@@ -2,6 +2,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
   use WishlistsWeb, :live_component
   alias Wishlists.Cards
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-50">
@@ -33,9 +34,9 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                     placeholder="Paste product URL here"
                   />
 
-                  <div class="flex justify-end">
-                    <.button type="submit" class="bg-indigo-600" disabled={@loading}>
-                      <%= if @loading do %>
+                  <div class="flex justify-center">
+                    <.button type="submit" class="bg-indigo-600" disabled={@card_loading}>
+                      <%= if @card_loading do %>
                         <div class="flex items-center">
                           <div class="animate-spin mr-2">
                             <.icon name="hero-arrow-path" class="h-5 w-5" />
@@ -43,7 +44,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                           Fetching...
                         </div>
                       <% else %>
-                        Fetch Product
+                        Wooosh!
                       <% end %>
                     </.button>
                   </div>
@@ -65,10 +66,11 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
 
                   <.input
                     field={@form[:price]}
-                    type="number"
-                    label="Price"
-                    step="0.01"
+                    type="text"
+                    label="Price (in RUB)"
                     value={format_price(@card.price)}
+                    pattern="[0-9]*\.?[0-9]*"
+                    inputmode="decimal"
                   />
 
                   <div class="flex justify-end pt-4">
@@ -99,7 +101,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
      socket
      |> assign(assigns)
      |> assign(form: to_form(changeset))
-     |> assign(loading: false)}
+     |> assign(card_loading: false)}
   end
 
   def update(%{card: _card} = assigns, socket) do
@@ -109,7 +111,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
      socket
      |> assign(assigns)
      |> assign(form: to_form(changeset))
-     |> assign(loading: false)}
+     |> assign(card_loading: false)}
   end
 
   @impl true
@@ -131,35 +133,50 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
   @impl true
   def handle_event("fetch_data", %{"card" => %{"link_url" => url}}, socket)
       when byte_size(url) > 0 do
-    socket = assign(socket, loading: true)
+    socket = socket |> assign(card_loading: true)
+
+    IO.inspect(socket, label: "socket")
 
     case MarketplaceScrapper.fetch_and_extract(url) do
-      %{"title" => title, "description" => description, "image" => image} = _data ->
+      {:ok, %{"title" => title, "description" => description, "image" => image, "price" => price}} ->
         card_params = %{
           "title" => title,
           "description" => description,
           "image_url" => image,
           "link_url" => url,
+          "price" => price,
           "user_id" => socket.assigns.current_user.id
         }
 
         case Cards.create_card(card_params) do
           {:ok, _card} ->
             send(self(), {:card_created})
-            {:noreply, assign(socket, loading: false)}
+            {:noreply, assign(socket, card_loading: false)}
 
           {:error, _changeset} ->
             {:noreply,
              socket
-             |> assign(loading: false)
+             |> assign(card_loading: false)
              |> put_flash(:error, "Failed to create card")}
         end
 
-      :error ->
+      {:error, :fetch_failed} ->
         {:noreply,
          socket
-         |> assign(loading: false)
-         |> put_flash(:error, "Failed to fetch product data")}
+         |> assign(card_loading: false)
+         |> put_flash(:error, "Failed to fetch the webpage. Please check if the URL is correct.")}
+
+      {:error, :parse_failed} ->
+        {:noreply,
+         socket
+         |> assign(card_loading: false)
+         |> put_flash(:error, "Failed to parse product data from the webpage")}
+
+      {:error, :api_failed} ->
+        {:noreply,
+         socket
+         |> assign(card_loading: false)
+         |> put_flash(:error, "AI processing failed. Please try again later.")}
     end
   end
 

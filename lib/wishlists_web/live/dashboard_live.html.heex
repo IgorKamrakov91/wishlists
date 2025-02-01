@@ -1,14 +1,22 @@
-<div class="min-h-screen bg-gray-100">
-  <header class="bg-white shadow">
+<div class="min-h-screen bg-gradient-to-b from-indigo-100 via-purple-50 to-pink-100">
+  <header class="bg-white/80 backdrop-blur-sm shadow-lg">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-      <h1 class="text-3xl font-bold text-gray-900">
-        Welcome, {@current_user.email}!
-      </h1>
+      <div class="flex items-center space-x-3">
+        <div class="h-12 w-12 bg-indigo-600 rounded-full flex items-center justify-center">
+          <.icon name="hero-sparkles" class="h-6 w-6 text-white" />
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            ✨ {String.split(@current_user.email, "@") |> hd()}'s Wishverse
+          </h1>
+          <p class="text-sm text-gray-600">Where dreams come true</p>
+        </div>
+      </div>
 
       <.link
         href={~p"/auth/sign_out"}
         method="delete"
-        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        class="bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-white font-bold py-2 px-4 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
       >
         Logout
       </.link>
@@ -16,54 +24,50 @@
   </header>
 
   <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <!-- Folders Section with Horizontal Scroll -->
+    <!-- Wishlists Section -->
     <div class="mb-8">
-      <div class="flex justify-between items-center mb-4 px-4 sm:px-0">
-        <h2 class="text-2xl font-semibold text-gray-900">My Folders</h2>
+      <div class="flex justify-between items-center mb-6 px-4 sm:px-0">
+        <div>
+          <h2 class="text-2xl font-bold text-indigo-900">
+            <span class="inline-block animate-bounce">🎁</span> Magic Collections
+          </h2>
+          <p class="text-sm text-indigo-600">Organize your wishes into magical collections</p>
+        </div>
         <button
           phx-click="new_folder"
-          class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+          class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
         >
-          New Folder
+          <.icon name="hero-plus" class="h-5 w-5" />
+          <span>New Collection</span>
         </button>
       </div>
 
       <div class="relative" id="folders-container" phx-hook="DragAndDrop">
-        <!-- Scroll Shadow Indicators -->
-        <div class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-100 to-transparent z-10">
-        </div>
-        <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-100 to-transparent z-10">
-        </div>
-
-<!-- Scrollable Folders Container -->
         <div class="overflow-x-auto hide-scrollbar">
           <div class="flex space-x-4 px-4 py-2 min-w-min">
             <%= for folder <- @folders do %>
               <div class="flex-none w-64">
                 <div
-                  class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-all duration-200 cursor-pointer relative"
+                  class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 cursor-pointer relative group transform hover:-translate-y-1"
                   data-folder-id={folder.id}
                   phx-hook="DragAndDrop"
                   id={"folder-drop-target-#{folder.id}"}
                 >
-                  <!-- Add a visual indicator for drop zone that shows on dragover -->
-                  <div class="absolute inset-0 border-2 border-dashed border-indigo-500 rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none drag-target">
-                    <div class="absolute inset-0 bg-indigo-50 opacity-50"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                      <span class="text-indigo-500 font-medium">Drop card here</span>
-                    </div>
+                  <div class="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span class="inline-block animate-bounce">✨</span>
                   </div>
 
-                  <h3 class="text-lg font-semibold text-gray-900 mb-2">{folder.name}</h3>
+                  <h3 class="text-xl font-bold text-indigo-900 mb-2">{folder.name}</h3>
                   <%= if folder.description do %>
-                    <p class="text-sm text-gray-600 mb-4 line-clamp-2">{folder.description}</p>
+                    <p class="text-sm text-indigo-600 mb-4 line-clamp-2">{folder.description}</p>
                   <% end %>
                   <div class="flex justify-end">
                     <.link
                       navigate={~p"/folders/#{folder.id}"}
-                      class="text-indigo-600 hover:text-indigo-800"
+                      class="text-purple-600 hover:text-purple-800 font-medium flex items-center space-x-1 group"
                     >
-                      Open →
+                      <span>Open Collection</span>
+                      <.icon name="hero-sparkles" class="h-4 w-4 group-hover:animate-pulse" />
                     </.link>
                   </div>
                 </div>
@@ -74,64 +78,78 @@
       </div>
     </div>
 
-<!-- Cards Section -->
+<!-- Wishes Section -->
     <div class="px-4 sm:px-0">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-semibold text-gray-900">Available Cards</h2>
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-indigo-900">
+            <span class="inline-block animate-pulse">⭐</span> Your Wishes
+          </h2>
+          <p class="text-sm text-indigo-600">Dreams waiting to come true</p>
+        </div>
         <button
           phx-click="new_card"
-          class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+          class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
         >
-          New Card
+          <.icon name="hero-sparkles" class="h-5 w-5" />
+          <span>Make a Wish</span>
         </button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <%= for card <- @cards do %>
-          <div
-            data-card-id={card.id}
-            draggable="true"
-            class="cursor-move"
-            phx-click="edit_card"
-            phx-value-id={card.id}
-          >
-            <div class="bg-white rounded-lg shadow p-4 hover:shadow-lg transition-all duration-200 group">
-              <div class="relative">
-                <%= if card.image_url do %>
+          <div data-card-id={card.id} draggable="true" class="cursor-move w-full">
+            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 h-full">
+              <!-- Image section with click handler -->
+              <div
+                class="relative h-48 mb-4 cursor-pointer"
+                phx-click="edit_card"
+                phx-value-id={card.id}
+              >
+                <%= if card.image_url && card.image_url != "" do %>
                   <img
                     src={card.image_url}
-                    alt=""
-                    class="w-full h-48 object-cover rounded-md mb-4"
+                    alt={card.title}
+                    class="w-full h-full object-cover rounded-xl"
+                    loading="lazy"
+                    phx-hook="ImageLoader"
+                    id={"image-#{card.id}"}
                   />
+                <% else %>
+                  <div class="w-full h-full bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center">
+                    <div class="text-center">
+                      <.icon name="hero-photo" class="h-12 w-12 text-indigo-300 mx-auto mb-2" />
+                      <p class="text-sm text-indigo-400">No image available</p>
+                    </div>
+                  </div>
                 <% end %>
-                <!-- Drag Handle Overlay -->
-                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <div class="bg-black bg-opacity-50 rounded-md p-2 text-white">
-                    <.icon name="hero-arrows-pointing-out" class="h-6 w-6" />
+                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div class="bg-white/90 rounded-full p-2 shadow-md">
+                    <.icon name="hero-pencil" class="h-5 w-5 text-purple-600" />
+                    <!-- Changed to pencil icon to indicate edit -->
                   </div>
                 </div>
               </div>
 
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">{card.title}</h3>
-              <%= if card.description do %>
-                <p class="text-sm text-gray-600 mb-4">{card.description}</p>
-              <% end %>
+<!-- Rest of the card content -->
+              <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">{card.title}</h3>
 
-              <div class="flex items-center justify-between mt-4">
+              <div class="flex items-center justify-between">
                 <%= if card.link_url do %>
                   <a
                     href={card.link_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-indigo-600 hover:text-indigo-800 text-sm flex items-center"
+                    class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
                   >
-                    Visit Link
-                    <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4 ml-1" />
+                    <span>Visit Link</span>
+                    <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
                   </a>
                 <% end %>
 
-                <div class="text-gray-400 text-sm flex items-center">
-                  <.icon name="hero-hand-raised" class="h-4 w-4 mr-1" /> Drag to add to folder
+                <div class="text-indigo-400 text-sm flex items-center space-x-1">
+                  <.icon name="hero-sparkles" class="h-4 w-4" />
+                  <span>Drag to add to Collection</span>
                 </div>
               </div>
             </div>
@@ -166,26 +184,3 @@
     <% end %>
   <% end %>
 </div>
-
-<style>
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Drag and Drop styles */
-  [draggable="true"] {
-    @apply cursor-grab;
-  }
-
-  [draggable="true"]:active {
-    @apply cursor-grabbing;
-  }
-
-  [data-folder-id].bg-indigo-50 {
-    @apply ring-2 ring-indigo-400;
-  }
-</style>
