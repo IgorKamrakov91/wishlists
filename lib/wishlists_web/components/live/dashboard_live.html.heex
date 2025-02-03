@@ -1,27 +1,45 @@
 <div class="min-h-screen bg-gradient-to-b from-indigo-100 via-purple-50 to-pink-100">
-  <header class="bg-white/80 backdrop-blur-sm shadow-lg">
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-      <div class="flex items-center space-x-3">
-        <div class="h-12 w-12 bg-indigo-600 rounded-full flex items-center justify-center">
-          <.icon name="hero-sparkles" class="h-6 w-6 text-white" />
-        </div>
-        <div>
-          <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            ✨ Your Wishverse
-          </h1>
-          <p class="text-sm text-gray-600">Where dreams come true</p>
+<header class="bg-white/80 backdrop-blur-sm shadow-lg">
+  <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+    <div class="flex items-center justify-between w-full">
+      <.link
+        navigate={~p"/dashboard"}
+        class="group relative flex items-center space-x-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+      >
+        <div class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <.icon name="hero-home" class="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
+        <span class="text-indigo-600 font-medium group-hover:text-indigo-800 transition-colors duration-300">Dashboard</span>
+      </.link>
+
+      <div class="flex flex-col items-center mx-auto">
+        <div class="flex items-center space-x-3">
+          <div class="h-12 w-12 bg-indigo-600 rounded-full flex items-center justify-center">
+            <.icon name="hero-sparkles" class="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              ✨ Your Wishverse
+            </h1>
+            <p class="text-sm text-gray-600">Where dreams come true</p>
+          </div>
         </div>
       </div>
 
+      <div class="w-[88px]"></div>
+    </div>
+
+    <div class="flex items-center">
       <.link
         href={~p"/auth/sign_out"}
         method="delete"
-        class="bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-white font-bold py-2 px-4 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
+        class="bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-white px-4 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
       >
-        Logout
+        <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" />
+        <span>Logout</span>
       </.link>
     </div>
-  </header>
+  </div>
+</header>
 
   <!-- Add the floating folders bar -->
     <div class="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-lg transform transition-all duration-300 z-30"
