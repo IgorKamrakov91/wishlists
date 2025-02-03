@@ -65,6 +65,21 @@ defmodule WishlistsWeb.FolderLive.Show do
   end
 
   @impl true
+  def handle_event("reorder_card", %{"card_id" => card_id, "position" => position}, socket) do
+    card_id = String.to_integer(card_id)
+    folder_id = socket.assigns.folder.id
+
+    with :ok <- Cards.reorder_card(card_id, position, folder_id) do
+      cards = Cards.list_folder_cards(folder_id)
+      {:noreply, assign(socket, :cards, cards)}
+    else
+      {:error, reason} ->
+        Logger.error("Failed to reorder card in folder: #{inspect(reason)}")
+        {:noreply, put_flash(socket, :error, "Failed to reorder card")}
+    end
+  end
+
+  @impl true
   def handle_info(:close_modal, socket) do
     {:noreply, assign(socket, show_modal: false)}
   end

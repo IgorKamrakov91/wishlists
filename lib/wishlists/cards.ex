@@ -7,15 +7,16 @@ defmodule Wishlists.Cards do
   def list_user_cards(user_id) do
     Card
     |> where(user_id: ^user_id)
-    |> order_by([c], c.inserted_at)
+    |> order_by([c], asc: c.position)
     |> Repo.all()
   end
 
   def list_folder_cards(folder_id) do
     Card
     |> join(:inner, [c], fc in FolderCard, on: c.id == fc.card_id)
-    |> where([c, fc], fc.folder_id == ^folder_id)
-    |> order_by([c, fc], fc.position)
+    |> where([_c, fc], fc.folder_id == ^folder_id)
+    |> order_by([_c, fc], asc: fc.position)
+    |> preload([_c, fc], folder_cards: fc)
     |> Repo.all()
   end
 
@@ -24,7 +25,7 @@ defmodule Wishlists.Cards do
 
     from(c in Card,
       where: c.user_id == ^user_id and c.id not in ^assigned_card_ids,
-      order_by: [asc: c.inserted_at]
+      order_by: [asc: :position, asc: :inserted_at]
     )
     |> Repo.all()
   end
@@ -85,5 +86,65 @@ defmodule Wishlists.Cards do
       where: fc.card_id == ^card_id and fc.folder_id == ^folder_id
     )
     |> Repo.delete_all()
+  end
+
+  def reorder_card(card_id, new_position, folder_id \\ nil) do
+    case Repo.transaction(fn ->
+           card = get_card!(card_id)
+
+           query =
+             if folder_id do
+               # For folder cards, use the FolderCard join table
+               from c in Card,
+                 join: fc in FolderCard,
+                 on: c.id == fc.card_id,
+                 where: fc.folder_id == ^folder_id,
+                 order_by: [asc: fc.position]
+             else
+               # For unassigned cards
+               from c in Card,
+                 where: c.user_id == ^card.user_id,
+                 where:
+                   c.id not in subquery(
+                     from fc in FolderCard,
+                       select: fc.card_id
+                   ),
+                 order_by: [asc: c.position]
+             end
+
+           cards = Repo.all(query)
+
+           # Remove the card being moved
+           remaining_cards = Enum.reject(cards, &(&1.id == card_id))
+
+           # Insert the card at the new position
+           {before_cards, after_cards} = Enum.split(remaining_cards, new_position - 1)
+           reordered_cards = before_cards ++ [card] ++ after_cards
+
+           # Update positions based on context
+           if folder_id do
+             # Update FolderCard positions
+             reordered_cards
+             |> Enum.with_index(1)
+             |> Enum.each(fn {card, index} ->
+               from(fc in FolderCard,
+                 where: fc.card_id == ^card.id and fc.folder_id == ^folder_id
+               )
+               |> Repo.update_all(set: [position: index])
+             end)
+           else
+             # Update Card positions directly
+             reordered_cards
+             |> Enum.with_index(1)
+             |> Enum.each(fn {card, index} ->
+               card
+               |> Ecto.Changeset.change(%{position: index})
+               |> Repo.update!()
+             end)
+           end
+         end) do
+      {:ok, _} -> :ok
+      {:error, error} -> {:error, error}
+    end
   end
 end

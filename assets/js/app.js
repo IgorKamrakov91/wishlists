@@ -2,7 +2,8 @@ import "phoenix_html"
 import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
 import DragAndDrop from "./hooks/drag_and_drop"
-import FloatingBar from "./hooks/floating_bar"  // Add this import
+import DragOrder from "./hooks/drag_order"
+import FloatingBar from "./hooks/floating_bar"
 import topbar from "../vendor/topbar"
 
 let Hooks = {
@@ -14,7 +15,8 @@ let Hooks = {
         localStorage.setItem("user_token", token)
       })
     }
-  }
+  },
+  DragOrder: DragOrder
 }
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")

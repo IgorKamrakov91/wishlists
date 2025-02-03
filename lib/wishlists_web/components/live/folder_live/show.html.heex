@@ -66,8 +66,14 @@
           </.link>
         </div>
       <% else %>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <%= for card <- @cards do %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+           id="folder-cards-container"
+           data-folder-id={@folder.id}
+           phx-hook="DragOrder">
+        <%= for {card, index} <- Enum.with_index(@cards, 1) do %>
+          <div data-card-id={card.id}
+               data-position={index}
+               class="cursor-move">
             <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1">
               <!-- Image section -->
               <div class="relative h-48 mb-4">
@@ -132,6 +138,7 @@
                   </button>
                 </div>
               </div>
+            </div>
             </div>
           <% end %>
         </div>

@@ -104,6 +104,20 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(:show_modal, true)}
   end
 
+  def handle_event("reorder_card", %{"card_id" => card_id, "position" => position}, socket) do
+    card_id = String.to_integer(card_id)
+
+    # Handle any return value from reorder_card
+    with :ok <- Cards.reorder_card(card_id, position) do
+      cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
+      {:noreply, assign(socket, :cards, cards)}
+    else
+      {:error, reason} ->
+        Logger.error("Failed to reorder card: #{inspect(reason)}")
+        {:noreply, put_flash(socket, :error, "Failed to reorder card")}
+    end
+  end
+
   @impl true
   def handle_info(:close_modal, socket) do
     {:noreply, assign(socket, show_modal: false, modal_type: nil)}
