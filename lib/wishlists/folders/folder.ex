@@ -19,6 +19,6 @@ defmodule Wishlists.Folders.Folder do
     |> cast(attrs, [:name, :description, :user_id])
     |> validate_required([:name, :user_id])
     |> validate_length(:name, min: 1, max: 50)
-    |> validate_length(:description, max: 200)
+    |> validate_length(:description, max: 40)
   end
 end

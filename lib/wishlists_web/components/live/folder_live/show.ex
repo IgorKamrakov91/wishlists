@@ -22,6 +22,8 @@ defmodule WishlistsWeb.FolderLive.Show do
            |> assign(cards: cards)
            |> assign(page_title: folder.name)
            |> assign(show_modal: false)
+           |> assign(show_share_modal: false)
+           |> assign(share_url: nil)
            |> assign(show_delete_modal: false)}
         else
           {:ok,
@@ -65,6 +67,13 @@ defmodule WishlistsWeb.FolderLive.Show do
          |> put_flash(:error, "Could not delete folder")
          |> assign(show_delete_modal: false)}
     end
+  end
+
+  def handle_event("share_folder", _, socket) do
+    {:noreply,
+     socket
+     |> assign(show_share_modal: true)
+     |> handle_share_modal_timeout()}
   end
 
   @impl true
@@ -123,6 +132,10 @@ defmodule WishlistsWeb.FolderLive.Show do
     {:noreply, assign(socket, show_modal: false)}
   end
 
+  def handle_info(:hide_share_modal, socket) do
+    {:noreply, assign(socket, show_share_modal: false)}
+  end
+
   @impl true
   def handle_info({:folder_updated, folder}, socket) do
     {:noreply,
@@ -130,5 +143,10 @@ defmodule WishlistsWeb.FolderLive.Show do
      |> assign(folder: folder)
      |> assign(show_modal: false)
      |> put_flash(:info, "Folder updated successfully")}
+  end
+
+  defp handle_share_modal_timeout(socket) do
+    Process.send_after(self(), :hide_share_modal, 3000)
+    socket
   end
 end

@@ -18,7 +18,14 @@ let Hooks = {
     }
   },
   DragOrder: DragOrder,
-  SparkleEffect: SparkleEffect
+  SparkleEffect: SparkleEffect,
+  CopyToClipboard: {
+    mounted() {
+      window.addEventListener('clipboard-copied', () => {
+        this.pushEvent("share_folder", {});
+      });
+    }
+  }
 }
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
@@ -27,6 +34,17 @@ let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
   hooks: Hooks
 })
+
+window.copyToClipboard = async function (event, text) {
+  event.preventDefault();
+  try {
+    await navigator.clipboard.writeText(text);
+    // Dispatch a custom event that Phoenix can listen for
+    window.dispatchEvent(new CustomEvent('clipboard-copied'));
+  } catch (err) {
+    console.error('Failed to copy text:', err);
+  }
+};
 
 // Show progress bar on live navigation and form submits
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
