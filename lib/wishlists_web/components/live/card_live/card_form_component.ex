@@ -25,7 +25,13 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                 {@modal_title}
               </h3>
 
-              <.form :if={@action == :new} for={@form} phx-submit="fetch_data" phx-target={@myself}>
+    <!-- URL Input Form -->
+              <.form
+                :if={@action == :new && !@show_manual_form}
+                for={@form}
+                phx-submit="fetch_data"
+                phx-target={@myself}
+              >
                 <div class="space-y-4">
                   <.input
                     field={@form[:link_url]}
@@ -35,7 +41,17 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
-                  <div class="flex justify-center">
+                  <div class="flex justify-between items-center">
+                    <button
+                      type="button"
+                      phx-click="show_manual_form"
+                      phx-target={@myself}
+                      class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
+                    >
+                      <.icon name="hero-pencil" class="h-4 w-4" />
+                      <span>Add manually instead</span>
+                    </button>
+
                     <.button
                       type="submit"
                       class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
@@ -50,40 +66,77 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                         </div>
                       <% else %>
                         <.icon name="hero-sparkles" class="h-5 w-5" />
-                        <span>Wooosh!</span>
+                        <span>Fetch Data</span>
                       <% end %>
                     </.button>
                   </div>
                 </div>
               </.form>
 
-              <.form :if={@action == :edit} for={@form} phx-submit="save" phx-target={@myself}>
+    <!-- Manual Input Form -->
+              <.form
+                :if={@action == :edit || @show_manual_form}
+                for={@form}
+                phx-submit="save"
+                phx-target={@myself}
+              >
                 <div class="space-y-6">
-                  <div class="relative w-full h-48 bg-[250,250,250] rounded-xl overflow-hidden">
-                    <%= if @card.image_url do %>
-                      <img src={@card.image_url} alt="" class="w-full h-full object-contain" />
+                  <div class={[
+                    "relative rounded-xl transition-all duration-300",
+                    @form[:image_url].value && @form[:image_url].value != "" &&
+                      "h-48 bg-[250,250,250] mb-20",
+                    !@form[:image_url].value || (@form[:image_url].value == "" && "h-auto")
+                  ]}>
+                    <%= if @form[:image_url].value && @form[:image_url].value != "" do %>
+                      <img
+                        src={@form[:image_url].value}
+                        alt=""
+                        class="w-full h-full object-contain rounded-t-xl"
+                      />
+                      <div class="absolute -bottom-16 left-0 right-0">
+                        <.input
+                          field={@form[:image_url]}
+                          type="text"
+                          label="Image URL"
+                          class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
+                          placeholder="Image URL"
+                        />
+                      </div>
+                    <% else %>
+                      <.input
+                        field={@form[:image_url]}
+                        type="text"
+                        label="Image URL"
+                        class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
+                        placeholder="Paste image URL here"
+                      />
                     <% end %>
-                    <.input
-                      field={@form[:image_url]}
-                      type="text"
-                      label="Image URL"
-                      class="absolute bottom-0 left-0 right-0 bg-black/50 text-white placeholder-white/70 border-none focus:ring-0 px-4 py-2"
-                      placeholder="Image URL"
-                    />
                   </div>
+
+                  <.input
+                    field={@form[:link_url]}
+                    type="url"
+                    label="Product URL"
+                    required
+                    placeholder="https://example.com"
+                    class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
+                  />
 
                   <.input
                     field={@form[:title]}
                     type="text"
                     label="Title"
+                    required
+                    placeholder="Product title"
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
                   <.input
                     field={@form[:description]}
                     type="textarea"
-                    label="Description"
+                    label="Description (optional)"
                     rows="4"
+                    placeholder="Product description"
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
@@ -91,9 +144,10 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                     field={@form[:price]}
                     type="text"
                     label="Price (in RUB)"
-                    value={format_price(@card.price)}
+                    required
                     pattern="[0-9]*\.?[0-9]*"
                     inputmode="decimal"
+                    placeholder="3000.00"
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
@@ -103,7 +157,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                       class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
                     >
                       <.icon name="hero-sparkles" class="h-5 w-5" />
-                      <span>Save Changes</span>
+                      <span>Save</span>
                     </.button>
                   </div>
                 </div>
@@ -129,7 +183,8 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
      socket
      |> assign(assigns)
      |> assign(form: to_form(changeset))
-     |> assign(card_loading: false)}
+     |> assign(card_loading: false)
+     |> assign(show_manual_form: false)}
   end
 
   def update(%{card: _card} = assigns, socket) do
@@ -139,7 +194,13 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
      socket
      |> assign(assigns)
      |> assign(form: to_form(changeset))
-     |> assign(card_loading: false)}
+     |> assign(card_loading: false)
+     |> assign(show_manual_form: false)}
+  end
+
+  @impl true
+  def handle_event("show_manual_form", _, socket) do
+    {:noreply, assign(socket, show_manual_form: true)}
   end
 
   @impl true
@@ -158,53 +219,59 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
     end
   end
 
+  defp save_card(socket, :new, card_params) do
+    card_params = Map.put(card_params, "user_id", socket.assigns.current_user.id)
+
+    case Cards.create_card(card_params) do
+      {:ok, _card} ->
+        send(self(), {:card_created})
+        {:noreply, socket}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
   @impl true
   def handle_event("fetch_data", %{"card" => %{"link_url" => url}}, socket)
       when byte_size(url) > 0 do
     socket = socket |> assign(card_loading: true)
 
-    IO.inspect(socket, label: "socket")
-
     case MarketplaceScrapper.fetch_and_extract(url) do
       {:ok, %{"title" => title, "description" => description, "image" => image, "price" => price}} ->
-        card_params = %{
-          "title" => title,
-          "description" => description,
-          "image_url" => image,
-          "link_url" => url,
-          "price" => price,
-          "user_id" => socket.assigns.current_user.id
-        }
+        parsed_price =
+          case Float.parse(price) do
+            {number, _} -> number
+            :error -> nil
+          end
 
-        case Cards.create_card(card_params) do
-          {:ok, _card} ->
-            send(self(), {:card_created})
-            {:noreply, assign(socket, card_loading: false)}
+        changeset =
+          Cards.change_card(%Cards.Card{}, %{
+            "title" => title,
+            "description" => description,
+            "image_url" => image,
+            "link_url" => url,
+            "price" => parsed_price
+          })
 
-          {:error, _changeset} ->
-            {:noreply,
-             socket
-             |> assign(card_loading: false)
-             |> put_flash(:error, "Failed to create card")}
-        end
-
-      {:error, :fetch_failed} ->
         {:noreply,
          socket
          |> assign(card_loading: false)
-         |> put_flash(:error, "Failed to fetch the webpage. Please check if the URL is correct.")}
+         |> assign(show_manual_form: true)
+         |> assign(form: to_form(changeset))}
 
-      {:error, :parse_failed} ->
+      {:error, _reason} ->
+        changeset = Cards.change_card(%Cards.Card{}, %{"link_url" => url})
+
         {:noreply,
          socket
          |> assign(card_loading: false)
-         |> put_flash(:error, "Failed to parse product data from the webpage")}
-
-      {:error, :api_failed} ->
-        {:noreply,
-         socket
-         |> assign(card_loading: false)
-         |> put_flash(:error, "AI processing failed. Please try again later.")}
+         |> assign(show_manual_form: true)
+         |> assign(form: to_form(changeset))
+         |> put_flash(
+           :error,
+           "Could not fetch data automatically. Please fill in the details manually."
+         )}
     end
   end
 
