@@ -80,6 +80,32 @@ defmodule WishlistsWeb.FolderLive.Show do
   end
 
   @impl true
+  def handle_event("remove_card", %{"card_id" => card_id}, socket) do
+    card_id = String.to_integer(card_id)
+    folder_id = socket.assigns.folder.id
+
+    case Cards.remove_card_from_folder(card_id, folder_id) do
+      {:ok, :removed} ->
+        cards = Cards.list_folder_cards(folder_id)
+
+        {:noreply,
+         socket
+         |> assign(:cards, cards)
+         |> put_flash(:info, "Card removed from folder")}
+
+      {:error, :not_found} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Card was already removed from folder")}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Could not remove card from folder")}
+    end
+  end
+
+  @impl true
   def handle_info(:close_modal, socket) do
     {:noreply, assign(socket, show_modal: false)}
   end

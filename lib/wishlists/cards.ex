@@ -82,10 +82,17 @@ defmodule Wishlists.Cards do
   end
 
   def remove_card_from_folder(card_id, folder_id) do
-    from(fc in FolderCard,
-      where: fc.card_id == ^card_id and fc.folder_id == ^folder_id
-    )
-    |> Repo.delete_all()
+    query =
+      from fc in "folder_cards",
+        where: fc.card_id == ^card_id and fc.folder_id == ^folder_id
+
+    case Repo.delete_all(query) do
+      {n, _} when n > 0 -> {:ok, :removed}
+      {0, _} -> {:error, :not_found}
+    end
+  rescue
+    e ->
+      {:error, e}
   end
 
   def reorder_card(card_id, new_position, folder_id \\ nil) do
