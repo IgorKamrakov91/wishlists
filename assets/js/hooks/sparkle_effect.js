@@ -1,52 +1,54 @@
-const SparkleEffect = {
+const ConfettiEffect = {
   mounted() {
     this.el.addEventListener("click", () => {
       for (let i = 0; i < 30; i++) {
-        createSparkle();
+        createConfetti();
       }
     });
 
-    function createSparkle() {
-      const sparkle = document.createElement("div");
-      sparkle.className = "sparkle";
+    function createConfetti() {
+      const confetti = document.createElement("div");
+      confetti.className = "confetti";
 
-      // Random position on the screen
+      // Random position near the click area
       const startX = Math.random() * window.innerWidth;
       const startY = Math.random() * window.innerHeight;
 
       // Random size
-      const size = Math.random() * 20 + 15; // Slightly bigger for better star visibility
+      const size = Math.random() * 10 + 5;
 
-      // Random color from a magical palette
+      // Random colors
       const colors = [
-        'rgba(147, 51, 234, 0.8)', // Purple
-        'rgba(79, 70, 229, 0.8)',  // Indigo
-        'rgba(219, 39, 119, 0.8)', // Pink
-        'rgba(236, 72, 153, 0.8)', // Rose
-        'rgba(167, 139, 250, 0.8)', // Violet
+        '#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#ff99ac',
+        '#ffba08', '#f48c06', '#e85d04', '#dc2f02', '#d00000'
       ];
       const color = colors[Math.floor(Math.random() * colors.length)];
 
-      sparkle.style.cssText = `
+      // Random shape
+      const shapes = ['circle', 'square', 'rectangle'];
+      const shape = shapes[Math.floor(Math.random() * shapes.length)];
+
+      confetti.style.cssText = `
         position: fixed;
         left: ${startX}px;
         top: ${startY}px;
         width: ${size}px;
-        height: ${size}px;
+        height: ${shape === 'rectangle' ? size * 2 : size}px;
         background-color: ${color};
-        clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%, 50% 0%);
-        filter: blur(0.5px);
+        opacity: 1;
+        transform-origin: center;
         pointer-events: none;
         z-index: 9999;
-        box-shadow: 0 0 ${size / 2}px ${color};
+        border-radius: ${shape === 'circle' ? '50%' : '0'};
       `;
 
-      document.body.appendChild(sparkle);
+      document.body.appendChild(confetti);
 
-      // Animate the sparkle
+      // Animation properties
       const angle = Math.random() * Math.PI * 2;
-      const velocity = Math.random() * 200 + 100;
-      const lifetime = Math.random() * 1500 + 800;
+      const velocity = Math.random() * 150 + 50;
+      const rotationSpeed = Math.random() * 360;
+      const lifetime = Math.random() * 2000 + 1000;
 
       let opacity = 1;
       let time = 0;
@@ -55,16 +57,16 @@ const SparkleEffect = {
         time += 16;
         opacity = 1 - (time / lifetime);
 
-        sparkle.style.transform = `translate(
+        confetti.style.transform = `translate(
           ${Math.cos(angle) * velocity * (time / 1000)}px,
           ${Math.sin(angle) * velocity * (time / 1000)}px
-        ) rotate(${time}deg)`; // Faster rotation for stars
-        sparkle.style.opacity = opacity;
+        ) rotate(${time / 10 * rotationSpeed}deg)`;
+        confetti.style.opacity = opacity;
 
         if (opacity > 0) {
           requestAnimationFrame(animate);
         } else {
-          sparkle.remove();
+          confetti.remove();
         }
       }
 
@@ -73,4 +75,4 @@ const SparkleEffect = {
   }
 }
 
-export default SparkleEffect;
+export default ConfettiEffect;
