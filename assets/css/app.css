@@ -29,3 +29,7 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+.drag-target.drag-over .drag-area {
+  opacity: 1;
+}
