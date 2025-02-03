@@ -104,6 +104,58 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(:show_modal, true)}
   end
 
+  def handle_event("delete_card", %{"id" => id}, socket) do
+    card = Cards.get_card!(id)
+
+    case Cards.delete_card(card) do
+      {:ok, _deleted_card} ->
+        cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
+
+        {:noreply,
+         socket
+         |> assign(:cards, cards)
+         |> put_flash(:info, "Card deleted successfully")}
+
+      {:error, _changeset} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to delete card")}
+    end
+  end
+
+  def handle_event("cancel_delete", _, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_modal, false)
+     |> assign(:modal_type, nil)
+     |> assign(:card_to_delete, nil)}
+  end
+
+  def handle_event("confirm_delete", %{"id" => id}, socket) do
+    card = Cards.get_card!(id)
+
+    case Cards.delete_card(card) do
+      {:ok, _deleted_card} ->
+        cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
+
+        {:noreply,
+         socket
+         |> assign(:cards, cards)
+         |> assign(:show_modal, false)
+         |> assign(:modal_type, nil)
+         |> assign(:card_to_delete, nil)
+         |> put_flash(:info, "Wish deleted successfully")}
+
+      {:error, _changeset} ->
+        {:noreply,
+         socket
+         |> assign(:show_modal, false)
+         |> assign(:modal_type, nil)
+         |> assign(:card_to_delete, nil)
+         |> put_flash(:error, "Failed to delete wish")}
+    end
+  end
+
   def handle_event("reorder_card", %{"card_id" => card_id, "position" => position}, socket) do
     card_id = String.to_integer(card_id)
 

@@ -168,7 +168,12 @@
           id="cards-container"
           phx-hook="DragOrder">
         <%= for {card, index} <- Enum.with_index(@cards, 1) do %>
-          <div data-card-id={card.id} draggable="true" data-position={index} class="cursor-move w-full">
+          <div data-card-id={card.id}
+               draggable="true"
+               data-position={index}
+               class="cursor-move w-full"
+               id={"card-#{card.id}"}
+               phx-hook="DragCard">
             <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 h-full">
               <!-- Image section with click handler -->
               <div
@@ -217,6 +222,30 @@
           </div>
         <% end %>
       </div>
+
+      <div id="delete-bucket"
+           class="fixed bottom-8 right-8 w-24 h-24 transform scale-0 transition-all duration-300 z-50"
+           phx-hook="DeleteBucket">
+        <!-- Larger hit area for dropping -->
+        <div class="absolute inset-0 rounded-full" id="delete-bucket-dropzone"></div>
+
+        <div class="relative w-full h-full flex items-center justify-center">
+          <!-- Main bucket button -->
+          <div class="w-16 h-16 bg-red-500 rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:bg-red-600 transition-colors">
+            <.icon name="hero-trash" class="h-8 w-8 text-white" />
+          </div>
+
+          <!-- Dashed border container - made larger -->
+          <div class="absolute -inset-4 rounded-full border-2 border-dashed border-red-500 opacity-0 transition-all duration-300"
+               id="delete-bucket-border">
+          </div>
+
+          <!-- Visual feedback overlay -->
+          <div class="absolute inset-0 bg-red-600 rounded-full opacity-0 transition-all duration-300"
+               id="delete-bucket-overlay">
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -242,6 +271,32 @@
           submit_button_text={@submit_button_text}
           current_user={@current_user}
         />
+      <% :delete_confirmation -> %>
+        <.modal id="delete-confirmation">
+          <div class="p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">
+              Are you sure you want to delete this wish?
+            </h3>
+            <p class="text-sm text-gray-500 mb-6">
+              This action cannot be undone.
+            </p>
+            <div class="flex justify-end space-x-3">
+              <button
+                phx-click="cancel_delete"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Cancel
+              </button>
+              <button
+                phx-click="confirm_delete"
+                phx-value-id={@card_to_delete.id}
+                class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </.modal>
     <% end %>
   <% end %>
 </div>

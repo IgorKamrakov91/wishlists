@@ -5,6 +5,8 @@ import DragAndDrop from "./hooks/drag_and_drop"
 import DragOrder from "./hooks/drag_order"
 import FloatingBar from "./hooks/floating_bar"
 import SparkleEffect from "./hooks/sparkle_effect"
+import DeleteBucket from "./hooks/delete_bucket"
+import DragCard from "./hooks/drag_card"
 import topbar from "../vendor/topbar"
 
 let Hooks = {
@@ -19,6 +21,8 @@ let Hooks = {
   },
   DragOrder: DragOrder,
   SparkleEffect: SparkleEffect,
+  DragCard: DragCard,
+  DeleteBucket: DeleteBucket,
   CopyToClipboard: {
     mounted() {
       window.addEventListener('clipboard-copied', () => {

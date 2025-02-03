@@ -83,3 +83,19 @@
 .sparkle {
   animation: twinkle 0.8s infinite;
 }
+
+#delete-bucket {
+  pointer-events: all;
+}
+
+#delete-bucket-dropzone {
+  pointer-events: all;
+}
+
+#delete-bucket.show {
+  transform: scale(1);
+}
+
+#delete-bucket:hover {
+  transform: scale(1.1);
+}
