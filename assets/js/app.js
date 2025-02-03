@@ -4,6 +4,7 @@ import { LiveSocket } from "phoenix_live_view"
 import DragAndDrop from "./hooks/drag_and_drop"
 import DragOrder from "./hooks/drag_order"
 import FloatingBar from "./hooks/floating_bar"
+import SparkleEffect from "./hooks/sparkle_effect"
 import topbar from "../vendor/topbar"
 
 let Hooks = {
@@ -16,7 +17,8 @@ let Hooks = {
       })
     }
   },
-  DragOrder: DragOrder
+  DragOrder: DragOrder,
+  SparkleEffect: SparkleEffect
 }
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")

@@ -65,3 +65,21 @@
 .folder-drop-target.drag-over .drag-area {
   @apply opacity-100;
 }
+
+@keyframes twinkle {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8) rotate(180deg);
+  }
+}
+
+.sparkle {
+  animation: twinkle 0.8s infinite;
+}
