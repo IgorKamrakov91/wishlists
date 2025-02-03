@@ -33,3 +33,35 @@
 .drag-target.drag-over .drag-area {
   opacity: 1;
 }
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari and Opera */
+}
+
+#floating-folders-bar {
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.folder-drop-target {
+  @apply relative transition-all duration-200;
+}
+
+.folder-drop-target.drag-over {
+  @apply transform scale-105;
+}
+
+.folder-drop-target .drag-area {
+  @apply absolute inset-0 border-2 border-dashed border-indigo-300 rounded-xl opacity-0 transition-opacity duration-200;
+}
+
+.folder-drop-target.drag-over .drag-area {
+  @apply opacity-100;
+}

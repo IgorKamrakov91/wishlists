@@ -25,13 +25,20 @@ defmodule WishlistsWeb.DashboardLive do
        |> assign(folders: folders_with_counts)
        |> assign(cards: cards)
        |> assign(show_modal: false)
-       |> assign(modal_type: nil)}
+       |> assign(modal_type: nil)
+       |> assign(show_folders_panel: false)}
     else
       {:ok,
        socket
        |> put_flash(:error, "Please log in to access this page")
        |> redirect(to: ~p"/")}
     end
+  end
+
+  # Add this handler
+  @impl true
+  def handle_event("toggle_folders_panel", _, socket) do
+    {:noreply, assign(socket, show_folders_panel: !socket.assigns.show_folders_panel)}
   end
 
   @impl true

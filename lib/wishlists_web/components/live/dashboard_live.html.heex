@@ -23,6 +23,44 @@
     </div>
   </header>
 
+  <!-- Add the floating folders bar -->
+    <div class="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-lg transform transition-all duration-300 z-30"
+         id="floating-folders-bar"
+         style="transform: translateY(-100%)"
+         phx-hook="FloatingBar">
+      <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
+        <div class="flex space-x-4 overflow-x-auto hide-scrollbar pb-2">
+          <div class="flex-none">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl p-3">
+              <span class="text-sm font-medium">Drop to add to:</span>
+            </div>
+          </div>
+          <%= for folder <- @folders do %>
+            <div class="flex-none">
+              <div class="bg-white/80 backdrop-blur-sm rounded-xl p-3 shadow-md hover:shadow-lg transition-all duration-200 drag-target transform hover:-translate-y-0.5"
+                   data-folder-id={folder.id}>
+                <div class="flex items-center space-x-3">
+                  <div class="h-6 w-6 bg-indigo-100 rounded-full flex items-center justify-center">
+                    <.icon name="hero-folder" class="h-4 w-4 text-indigo-600" />
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="font-medium text-sm text-indigo-900">{folder.name}</span>
+                    <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full">
+                      {folder.card_count}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Draggable area indicator -->
+                <div class="absolute inset-0 border-2 border-dashed border-indigo-300 rounded-xl opacity-0 pointer-events-none drag-area">
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
   <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <!-- Wishlists Section -->
     <div class="mb-8">
