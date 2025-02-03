@@ -7,7 +7,9 @@ defmodule Wishlists.Folders.Folder do
     field :description, :string
     belongs_to :user, Wishlists.Accounts.User
 
-    many_to_many :cards, Wishlists.Cards.Card, join_through: "folder_cards"
+    many_to_many :cards, Wishlists.Cards.Card,
+      join_through: "folder_cards",
+      on_delete: :delete_all
 
     timestamps()
   end

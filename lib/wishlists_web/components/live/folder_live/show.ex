@@ -21,7 +21,8 @@ defmodule WishlistsWeb.FolderLive.Show do
            |> assign(folder: folder)
            |> assign(cards: cards)
            |> assign(page_title: folder.name)
-           |> assign(show_modal: false)}
+           |> assign(show_modal: false)
+           |> assign(show_delete_modal: false)}
         else
           {:ok,
            socket
@@ -49,7 +50,9 @@ defmodule WishlistsWeb.FolderLive.Show do
 
   @impl true
   def handle_event("delete_folder", _, socket) do
-    case Folders.delete_folder(socket.assigns.folder) do
+    folder = socket.assigns.folder
+
+    case Folders.delete_folder(folder) do
       {:ok, _} ->
         {:noreply,
          socket
@@ -60,7 +63,7 @@ defmodule WishlistsWeb.FolderLive.Show do
         {:noreply,
          socket
          |> put_flash(:error, "Could not delete folder")
-         |> redirect(to: ~p"/dashboard")}
+         |> assign(show_delete_modal: false)}
     end
   end
 
@@ -103,6 +106,16 @@ defmodule WishlistsWeb.FolderLive.Show do
          socket
          |> put_flash(:error, "Could not remove card from folder")}
     end
+  end
+
+  @impl true
+  def handle_event("show_delete_modal", _, socket) do
+    {:noreply, assign(socket, show_delete_modal: true)}
+  end
+
+  @impl true
+  def handle_event("hide_delete_modal", _, socket) do
+    {:noreply, assign(socket, show_delete_modal: false)}
   end
 
   @impl true
