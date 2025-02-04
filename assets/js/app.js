@@ -7,6 +7,7 @@ import FloatingBar from "./hooks/floating_bar"
 import SparkleEffect from "./hooks/sparkle_effect"
 import DeleteBucket from "./hooks/delete_bucket"
 import DragCard from "./hooks/drag_card"
+import CopyToClipboard from "./hooks/copy_to_clipboard"
 import topbar from "../vendor/topbar"
 
 let Hooks = {
@@ -42,9 +43,11 @@ let liveSocket = new LiveSocket("/live", Socket, {
 window.copyToClipboard = async function (event, text) {
   event.preventDefault();
   try {
-    await navigator.clipboard.writeText(text);
-    // Dispatch a custom event that Phoenix can listen for
-    window.dispatchEvent(new CustomEvent('clipboard-copied'));
+    const input = document.getElementById('share-url-input');
+    if (input && input.value) {
+      await navigator.clipboard.writeText(input.value);
+      window.dispatchEvent(new CustomEvent('clipboard-copied'));
+    }
   } catch (err) {
     console.error('Failed to copy text:', err);
   }

@@ -24,10 +24,16 @@ defmodule WishlistsWeb.Router do
   end
 
   scope "/", WishlistsWeb do
+    pipe_through :browser
+
+    live "/shared/:token", SharedFolderLive.Show
+    get "/set_viewer_session", ViewerSessionController, :set_session
+  end
+
+  scope "/", WishlistsWeb do
     pipe_through [:browser, :auth]
 
     live "/", PageLive, :home
-    get "/login", SessionController, :new
     get "/auth/set_session", AuthController, :set_session
     delete "/auth/sign_out", AuthController, :sign_out
   end

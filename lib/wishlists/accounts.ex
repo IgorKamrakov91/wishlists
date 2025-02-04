@@ -1,6 +1,6 @@
 defmodule Wishlists.Accounts do
   alias Wishlists.Repo
-  alias Wishlists.Accounts.{User, Account}
+  alias Wishlists.Accounts.{User, Account, GuestViewer}
 
   def register_user(attrs \\ %{}) do
     %User{}
@@ -37,6 +37,20 @@ defmodule Wishlists.Accounts do
         {:error, :invalid_credentials}
     end
   end
+
+  def create_guest_viewer(attrs \\ %{}) do
+    %GuestViewer{}
+    |> GuestViewer.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def get_guest_viewer_by_token(nil), do: nil
+
+  def get_guest_viewer_by_token(token) do
+    Repo.get_by(GuestViewer, viewer_token: token)
+  end
+
+  def get_guest_viewer!(id), do: Repo.get!(GuestViewer, id)
 
   defp valid_password?(%User{hashed_password: hashed_password}, password)
        when is_binary(hashed_password) and byte_size(password) > 0 do

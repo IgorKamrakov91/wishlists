@@ -14,6 +14,9 @@ defmodule WishlistsWeb.FolderLive.Show do
 
         if folder.user_id == user.id do
           cards = Cards.list_folder_cards(folder_id)
+          # Получаем или создаем shared_folder при монтировании
+          shared_folder = get_or_create_shared_folder(folder_id)
+          share_url = generate_share_url(shared_folder.share_token)
 
           {:ok,
            socket
@@ -23,7 +26,7 @@ defmodule WishlistsWeb.FolderLive.Show do
            |> assign(page_title: folder.name)
            |> assign(show_modal: false)
            |> assign(show_share_modal: false)
-           |> assign(share_url: nil)
+           |> assign(share_url: share_url)
            |> assign(show_delete_modal: false)}
         else
           {:ok,
@@ -38,6 +41,21 @@ defmodule WishlistsWeb.FolderLive.Show do
          |> put_flash(:error, "You must log in to access this page")
          |> redirect(to: ~p"/")}
     end
+  end
+
+  defp get_or_create_shared_folder(folder_id) do
+    case Folders.get_shared_folder_by_folder_id(folder_id) do
+      nil ->
+        {:ok, shared_folder} = Folders.create_shared_folder(folder_id)
+        shared_folder
+
+      shared_folder ->
+        shared_folder
+    end
+  end
+
+  defp generate_share_url(token) do
+    WishlistsWeb.Endpoint.url() <> "/shared/" <> token
   end
 
   @impl true
@@ -69,10 +87,31 @@ defmodule WishlistsWeb.FolderLive.Show do
     end
   end
 
+  def handle_event("create_share_link", _, socket) do
+    folder = socket.assigns.folder
+
+    case Folders.create_shared_folder(folder.id) do
+      {:ok, shared_folder} ->
+        share_url = WishlistsWeb.Endpoint.url() <> "/shared/" <> shared_folder.share_token
+
+        # Just set the URL, copying will be handled by JavaScript
+        {:noreply,
+         socket
+         |> assign(:share_url, share_url)
+         |> assign(:show_share_modal, true)
+         |> handle_share_modal_timeout()}
+
+      {:error, _changeset} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Could not create share link")}
+    end
+  end
+
   def handle_event("share_folder", _, socket) do
     {:noreply,
      socket
-     |> assign(show_share_modal: true)
+     |> assign(:show_share_modal, true)
      |> handle_share_modal_timeout()}
   end
 
@@ -127,13 +166,31 @@ defmodule WishlistsWeb.FolderLive.Show do
     {:noreply, assign(socket, show_delete_modal: false)}
   end
 
-  @impl true
-  def handle_info(:close_modal, socket) do
-    {:noreply, assign(socket, show_modal: false)}
+  def handle_event("copy_to_clipboard", _, socket) do
+    {:noreply,
+     socket
+     |> push_event("do_copy", %{text: socket.assigns.share_url})}
+  end
+
+  def handle_event("copied_to_clipboard", _, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_share_modal, true)
+     |> handle_share_modal_timeout()}
+  end
+
+  defp handle_share_modal_timeout(socket) do
+    Process.send_after(self(), :hide_share_modal, 3000)
+    socket
   end
 
   def handle_info(:hide_share_modal, socket) do
-    {:noreply, assign(socket, show_share_modal: false)}
+    {:noreply, assign(socket, :show_share_modal, false)}
+  end
+
+  @impl true
+  def handle_info(:close_modal, socket) do
+    {:noreply, assign(socket, show_modal: false)}
   end
 
   @impl true
@@ -143,10 +200,5 @@ defmodule WishlistsWeb.FolderLive.Show do
      |> assign(folder: folder)
      |> assign(show_modal: false)
      |> put_flash(:info, "Folder updated successfully")}
-  end
-
-  defp handle_share_modal_timeout(socket) do
-    Process.send_after(self(), :hide_share_modal, 3000)
-    socket
   end
 end

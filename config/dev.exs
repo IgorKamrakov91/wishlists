@@ -27,7 +27,8 @@ config :wishlists, WishlistsWeb.Endpoint,
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:wishlists, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:wishlists, ~w(--watch)]}
-  ]
+  ],
+  url: [host: "localhost"]
 
 # ## SSL Support
 #
