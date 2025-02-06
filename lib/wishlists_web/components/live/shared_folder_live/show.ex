@@ -156,6 +156,13 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   def handle_event("reserve_card", %{"card_id" => folder_card_id}, socket) do
     folder_card_id = String.to_integer(folder_card_id)
 
+    reserver_name =
+      cond do
+        socket.assigns.current_user -> socket.assigns.current_user.email
+        socket.assigns.guest_viewer -> socket.assigns.guest_viewer.name
+        true -> nil
+      end
+
     attrs =
       cond do
         socket.assigns.current_user ->
@@ -176,6 +183,14 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
     case Cards.reserve_card(folder_card_id, attrs) do
       {:ok, _reservation} ->
+        folder_card = Cards.get_folder_card!(folder_card_id)
+
+        Wishlists.Notifications.notify_reservation(
+          socket.assigns.folder,
+          folder_card,
+          reserver_name
+        )
+
         cards = Cards.list_folder_cards(socket.assigns.folder.id)
         {:noreply, assign(socket, :cards, cards)}
 

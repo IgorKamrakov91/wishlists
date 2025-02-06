@@ -216,4 +216,8 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(modal_type: nil)
      |> put_flash(:info, "Card updated successfully")}
   end
+
+  def handle_info({:new_notification}, socket) do
+    {:noreply, socket}
+  end
 end

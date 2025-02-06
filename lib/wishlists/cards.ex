@@ -60,6 +60,13 @@ defmodule Wishlists.Cards do
     Repo.get_by(CardReservation, folder_card_id: folder_card_id)
   end
 
+  def get_folder_card!(id) do
+    FolderCard
+    |> where([fc], fc.id == ^id)
+    |> preload([:card])
+    |> Repo.one!()
+  end
+
   def delete_card(%Card{} = card) do
     Repo.delete(card)
   end

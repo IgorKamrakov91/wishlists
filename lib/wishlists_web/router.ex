@@ -45,4 +45,9 @@ defmodule WishlistsWeb.Router do
     live "/dashboard", DashboardLive, :home
     live "/folders/:id", FolderLive.Show, :show
   end
+
+  live_session :notifications,
+    on_mount: [{WishlistsWeb.UserAuth, :ensure_authenticated}] do
+    live "/notifications", NotificationLive
+  end
 end

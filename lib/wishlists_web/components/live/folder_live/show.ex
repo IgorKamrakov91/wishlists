@@ -156,58 +156,6 @@ defmodule WishlistsWeb.FolderLive.Show do
     end
   end
 
-  def handle_event("reserve_card", %{"card_id" => card_id}, socket) do
-    folder_card_id = String.to_integer(card_id)
-
-    attrs =
-      cond do
-        socket.assigns.current_user ->
-          %{
-            "reserved_by_user_id" => socket.assigns.current_user.id,
-            "reserver_name" => socket.assigns.current_user.email
-          }
-
-        socket.assigns.guest_viewer ->
-          %{
-            "reserved_by_guest_id" => socket.assigns.guest_viewer.id,
-            "reserver_name" => socket.assigns.guest_viewer.name
-          }
-
-        true ->
-          {:noreply, socket}
-      end
-
-    case Cards.reserve_card(folder_card_id, attrs) do
-      {:ok, _reservation} ->
-        cards = Cards.list_folder_cards(socket.assigns.folder.id)
-        {:noreply, assign(socket, :cards, cards)}
-
-      {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, "Could not reserve card")}
-    end
-  end
-
-  def handle_event("unreserve_card", %{"card_id" => card_id}, socket) do
-    folder_card_id = String.to_integer(card_id)
-
-    case Cards.unreserve_card(folder_card_id) do
-      {:ok, _} ->
-        cards = Cards.list_folder_cards(socket.assigns.folder.id)
-        {:noreply, assign(socket, :cards, cards)}
-
-      {:error, _} ->
-        {:noreply, put_flash(socket, :error, "Could not unreserve card")}
-    end
-  end
-
-  defp can_unreserve?(reservation, current_user, guest_viewer) do
-    cond do
-      current_user && reservation.reserved_by_user_id == current_user.id -> true
-      guest_viewer && reservation.reserved_by_guest_id == guest_viewer.id -> true
-      true -> false
-    end
-  end
-
   @impl true
   def handle_event("show_delete_modal", _, socket) do
     {:noreply, assign(socket, show_delete_modal: true)}
@@ -252,5 +200,9 @@ defmodule WishlistsWeb.FolderLive.Show do
      |> assign(folder: folder)
      |> assign(show_modal: false)
      |> put_flash(:info, "Folder updated successfully")}
+  end
+
+  def handle_info({:new_notification}, socket) do
+    {:noreply, socket}
   end
 end

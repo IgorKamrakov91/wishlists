@@ -1,7 +1,6 @@
 defmodule WishlistsWeb.FolderLive.FolderFormComponent do
   use WishlistsWeb, :live_component
   alias Wishlists.Folders
-  alias Wishlists.Folders.Folder
 
   @impl true
   def render(assigns) do
