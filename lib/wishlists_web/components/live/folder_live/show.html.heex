@@ -1,61 +1,72 @@
-<div class="min-h-screen bg-gradient-to-b from-indigo-100 via-purple-50 to-pink-100" phx-hook="CopyToClipboard" id="clipboard-container">
+<div
+  class="min-h-screen bg-gradient-to-b from-indigo-100 via-purple-50 to-pink-100"
+  phx-hook="CopyToClipboard"
+  id="clipboard-container"
+>
   <input type="text" id="share-url-input" value={@share_url} class="hidden" />
   <header class="bg-white/80 backdrop-blur-sm shadow-lg">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-    <div class="flex items-center justify-between w-full">
-      <.link
-        navigate={~p"/dashboard"}
-        class="group relative flex items-center space-x-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
-      >
-        <div class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <.icon name="hero-home" class="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
-        <span class="text-indigo-600 font-medium group-hover:text-indigo-800 transition-colors duration-300">Dashboard</span>
-      </.link>
-
-      <div class="flex flex-col items-center mx-auto">
-        <div class="flex items-center space-x-3">
-          <div class="h-12 w-12 bg-indigo-600 rounded-full flex items-center justify-center">
-            <.icon name="hero-folder" class="h-6 w-6 text-white" />
+      <div class="flex items-center justify-between w-full">
+        <.link
+          navigate={~p"/dashboard"}
+          class="group relative flex items-center space-x-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+        >
+          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           </div>
-          <div class="text-center">
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              {@folder.name}
-            </h1>
-            <%= if @folder.description do %>
-              <p class="text-sm text-gray-600">{@folder.description}</p>
-            <% end %>
+          <.icon
+            name="hero-home"
+            class="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300"
+          />
+          <span class="text-indigo-600 font-medium group-hover:text-indigo-800 transition-colors duration-300">
+            Dashboard
+          </span>
+        </.link>
+
+        <div class="flex flex-col items-center mx-auto">
+          <div class="flex items-center space-x-3">
+            <div class="h-12 w-12 bg-indigo-600 rounded-full flex items-center justify-center">
+              <.icon name="hero-folder" class="h-6 w-6 text-white" />
+            </div>
+            <div class="text-center">
+              <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                {@folder.name}
+              </h1>
+              <%= if @folder.description do %>
+                <p class="text-sm text-gray-600">{@folder.description}</p>
+              <% end %>
+            </div>
           </div>
         </div>
+
+        <div class="w-[88px]"></div>
       </div>
 
-      <div class="w-[88px]"></div>
-    </div>
+      <div class="flex items-center space-x-3">
+        <button
+          phx-click="share_folder"
+          class="bg-white/80 backdrop-blur-sm text-emerald-600 px-4 py-2 rounded-full hover:bg-emerald-50 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
+          onclick={"copyToClipboard(event, '#{@share_url}')"}
+        >
+          <.icon name="hero-share" class="h-4 w-4" />
+          <span>Share</span>
+        </button>
 
-    <div class="flex items-center space-x-3">
-      <button
-        phx-click="share_folder"
-        class="bg-white/80 backdrop-blur-sm text-emerald-600 px-4 py-2 rounded-full hover:bg-emerald-50 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
-        onclick={"copyToClipboard(event, '#{@share_url}')"}>
-        <.icon name="hero-share" class="h-4 w-4" />
-        <span>Share</span>
-      </button>
+        <button
+          phx-click="edit_folder"
+          class="bg-white/80 backdrop-blur-sm text-indigo-600 px-4 py-2 rounded-full hover:bg-indigo-50 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
+        >
+          <.icon name="hero-pencil" class="h-4 w-4" />
+          <span>Edit</span>
+        </button>
 
-      <button
-        phx-click="edit_folder"
-        class="bg-white/80 backdrop-blur-sm text-indigo-600 px-4 py-2 rounded-full hover:bg-indigo-50 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
-      >
-        <.icon name="hero-pencil" class="h-4 w-4" />
-        <span>Edit</span>
-      </button>
-
-      <button
-        phx-click="show_delete_modal"
-        class="bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-white px-4 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
-      >
-        <.icon name="hero-trash" class="h-4 w-4" />
-        <span>Delete</span>
-      </button>
-    </div>
+        <button
+          phx-click="show_delete_modal"
+          class="bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-white px-4 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
+        >
+          <.icon name="hero-trash" class="h-4 w-4" />
+          <span>Delete</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -79,61 +90,74 @@
           </.link>
         </div>
       <% else %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-           id="folder-cards-container"
-           data-folder-id={@folder.id}
-           phx-hook="DragOrder">
-        <%= for {card, index} <- Enum.with_index(@cards, 1) do %>
-          <div data-card-id={card.id}
-               data-position={index}
-               class="cursor-move">
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1">
-              <!-- Image section -->
-              <div class="relative h-48 mb-4">
-                <img
-                  src={if card.image_url && card.image_url != "", do: card.image_url, else: "/images/gift.jpg"}
-                  alt={card.title}
-                  class="w-full h-full object-cover rounded-xl"
-                  loading="lazy"
-                  phx-hook="ImageLoader"
-                  id={"image-#{card.id}"}
-                />
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          id="folder-cards-container"
+          data-folder-id={@folder.id}
+          phx-hook="DragOrder"
+        >
+          <%= for {folder_card, index} <- Enum.with_index(@cards, 1) do %>
+            <div data-card-id={folder_card.card.id} data-position={index} class="cursor-move">
+              <div class={[
+                "bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1",
+                folder_card.reservation && "bg-purple-50/80"
+              ]}>
+                <!-- Image section -->
+                <div class="relative h-48 mb-4">
+                  <img
+                    src={
+                      if folder_card.card.image_url && folder_card.card.image_url != "",
+                        do: folder_card.card.image_url,
+                        else: "/images/gift.jpg"
+                    }
+                    alt={folder_card.card.title}
+                    class="w-full h-full object-cover rounded-xl"
+                    loading="lazy"
+                    phx-hook="ImageLoader"
+                    id={"image-#{folder_card.card.id}"}
+                  />
 
-                <button
-                  phx-click="remove_card"
-                  phx-value-card_id={card.id}
-                  class="absolute top-2 right-2 bg-white/90 w-8 h-8 rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-50 hover:text-rose-700 flex items-center justify-center"
-                >
-                  <.icon name="hero-x-mark" class="h-4 w-4 text-rose-600" />
-                </button>
-              </div>
-
-              <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">{card.title}</h3>
-
-              <div class="flex items-center justify-between">
-                <%= if card.link_url do %>
-                  <a
-                    href={card.link_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
+                  <button
+                    phx-click="remove_card"
+                    phx-value-card_id={folder_card.card.id}
+                    class="absolute top-2 right-2 bg-white/90 w-8 h-8 rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-50 hover:text-rose-700 flex items-center justify-center"
                   >
-                    <span>Visit Link</span>
-                    <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
-                  </a>
+                    <.icon name="hero-x-mark" class="h-4 w-4 text-rose-600" />
+                  </button>
+                </div>
+
+                <%= if folder_card.reservation do %>
+                  <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
+                    Reserved by {folder_card.reservation.reserver_name}
+                  </div>
                 <% end %>
 
-                <div class="flex items-center space-x-1">
-                  <span class="text-indigo-600 font-medium">
-                    <%= if card.price && card.price > 0 do %>
-                      <%= "#{:erlang.float_to_binary(card.price, decimals: 0)} ₽" %>
-                    <% else %>
-                      <span class="text-indigo-400 text-sm">No Price</span>
-                    <% end %>
-                  </span>
+                <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">{folder_card.card.title}</h3>
+
+                <div class="flex items-center justify-between">
+                  <%= if folder_card.card.link_url do %>
+                    <a
+                      href={folder_card.card.link_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
+                    >
+                      <span>Visit Link</span>
+                      <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
+                    </a>
+                  <% end %>
+
+                  <div class="flex items-center space-x-1">
+                    <span class="text-indigo-600 font-medium">
+                      <%= if folder_card.card.price && folder_card.card.price > 0 do %>
+                        {"#{:erlang.float_to_binary(folder_card.card.price, decimals: 0)} ₽"}
+                      <% else %>
+                        <span class="text-indigo-400 text-sm">No Price</span>
+                      <% end %>
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
             </div>
           <% end %>
         </div>

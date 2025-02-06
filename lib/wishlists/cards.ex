@@ -1,7 +1,7 @@
 defmodule Wishlists.Cards do
   import Ecto.Query
   alias Wishlists.Repo
-  alias Wishlists.Cards.{Card, FolderCard}
+  alias Wishlists.Cards.{Card, CardReservation, FolderCard}
   require Logger
 
   def list_user_cards(user_id) do
@@ -12,11 +12,10 @@ defmodule Wishlists.Cards do
   end
 
   def list_folder_cards(folder_id) do
-    Card
-    |> join(:inner, [c], fc in FolderCard, on: c.id == fc.card_id)
-    |> where([_c, fc], fc.folder_id == ^folder_id)
-    |> order_by([_c, fc], asc: fc.position)
-    |> preload([_c, fc], folder_cards: fc)
+    FolderCard
+    |> where([fc], fc.folder_id == ^folder_id)
+    |> order_by([fc], asc: fc.position)
+    |> preload([:card, :reservation])
     |> Repo.all()
   end
 
@@ -42,6 +41,23 @@ defmodule Wishlists.Cards do
     card
     |> Card.changeset(attrs)
     |> Repo.update()
+  end
+
+  def reserve_card(folder_card_id, attrs) do
+    %CardReservation{}
+    |> CardReservation.changeset(Map.put(attrs, "folder_card_id", folder_card_id))
+    |> Repo.insert()
+  end
+
+  def unreserve_card(folder_card_id) do
+    case Repo.get_by(CardReservation, folder_card_id: folder_card_id) do
+      nil -> {:error, :not_found}
+      reservation -> Repo.delete(reservation)
+    end
+  end
+
+  def get_card_reservation(folder_card_id) do
+    Repo.get_by(CardReservation, folder_card_id: folder_card_id)
   end
 
   def delete_card(%Card{} = card) do

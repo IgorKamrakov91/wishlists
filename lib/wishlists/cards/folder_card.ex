@@ -7,6 +7,8 @@ defmodule Wishlists.Cards.FolderCard do
     belongs_to :card, Wishlists.Cards.Card
     field :position, :integer
 
+    has_one :reservation, Wishlists.Cards.CardReservation
+
     timestamps()
   end
 

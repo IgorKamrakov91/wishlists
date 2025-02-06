@@ -2,7 +2,6 @@
   <header class="bg-white/80 backdrop-blur-sm shadow-lg">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <div class="flex flex-wrap items-center justify-between gap-4">
-
         <%= if @current_user do %>
           <.link
             navigate={~p"/dashboard"}
@@ -75,7 +74,6 @@
               </div>
             <% else %>
               <div class="w-[120px]"></div>
-
             <% end %>
           <% end %>
         </div>
@@ -97,28 +95,38 @@
         </div>
       <% else %>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <%= for card <- @cards do %>
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1">
-              <!-- Image section -->
+          <%= for folder_card <- @cards do %>
+            <div class={[
+              "bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1",
+              folder_card.reservation && "bg-purple-50/80"
+            ]}>
               <div class="relative h-48 mb-4">
                 <img
                   src={
-                    if card.image_url && card.image_url != "",
-                      do: card.image_url,
+                    if folder_card.card.image_url && folder_card.card.image_url != "",
+                      do: folder_card.card.image_url,
                       else: "/images/gift.jpg"
                   }
-                  alt={card.title}
+                  alt={folder_card.card.title}
                   class="w-full h-full object-cover rounded-xl"
                   loading="lazy"
                 />
+
+                <%= if folder_card.reservation do %>
+                  <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
+                    Reserved by {folder_card.reservation.reserver_name}
+                  </div>
+                <% end %>
               </div>
 
-              <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">{card.title}</h3>
+              <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">
+                {folder_card.card.title}
+              </h3>
 
               <div class="flex items-center justify-between">
-                <%= if card.link_url do %>
+                <%= if folder_card.card.link_url do %>
                   <a
-                    href={card.link_url}
+                    href={folder_card.card.link_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
@@ -130,13 +138,35 @@
 
                 <div class="flex items-center space-x-1">
                   <span class="text-indigo-600 font-medium">
-                    <%= if card.price && card.price > 0 do %>
-                      {"#{:erlang.float_to_binary(card.price, decimals: 0)} ₽"}
+                    <%= if folder_card.card.price && folder_card.card.price > 0 do %>
+                      {"#{:erlang.float_to_binary(folder_card.card.price, decimals: 0)} ₽"}
                     <% else %>
                       <span class="text-indigo-400 text-sm">No Price</span>
                     <% end %>
                   </span>
                 </div>
+
+                <%= if !folder_card.reservation do %>
+                  <button
+                    phx-click="reserve_card"
+                    phx-value-card_id={folder_card.id}
+                    class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
+                  >
+                    <.icon name="hero-gift" class="h-4 w-4" />
+                    <span>Reserve</span>
+                  </button>
+                <% else %>
+                  <%= if can_unreserve?(folder_card.reservation, @current_user, @guest_viewer) do %>
+                    <button
+                      phx-click="unreserve_card"
+                      phx-value-card_id={folder_card.id}
+                      class="text-rose-600 hover:text-rose-800 text-sm flex items-center space-x-1"
+                    >
+                      <.icon name="hero-x-mark" class="h-4 w-4" />
+                      <span>Cancel Reservation</span>
+                    </button>
+                  <% end %>
+                <% end %>
               </div>
             </div>
           <% end %>
