@@ -14,7 +14,7 @@ defmodule WishlistsWeb.FolderLive.Show do
 
         if folder.user_id == user.id do
           cards = Cards.list_folder_cards(folder_id)
-          # Получаем или создаем shared_folder при монтировании
+
           shared_folder = get_or_create_shared_folder(folder_id)
           share_url = generate_share_url(shared_folder.share_token)
 

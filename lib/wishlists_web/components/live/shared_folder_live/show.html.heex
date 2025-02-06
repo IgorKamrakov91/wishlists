@@ -2,25 +2,38 @@
   <header class="bg-white/80 backdrop-blur-sm shadow-lg">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <div class="flex flex-wrap items-center justify-between gap-4">
-      <%= if @current_user do %>
-              <.link
-                navigate={~p"/dashboard"}
-                class="group relative flex items-center space-x-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
-              >
-                <div class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <.icon name="hero-home" class="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
-                <span class="text-indigo-600 font-medium group-hover:text-indigo-800 transition-colors duration-300">Dashboard</span>
-              </.link>
-            <% else %>
-              <.link
-                navigate={~p"/"}
-                class="group relative flex items-center space-x-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
-              >
-                <div class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <.icon name="hero-sparkles" class="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
-                <span class="text-indigo-600 font-medium group-hover:text-indigo-800 transition-colors duration-300">Join Wishverse</span>
-              </.link>
-            <% end %>
+
+        <%= if @current_user do %>
+          <.link
+            navigate={~p"/dashboard"}
+            class="group relative flex items-center space-x-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+          >
+            <div class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            </div>
+            <.icon
+              name="hero-home"
+              class="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300"
+            />
+            <span class="text-indigo-600 font-medium group-hover:text-indigo-800 transition-colors duration-300">
+              Dashboard
+            </span>
+          </.link>
+        <% else %>
+          <.link
+            navigate={~p"/"}
+            class="group relative flex items-center space-x-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+          >
+            <div class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            </div>
+            <.icon
+              name="hero-sparkles"
+              class="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300"
+            />
+            <span class="text-indigo-600 font-medium group-hover:text-indigo-800 transition-colors duration-300">
+              Join Wishverse
+            </span>
+          </.link>
+        <% end %>
 
         <div class="flex items-center space-x-3 mx-auto">
           <div class="h-12 w-12 bg-indigo-600 rounded-full flex items-center justify-center">
@@ -28,15 +41,44 @@
           </div>
           <div>
             <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              <%= @folder.name %>
+              {@folder.name}
             </h1>
             <%= if @folder.description do %>
-              <p class="text-sm text-gray-600"><%= @folder.description %></p>
+              <p class="text-sm text-gray-600">{@folder.description}</p>
             <% end %>
           </div>
         </div>
 
-        <div class="w-[88px]"></div>
+        <div class="flex items-center">
+          <%= if @current_user do %>
+            <div class="px-4 py-2 bg-indigo-100 rounded-full">
+              <span class="text-indigo-700 font-medium">
+                {@current_user.email}
+              </span>
+            </div>
+          <% else %>
+            <%= if @guest_viewer do %>
+              <div class="flex items-center space-x-2">
+                <div class="px-4 py-2 bg-purple-100 rounded-full">
+                  <span class="text-purple-700 font-medium">
+                    Guest: {@guest_viewer.name}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  phx-click="logout_guest"
+                  class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                  title="Sign out"
+                >
+                  <.icon name="hero-arrow-right-on-rectangle" class="h-5 w-5" />
+                </button>
+              </div>
+            <% else %>
+              <div class="w-[120px]"></div>
+
+            <% end %>
+          <% end %>
+        </div>
       </div>
     </div>
   </header>
@@ -60,14 +102,18 @@
               <!-- Image section -->
               <div class="relative h-48 mb-4">
                 <img
-                  src={if card.image_url && card.image_url != "", do: card.image_url, else: "/images/gift.jpg"}
+                  src={
+                    if card.image_url && card.image_url != "",
+                      do: card.image_url,
+                      else: "/images/gift.jpg"
+                  }
                   alt={card.title}
                   class="w-full h-full object-cover rounded-xl"
                   loading="lazy"
                 />
               </div>
 
-              <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1"><%= card.title %></h3>
+              <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">{card.title}</h3>
 
               <div class="flex items-center justify-between">
                 <%= if card.link_url do %>
@@ -85,7 +131,7 @@
                 <div class="flex items-center space-x-1">
                   <span class="text-indigo-600 font-medium">
                     <%= if card.price && card.price > 0 do %>
-                      <%= "#{:erlang.float_to_binary(card.price, decimals: 0)} ₽" %>
+                      {"#{:erlang.float_to_binary(card.price, decimals: 0)} ₽"}
                     <% else %>
                       <span class="text-indigo-400 text-sm">No Price</span>
                     <% end %>

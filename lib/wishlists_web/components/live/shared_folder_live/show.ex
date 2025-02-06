@@ -9,6 +9,8 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   def mount(%{"token" => token}, session, socket) do
     Logger.debug("Mounting SharedFolderLive.Show with token: #{token}")
 
+    viewer_name_from_cookie = get_connect_params(socket)["_visitor_name"]
+
     case Folders.get_shared_folder_by_token(token) do
       nil ->
         Logger.debug("No shared folder found for token: #{token}")
@@ -46,8 +48,31 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
           |> assign(:guest_viewer, guest_viewer)
           |> assign(:current_user, current_user)
           |> assign(:show_name_modal, is_nil(current_user) && is_nil(guest_viewer))
-          # Добавляем для auth modal
           |> assign(:show_auth_modal, false)
+
+        socket =
+          if viewer_name_from_cookie && is_nil(current_user) && is_nil(guest_viewer) do
+            case Accounts.create_guest_viewer(%{name: viewer_name_from_cookie}) do
+              {:ok, new_guest_viewer} ->
+                socket
+                |> redirect(
+                  to:
+                    ~p"/set_viewer_session?token=#{new_guest_viewer.viewer_token}&return_to=#{shared_folder.share_token}"
+                )
+
+              _ ->
+                socket
+            end
+          else
+            socket
+          end
+
+        socket =
+          assign(
+            socket,
+            :show_name_modal,
+            is_nil(current_user) && is_nil(guest_viewer) && is_nil(viewer_name_from_cookie)
+          )
 
         {:ok, socket}
     end
@@ -57,12 +82,16 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
     {:noreply, assign(socket, show_auth_modal: true)}
   end
 
-  # Оставляем обработчик для гостевого входа
   def handle_event("save_viewer_name", %{"guest_viewer" => %{"name" => name}}, socket) do
     case Accounts.create_guest_viewer(%{name: name}) do
       {:ok, guest_viewer} ->
         {:noreply,
          socket
+         |> push_event("set-cookie", %{
+           key: "_visitor_name",
+           value: name,
+           max_age: 30 * 24 * 60 * 60
+         })
          |> redirect(
            to:
              ~p"/set_viewer_session?token=#{guest_viewer.viewer_token}&return_to=#{socket.assigns.shared_folder.share_token}"
@@ -74,6 +103,13 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
          |> put_flash(:error, "Error saving your name")
          |> assign(:show_name_modal, true)}
     end
+  end
+
+  def handle_event("logout_guest", _, socket) do
+    {:noreply,
+     socket
+     |> push_event("clear-cookie", %{key: "_visitor_name"})
+     |> redirect(to: ~p"/clear_viewer_session?return_to=/")}
   end
 
   def handle_event("switch_tab", %{"tab" => tab}, socket) do

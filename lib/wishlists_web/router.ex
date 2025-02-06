@@ -28,6 +28,7 @@ defmodule WishlistsWeb.Router do
 
     live "/shared/:token", SharedFolderLive.Show
     get "/set_viewer_session", ViewerSessionController, :set_session
+    get "/clear_viewer_session", ViewerSessionController, :clear
   end
 
   scope "/", WishlistsWeb do

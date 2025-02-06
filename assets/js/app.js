@@ -33,10 +33,16 @@ let Hooks = {
   }
 }
 
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: { _csrf_token: csrfToken },
+  params: { _csrf_token: csrfToken, _visitor_name: getCookie("_visitor_name") },
   hooks: Hooks
 })
 
@@ -57,6 +63,16 @@ window.copyToClipboard = async function (event, text) {
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
 window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
+
+window.addEventListener("phx:set-cookie", (e) => {
+  const { key, value, max_age } = e.detail;
+  document.cookie = `${key}=${value};max-age=${max_age};path=/`;
+});
+
+window.addEventListener("phx:clear-cookie", (e) => {
+  const { key } = e.detail;
+  document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+});
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
