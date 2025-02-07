@@ -17,7 +17,8 @@ defmodule Wishlists.Application do
       # Start a worker by calling: Wishlists.Worker.start_link(arg)
       # {Wishlists.Worker, arg},
       # Start to serve requests, typically the last entry
-      WishlistsWeb.Endpoint
+      WishlistsWeb.Endpoint,
+      Wishlists.Folders.CleanupWorker
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

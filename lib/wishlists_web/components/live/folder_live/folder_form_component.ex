@@ -45,6 +45,14 @@ defmodule WishlistsWeb.FolderLive.FolderFormComponent do
                     rows={4}
                   />
 
+                  <.input
+                    field={@form[:event_date]}
+                    type="date"
+                    label="Event Date (optional)"
+                    help_text="Folder will be automatically deleted one day after the event"
+                    class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
+                  />
+
                   <%= if @action == :edit do %>
                     <div class="flex items-center justify-between">
                       <div class="flex flex-col">

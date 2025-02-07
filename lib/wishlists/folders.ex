@@ -2,6 +2,8 @@ defmodule Wishlists.Folders do
   import Ecto.Query
   alias Wishlists.Repo
   alias Wishlists.Folders.{Folder, SharedFolder}
+  alias Wishlists.Cards.Card
+  alias Wishlists.Cards
 
   def list_user_folders(user_id) do
     Folder
@@ -43,7 +45,20 @@ defmodule Wishlists.Folders do
   end
 
   def delete_folder(%Folder{} = folder) do
-    Repo.delete(folder)
+    Repo.transaction(fn ->
+      folder_cards = Cards.list_folder_cards(folder.id)
+
+      {reserved, _unreserved} = Enum.split_with(folder_cards, & &1.reservation)
+
+      reserved_card_ids = Enum.map(reserved, & &1.card_id)
+
+      if length(reserved_card_ids) > 0 do
+        from(c in Card, where: c.id in ^reserved_card_ids)
+        |> Repo.delete_all()
+      end
+
+      Repo.delete(folder)
+    end)
   end
 
   def create_shared_folder(folder_id) do
