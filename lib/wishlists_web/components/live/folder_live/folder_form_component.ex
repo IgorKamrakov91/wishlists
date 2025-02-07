@@ -45,6 +45,33 @@ defmodule WishlistsWeb.FolderLive.FolderFormComponent do
                     rows={4}
                   />
 
+                  <%= if @action == :edit do %>
+                    <div class="flex items-center justify-between">
+                      <div class="flex flex-col">
+                        <span class="text-sm font-medium text-gray-700">Show Reserver Names</span>
+                        <span class="text-xs text-gray-500">
+                          Allow yourself to see who reserved items
+                        </span>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          name="folder[show_reserver_names]"
+                          value="true"
+                          #
+                          Добавляем
+                          явное
+                          значение
+                          true
+                          class="sr-only peer"
+                          checked={@form[:show_reserver_names].value}
+                        />
+                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-indigo-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600">
+                        </div>
+                      </label>
+                    </div>
+                  <% end %>
+
                   <div class="flex justify-end pt-4">
                     <.button
                       type="submit"
@@ -86,6 +113,13 @@ defmodule WishlistsWeb.FolderLive.FolderFormComponent do
   end
 
   defp save_folder(socket, :edit, folder_params) do
+    folder_params =
+      Map.update(folder_params, "show_reserver_names", false, fn
+        "true" -> true
+        "on" -> true
+        _ -> false
+      end)
+
     case Folders.update_folder(socket.assigns.folder, folder_params) do
       {:ok, folder} ->
         send(self(), {:folder_updated, folder})

@@ -5,6 +5,7 @@ defmodule Wishlists.Folders.Folder do
   schema "folders" do
     field :name, :string
     field :description, :string
+    field :show_reserver_names, :boolean, default: false
     belongs_to :user, Wishlists.Accounts.User
 
     many_to_many :cards, Wishlists.Cards.Card,
@@ -16,7 +17,7 @@ defmodule Wishlists.Folders.Folder do
 
   def changeset(folder, attrs) do
     folder
-    |> cast(attrs, [:name, :description, :user_id])
+    |> cast(attrs, [:name, :description, :user_id, :show_reserver_names])
     |> validate_required([:name, :user_id])
     |> validate_length(:name, min: 1, max: 50)
     |> validate_length(:description, max: 40)

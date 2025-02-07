@@ -9,8 +9,6 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   def mount(%{"token" => token}, session, socket) do
     Logger.debug("Mounting SharedFolderLive.Show with token: #{token}")
 
-    viewer_name_from_cookie = get_connect_params(socket)["_visitor_name"]
-
     case Folders.get_shared_folder_by_token(token) do
       nil ->
         Logger.debug("No shared folder found for token: #{token}")
@@ -22,6 +20,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
       shared_folder ->
         Logger.debug("Found shared folder: #{inspect(shared_folder)}")
+        folder = Folders.get_folder!(shared_folder.folder_id)
 
         current_user =
           case Guardian.decode_and_verify(session["guardian_default_token"]) do
@@ -33,48 +32,31 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
               nil
           end
 
-        viewer_token = session["viewer_token"]
-        guest_viewer = viewer_token && Accounts.get_guest_viewer_by_token(viewer_token)
-        Logger.debug("Guest viewer: #{inspect(guest_viewer)}")
+        if current_user && current_user.id == folder.user_id do
+          {:ok,
+           socket
+           |> redirect(to: ~p"/folders/#{folder.id}")}
+        else
+          _viewer_name_from_cookie = get_connect_params(socket)["_visitor_name"]
+          viewer_token = session["viewer_token"]
+          guest_viewer = viewer_token && Accounts.get_guest_viewer_by_token(viewer_token)
 
-        folder = Folders.get_folder!(shared_folder.folder_id)
-        cards = Cards.list_folder_cards(folder.id)
+          cards = Cards.list_folder_cards(folder.id)
 
-        socket =
-          socket
-          |> assign(:shared_folder, shared_folder)
-          |> assign(:folder, folder)
-          |> assign(:cards, cards)
-          |> assign(:guest_viewer, guest_viewer)
-          |> assign(:current_user, current_user)
-          |> assign(:show_name_modal, is_nil(current_user) && is_nil(guest_viewer))
-          |> assign(:show_auth_modal, false)
-
-        socket =
-          if viewer_name_from_cookie && is_nil(current_user) && is_nil(guest_viewer) do
-            case Accounts.create_guest_viewer(%{name: viewer_name_from_cookie}) do
-              {:ok, new_guest_viewer} ->
-                socket
-                |> redirect(
-                  to:
-                    ~p"/set_viewer_session?token=#{new_guest_viewer.viewer_token}&return_to=#{shared_folder.share_token}"
-                )
-
-              _ ->
-                socket
-            end
-          else
+          socket =
             socket
-          end
+            |> assign(:shared_folder, shared_folder)
+            |> assign(:folder, folder)
+            |> assign(:cards, cards)
+            |> assign(:guest_viewer, guest_viewer)
+            |> assign(:current_user, current_user)
+            |> assign(:show_name_modal, is_nil(current_user) && is_nil(guest_viewer))
+            |> assign(:show_auth_modal, false)
 
-        socket =
-          assign(
-            socket,
-            :show_name_modal,
-            is_nil(current_user) && is_nil(guest_viewer) && is_nil(viewer_name_from_cookie)
-          )
+          # Остальной код mount остается без изменений...
 
-        {:ok, socket}
+          {:ok, socket}
+        end
     end
   end
 

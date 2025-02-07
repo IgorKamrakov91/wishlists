@@ -114,7 +114,20 @@
 
                 <%= if folder_card.reservation do %>
                   <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
-                    Reserved by {folder_card.reservation.reserver_name}
+                    <%= if @current_user && @current_user.id == @folder.user_id do %>
+                      <%= if @folder.show_reserver_names do %>
+                        Reserved by <%= folder_card.reservation.reserver_name %>
+                      <% else %>
+                        Reserved
+                      <% end %>
+                    <% else %>
+                      <%= if folder_card.reservation.reserved_by_user_id == @current_user.id ||
+                            folder_card.reservation.reserved_by_guest_id == @guest_viewer.id do %>
+                        Reserved by you
+                      <% else %>
+                        Reserved by <%= folder_card.reservation.reserver_name %>
+                      <% end %>
+                    <% end %>
                   </div>
                 <% end %>
               </div>
