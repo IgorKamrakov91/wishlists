@@ -7,7 +7,7 @@ import FloatingBar from "./hooks/floating_bar"
 import SparkleEffect from "./hooks/sparkle_effect"
 import DeleteBucket from "./hooks/delete_bucket"
 import DragCard from "./hooks/drag_card"
-import CopyToClipboard from "./hooks/copy_to_clipboard"
+import CountdownTimer from "./hooks/countdown_timer"
 import topbar from "../vendor/topbar"
 
 let Hooks = {
@@ -30,7 +30,8 @@ let Hooks = {
         this.pushEvent("share_folder", {});
       });
     }
-  }
+  },
+  CountdownTimer: CountdownTimer
 }
 
 function getCookie(name) {

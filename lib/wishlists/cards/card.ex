@@ -22,7 +22,7 @@ defmodule Wishlists.Cards.Card do
     card
     |> cast(attrs, [:title, :description, :image_url, :link_url, :user_id, :price, :position])
     |> validate_required([:title, :user_id])
-    |> validate_length(:title, min: 1, max: 100)
+    |> validate_length(:title, min: 1, max: 13)
     |> validate_length(:description, max: 500)
     |> validate_url(:image_url)
     |> validate_url(:link_url)
