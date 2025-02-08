@@ -53,6 +53,9 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
             |> assign(:is_following, is_following)
             |> assign(:show_name_modal, is_nil(current_user) && is_nil(guest_viewer))
             |> assign(:show_auth_modal, false)
+            |> assign(:show_suggest_modal, false)
+            |> assign(:suggested_card, %Cards.Card{})
+            |> assign(:is_suggestion, false)
 
           # Автоматически подписываемся на папку, если пользователь авторизован
           if current_user && !is_following do
@@ -141,47 +144,53 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
   def handle_event("reserve_card", %{"card_id" => folder_card_id}, socket) do
     folder_card_id = String.to_integer(folder_card_id)
+    folder_card = Cards.get_folder_card!(folder_card_id)
 
-    reserver_name =
-      cond do
-        socket.assigns.current_user -> socket.assigns.current_user.email
-        socket.assigns.guest_viewer -> socket.assigns.guest_viewer.name
-        true -> nil
+    # Проверяем статус карточки перед резервированием
+    if folder_card.card.status != "approved" do
+      {:noreply,
+       socket
+       |> put_flash(:error, "Can't reserve pending or rejected gifts")}
+    else
+      reserver_name =
+        cond do
+          socket.assigns.current_user -> socket.assigns.current_user.email
+          socket.assigns.guest_viewer -> socket.assigns.guest_viewer.name
+          true -> nil
+        end
+
+      attrs =
+        cond do
+          socket.assigns.current_user ->
+            %{
+              "reserved_by_user_id" => socket.assigns.current_user.id,
+              "reserver_name" => socket.assigns.current_user.email
+            }
+
+          socket.assigns.guest_viewer ->
+            %{
+              "reserved_by_guest_id" => socket.assigns.guest_viewer.id,
+              "reserver_name" => socket.assigns.guest_viewer.name
+            }
+
+          true ->
+            {:noreply, socket}
+        end
+
+      case Cards.reserve_card(folder_card_id, attrs) do
+        {:ok, _reservation} ->
+          Wishlists.Notifications.notify_reservation(
+            socket.assigns.folder,
+            folder_card,
+            reserver_name
+          )
+
+          cards = Cards.list_folder_cards(socket.assigns.folder.id)
+          {:noreply, assign(socket, :cards, cards)}
+
+        {:error, _changeset} ->
+          {:noreply, put_flash(socket, :error, "Could not reserve card")}
       end
-
-    attrs =
-      cond do
-        socket.assigns.current_user ->
-          %{
-            "reserved_by_user_id" => socket.assigns.current_user.id,
-            "reserver_name" => socket.assigns.current_user.email
-          }
-
-        socket.assigns.guest_viewer ->
-          %{
-            "reserved_by_guest_id" => socket.assigns.guest_viewer.id,
-            "reserver_name" => socket.assigns.guest_viewer.name
-          }
-
-        true ->
-          {:noreply, socket}
-      end
-
-    case Cards.reserve_card(folder_card_id, attrs) do
-      {:ok, _reservation} ->
-        folder_card = Cards.get_folder_card!(folder_card_id)
-
-        Wishlists.Notifications.notify_reservation(
-          socket.assigns.folder,
-          folder_card,
-          reserver_name
-        )
-
-        cards = Cards.list_folder_cards(socket.assigns.folder.id)
-        {:noreply, assign(socket, :cards, cards)}
-
-      {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, "Could not reserve card")}
     end
   end
 
@@ -195,6 +204,82 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
       {:error, _} ->
         {:noreply, put_flash(socket, :error, "Could not unreserve card")}
+    end
+  end
+
+  def handle_event("suggest_card", _, socket) do
+    {:noreply,
+     socket
+     |> assign(:suggested_card, %Cards.Card{})
+     |> assign(:show_suggest_modal, true)
+     |> assign(:is_suggestion, true)
+     |> assign(:folder, socket.assigns.folder)}
+  end
+
+  def handle_event("submit_suggestion", %{"card" => card_params}, socket) do
+    folder_id = socket.assigns.folder.id
+
+    suggester_attrs =
+      cond do
+        socket.assigns.current_user ->
+          %{"suggested_by_user_id" => socket.assigns.current_user.id}
+
+        socket.assigns.guest_viewer ->
+          %{"suggested_by_guest_id" => socket.assigns.guest_viewer.id}
+
+        true ->
+          %{}
+      end
+
+    card_params = Map.merge(card_params, suggester_attrs)
+
+    case Cards.suggest_card(folder_id, card_params) do
+      {:ok, _card} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Card suggested successfully! Waiting for approval.")
+         |> assign(:show_suggest_modal, false)}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, suggested_card_changeset: changeset)}
+    end
+  end
+
+  def handle_event("approve_card", %{"id" => card_id}, socket) do
+    card_id = String.to_integer(card_id)
+
+    case Cards.approve_card(card_id) do
+      {:ok, _card} ->
+        cards = Cards.list_folder_cards(socket.assigns.folder.id)
+
+        {:noreply,
+         socket
+         |> assign(:cards, cards)
+         |> put_flash(:info, "Gift suggestion approved successfully!")}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to approve gift suggestion")}
+    end
+  end
+
+  def handle_event("reject_card", %{"id" => card_id}, socket) do
+    card_id = String.to_integer(card_id)
+
+    case Cards.reject_card(card_id) do
+      {:ok, _card} ->
+        cards = Cards.list_folder_cards(socket.assigns.folder.id)
+
+        {:noreply,
+         socket
+         |> assign(:cards, cards)
+         |> put_flash(:info, "Gift suggestion rejected successfully!")}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to reject gift suggestion")}
     end
   end
 
@@ -214,7 +299,10 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   end
 
   def handle_info(:close_modal, socket) do
-    {:noreply, assign(socket, show_auth_modal: false)}
+    {:noreply,
+     socket
+     |> assign(:show_auth_modal, false)
+     |> assign(:show_suggest_modal, false)}
   end
 
   def handle_info({:login_success, _user, token}, socket) do
@@ -225,5 +313,47 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
        to:
          ~p"/auth/set_session?token=#{token}&return_to=/shared/#{socket.assigns.shared_folder.share_token}"
      )}
+  end
+
+  def handle_info({:card_suggested, card}, socket) do
+    case Cards.assign_card_to_folder(card.id, socket.assigns.folder.id) do
+      {:ok, _} ->
+        cards = Cards.list_folder_cards(socket.assigns.folder.id)
+
+        {:noreply,
+         socket
+         |> assign(:cards, cards)
+         |> assign(:show_suggest_modal, false)
+         |> put_flash(:info, "Gift suggestion submitted successfully! Waiting for approval.")}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to submit gift suggestion")}
+    end
+  end
+
+  def handle_info({:card_created}, socket) do
+    cards = Cards.list_folder_cards(socket.assigns.folder.id)
+
+    {:noreply,
+     socket
+     |> assign(:cards, cards)
+     |> assign(:show_suggest_modal, false)}
+  end
+
+  defp get_suggester_name(card) do
+    cond do
+      card.suggested_by_user_id ->
+        user = Wishlists.Accounts.get_user!(card.suggested_by_user_id)
+        user.email
+
+      card.suggested_by_guest_id ->
+        guest = Wishlists.Accounts.get_guest_viewer!(card.suggested_by_guest_id)
+        "Guest: #{guest.name}"
+
+      true ->
+        "Unknown"
+    end
   end
 end

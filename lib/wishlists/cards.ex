@@ -15,7 +15,10 @@ defmodule Wishlists.Cards do
     FolderCard
     |> where([fc], fc.folder_id == ^folder_id)
     |> order_by([fc], asc: fc.position)
-    |> preload([:card, :reservation])
+    |> preload([
+      :reservation,
+      card: [:suggested_by_user, :suggested_by_guest]
+    ])
     |> Repo.all()
   end
 
@@ -176,5 +179,39 @@ defmodule Wishlists.Cards do
       {:ok, _} -> :ok
       {:error, error} -> {:error, error}
     end
+  end
+
+  def suggest_card(folder_id, attrs) do
+    attrs =
+      Map.merge(attrs, %{
+        "status" => "pending",
+        "user_id" => attrs["user_id"]
+      })
+
+    with {:ok, card} <- create_card(attrs),
+         {:ok, _} <- assign_card_to_folder(card.id, folder_id) do
+      {:ok, card}
+    end
+  end
+
+  def approve_card(card_id) do
+    get_card!(card_id)
+    |> Card.changeset(%{status: "approved"})
+    |> Repo.update()
+  end
+
+  def reject_card(card_id) do
+    get_card!(card_id)
+    |> Card.changeset(%{status: "rejected"})
+    |> Repo.update()
+  end
+
+  def list_pending_cards(folder_id) do
+    FolderCard
+    |> where([fc], fc.folder_id == ^folder_id)
+    |> join(:inner, [fc], c in Card, on: fc.card_id == c.id)
+    |> where([fc, c], c.status == "pending")
+    |> preload([:card])
+    |> Repo.all()
   end
 end

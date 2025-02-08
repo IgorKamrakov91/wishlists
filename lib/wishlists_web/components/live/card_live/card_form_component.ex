@@ -170,11 +170,6 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
     """
   end
 
-  # Helper function to format price
-  defp format_price(nil), do: ""
-  defp format_price(price) when is_float(price), do: :erlang.float_to_binary(price, decimals: 2)
-  defp format_price(price), do: price
-
   @impl true
   def update(%{card: card, action: :edit} = assigns, socket) do
     changeset = Cards.change_card(card)
@@ -206,30 +201,6 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
   @impl true
   def handle_event("save", %{"card" => card_params}, socket) do
     save_card(socket, socket.assigns.action, card_params)
-  end
-
-  defp save_card(socket, :edit, card_params) do
-    case Cards.update_card(socket.assigns.card, card_params) do
-      {:ok, _card} ->
-        send(self(), {:card_updated})
-        {:noreply, socket}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
-  end
-
-  defp save_card(socket, :new, card_params) do
-    card_params = Map.put(card_params, "user_id", socket.assigns.current_user.id)
-
-    case Cards.create_card(card_params) do
-      {:ok, _card} ->
-        send(self(), {:card_created})
-        {:noreply, socket}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
   end
 
   @impl true
@@ -281,5 +252,57 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
   def handle_event("close_modal", _, socket) do
     send(self(), :close_modal)
     {:noreply, socket}
+  end
+
+  defp save_card(socket, :edit, card_params) do
+    case Cards.update_card(socket.assigns.card, card_params) do
+      {:ok, _card} ->
+        send(self(), {:card_updated})
+        {:noreply, socket}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
+  defp save_card(socket, :new, card_params) do
+    is_suggestion = Map.get(socket.assigns, :is_suggestion, false)
+
+    card_params =
+      if is_suggestion do
+        card_params
+        |> Map.put("status", "pending")
+        |> Map.put("user_id", socket.assigns.folder.user_id)
+        |> add_suggester_info(socket.assigns)
+      else
+        Map.put(card_params, "user_id", socket.assigns.current_user.id)
+      end
+
+    case Cards.create_card(card_params) do
+      {:ok, card} ->
+        if is_suggestion do
+          send(self(), {:card_suggested, card})
+        else
+          send(self(), {:card_created})
+        end
+
+        {:noreply, socket}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
+  defp add_suggester_info(params, assigns) do
+    cond do
+      assigns.current_user ->
+        Map.put(params, "suggested_by_user_id", assigns.current_user.id)
+
+      assigns.guest_viewer ->
+        Map.put(params, "suggested_by_guest_id", assigns.guest_viewer.id)
+
+      true ->
+        params
+    end
   end
 end

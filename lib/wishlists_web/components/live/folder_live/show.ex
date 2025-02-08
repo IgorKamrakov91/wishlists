@@ -124,8 +124,7 @@ defmodule WishlistsWeb.FolderLive.Show do
       cards = Cards.list_folder_cards(folder_id)
       {:noreply, assign(socket, :cards, cards)}
     else
-      {:error, reason} ->
-        Logger.error("Failed to reorder card in folder: #{inspect(reason)}")
+      {:error, _reason} ->
         {:noreply, put_flash(socket, :error, "Failed to reorder card")}
     end
   end
@@ -179,6 +178,44 @@ defmodule WishlistsWeb.FolderLive.Show do
      |> handle_share_modal_timeout()}
   end
 
+  def handle_event("approve_card", %{"id" => card_id}, socket) do
+    card_id = String.to_integer(card_id)
+
+    case Cards.approve_card(card_id) do
+      {:ok, _card} ->
+        cards = Cards.list_folder_cards(socket.assigns.folder.id)
+
+        {:noreply,
+         socket
+         |> assign(:cards, cards)
+         |> put_flash(:info, "Gift suggestion approved successfully!")}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to approve gift suggestion")}
+    end
+  end
+
+  def handle_event("reject_card", %{"id" => card_id}, socket) do
+    card_id = String.to_integer(card_id)
+
+    case Cards.reject_card(card_id) do
+      {:ok, _card} ->
+        cards = Cards.list_folder_cards(socket.assigns.folder.id)
+
+        {:noreply,
+         socket
+         |> assign(:cards, cards)
+         |> put_flash(:info, "Gift suggestion rejected successfully!")}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to reject gift suggestion")}
+    end
+  end
+
   defp handle_share_modal_timeout(socket) do
     Process.send_after(self(), :hide_share_modal, 3000)
     socket
@@ -204,5 +241,20 @@ defmodule WishlistsWeb.FolderLive.Show do
 
   def handle_info({:new_notification}, socket) do
     {:noreply, socket}
+  end
+
+  defp get_suggester_name(card) do
+    cond do
+      card.suggested_by_user_id ->
+        user = Wishlists.Accounts.get_user!(card.suggested_by_user_id)
+        user.email
+
+      card.suggested_by_guest_id ->
+        guest = Wishlists.Accounts.get_guest_viewer!(card.suggested_by_guest_id)
+        "Guest: #{guest.name}"
+
+      true ->
+        "Unknown"
+    end
   end
 end

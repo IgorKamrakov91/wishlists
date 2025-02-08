@@ -9,6 +9,10 @@ defmodule Wishlists.Cards.Card do
     field :link_url, :string
     field :price, :float
     field :position, :integer
+    field :status, :string, default: "approved"
+
+    belongs_to :suggested_by_user, Wishlists.Accounts.User
+    belongs_to :suggested_by_guest, Wishlists.Accounts.GuestViewer
     belongs_to :user, Wishlists.Accounts.User
 
     many_to_many :folders, Wishlists.Folders.Folder, join_through: "folder_cards"
@@ -20,8 +24,20 @@ defmodule Wishlists.Cards.Card do
 
   def changeset(card, attrs) do
     card
-    |> cast(attrs, [:title, :description, :image_url, :link_url, :user_id, :price, :position])
+    |> cast(attrs, [
+      :title,
+      :description,
+      :image_url,
+      :link_url,
+      :user_id,
+      :price,
+      :position,
+      :status,
+      :suggested_by_user_id,
+      :suggested_by_guest_id
+    ])
     |> validate_required([:title, :user_id])
+    |> validate_inclusion(:status, ["pending", "approved", "rejected"])
     |> validate_length(:title, min: 1, max: 13)
     |> validate_length(:description, max: 500)
     |> validate_url(:image_url)

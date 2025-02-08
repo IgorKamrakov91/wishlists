@@ -28,7 +28,7 @@
           </h1>
           <%= if @folder.event_date do %>
             <span class="text-sm text-gray-600 bg-indigo-50 px-3 py-1 rounded-full">
-              <%= Calendar.strftime(@folder.event_date, "%B %d, %Y") %>
+              {Calendar.strftime(@folder.event_date, "%B %d, %Y")}
             </span>
           <% end %>
         </div>
@@ -98,10 +98,37 @@
           <%= for {folder_card, index} <- Enum.with_index(@cards, 1) do %>
             <div data-card-id={folder_card.card.id} data-position={index} class="cursor-move">
               <div class={[
-                "bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1",
+                "relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1",
+                folder_card.card.status == "pending" && "opacity-75 bg-gray-100/80",
                 folder_card.reservation && "bg-purple-50/80"
               ]}>
-                <!-- Image section -->
+                <%= if folder_card.card.status == "pending" do %>
+                  <div class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium z-10">
+                    Pending Approval
+                  </div>
+
+<!-- Approval Controls for Owner -->
+                  <div class="absolute top-2 left-2 flex space-x-2 z-10">
+                    <button
+                      phx-click="approve_card"
+                      phx-value-id={folder_card.card.id}
+                      class="bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600 transition-colors duration-200 flex items-center space-x-1"
+                      title="Approve suggestion"
+                    >
+                      <.icon name="hero-check" class="h-4 w-4" />
+                    </button>
+                    <button
+                      phx-click="reject_card"
+                      phx-value-id={folder_card.card.id}
+                      class="bg-rose-500 text-white p-2 rounded-full hover:bg-rose-600 transition-colors duration-200 flex items-center space-x-1"
+                      title="Reject suggestion"
+                    >
+                      <.icon name="hero-x-mark" class="h-4 w-4" />
+                    </button>
+                  </div>
+                <% end %>
+
+<!-- Image section -->
                 <div class="relative h-48 mb-4">
                   <img
                     src={
@@ -115,27 +142,27 @@
                     phx-hook="ImageLoader"
                     id={"image-#{folder_card.card.id}"}
                   />
-
-                  <button
-                    phx-click="remove_card"
-                    phx-value-card_id={folder_card.card.id}
-                    class="absolute top-2 right-2 bg-white/90 w-8 h-8 rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-50 hover:text-rose-700 flex items-center justify-center"
-                  >
-                    <.icon name="hero-x-mark" class="h-4 w-4 text-rose-600" />
-                  </button>
                 </div>
 
                 <%= if folder_card.reservation do %>
                   <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
                     <%= if @folder.show_reserver_names do %>
-                      Reserved by <%= folder_card.reservation.reserver_name %>
+                      Reserved by {folder_card.reservation.reserver_name}
                     <% else %>
                       Reserved
                     <% end %>
                   </div>
                 <% end %>
 
-                <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">{folder_card.card.title}</h3>
+                <%= if folder_card.card.status == "pending" do %>
+                  <div class="mb-3 text-sm text-gray-500">
+                    Suggested by: {get_suggester_name(folder_card.card)}
+                  </div>
+                <% end %>
+
+                <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">
+                  {folder_card.card.title}
+                </h3>
 
                 <div class="flex items-center justify-between">
                   <%= if folder_card.card.link_url do %>
@@ -159,6 +186,16 @@
                       <% end %>
                     </span>
                   </div>
+
+                  <%= if folder_card.card.status == "approved" do %>
+                    <button
+                      phx-click="remove_card"
+                      phx-value-card_id={folder_card.card.id}
+                      class="absolute top-2 right-2 bg-white/90 w-8 h-8 rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-50 hover:text-rose-700 flex items-center justify-center"
+                    >
+                      <.icon name="hero-x-mark" class="h-4 w-4 text-rose-600" />
+                    </button>
+                  <% end %>
                 </div>
               </div>
             </div>

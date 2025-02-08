@@ -26,10 +26,6 @@ defmodule WishlistsWeb.PageLive do
     end
   end
 
-  def handle_info(:close_modal, socket) do
-    {:noreply, assign(socket, show_auth_modal: false)}
-  end
-
   def handle_info({:login_success, _user, token}, socket) do
     {:noreply,
      socket
@@ -37,15 +33,18 @@ defmodule WishlistsWeb.PageLive do
      |> redirect(to: ~p"/auth/set_session?token=#{token}")}
   end
 
-  def handle_event("open_auth_modal", _, socket) do
-    {:noreply, assign(socket, show_auth_modal: true)}
-  end
-
-  # Add error handling for auth failures
   def handle_info({:login_error, message}, socket) do
     {:noreply,
      socket
      |> put_flash(:error, message)
      |> assign(show_auth_modal: true)}
+  end
+
+  def handle_info(:close_modal, socket) do
+    {:noreply, assign(socket, show_auth_modal: false)}
+  end
+
+  def handle_event("open_auth_modal", _, socket) do
+    {:noreply, assign(socket, show_auth_modal: true)}
   end
 end
