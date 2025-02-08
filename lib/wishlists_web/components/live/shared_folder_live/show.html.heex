@@ -94,8 +94,9 @@
           </p>
         </div>
       <% else %>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <%= for folder_card <- @cards do %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <%= for folder_card <- @cards do %>
+          <%= if folder_card.card do %>
             <div class={[
               "bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1",
               folder_card.reservation && "bg-purple-50/80"
@@ -110,6 +111,8 @@
                   alt={folder_card.card.title}
                   class="w-full h-full object-cover rounded-xl"
                   loading="lazy"
+                  phx-hook="ImageLoader"
+                  id={"image-#{folder_card.card.id}"}
                 />
 
                 <%= if folder_card.reservation do %>
@@ -121,8 +124,8 @@
                         Reserved
                       <% end %>
                     <% else %>
-                      <%= if folder_card.reservation.reserved_by_user_id == @current_user.id ||
-                            folder_card.reservation.reserved_by_guest_id == @guest_viewer.id do %>
+                      <%= if folder_card.reservation.reserved_by_user_id == @current_user && @current_user.id ||
+                            (folder_card.reservation.reserved_by_guest_id == @guest_viewer && @guest_viewer.id) do %>
                         Reserved by you
                       <% else %>
                         Reserved by <%= folder_card.reservation.reserver_name %>
@@ -133,7 +136,7 @@
               </div>
 
               <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">
-                {folder_card.card.title}
+                <%= folder_card.card.title %>
               </h3>
 
               <div class="flex items-center justify-between">
@@ -152,7 +155,7 @@
                 <div class="flex items-center space-x-1">
                   <span class="text-indigo-600 font-medium">
                     <%= if folder_card.card.price && folder_card.card.price > 0 do %>
-                      {"#{:erlang.float_to_binary(folder_card.card.price, decimals: 0)} ₽"}
+                      <%= "#{:erlang.float_to_binary(folder_card.card.price, decimals: 0)} ₽" %>
                     <% else %>
                       <span class="text-indigo-400 text-sm">No Price</span>
                     <% end %>
@@ -183,7 +186,8 @@
               </div>
             </div>
           <% end %>
-        </div>
+        <% end %>
+      </div>
       <% end %>
     </div>
   </main>

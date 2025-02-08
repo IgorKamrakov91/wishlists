@@ -37,7 +37,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
            socket
            |> redirect(to: ~p"/folders/#{folder.id}")}
         else
-          _viewer_name_from_cookie = get_connect_params(socket)["_visitor_name"]
+          is_following = current_user && Folders.is_following?(current_user.id, folder.id)
           viewer_token = session["viewer_token"]
           guest_viewer = viewer_token && Accounts.get_guest_viewer_by_token(viewer_token)
 
@@ -50,10 +50,14 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
             |> assign(:cards, cards)
             |> assign(:guest_viewer, guest_viewer)
             |> assign(:current_user, current_user)
+            |> assign(:is_following, is_following)
             |> assign(:show_name_modal, is_nil(current_user) && is_nil(guest_viewer))
             |> assign(:show_auth_modal, false)
 
-          # Остальной код mount остается без изменений...
+          # Автоматически подписываемся на папку, если пользователь авторизован
+          if current_user && !is_following do
+            Folders.follow_folder(current_user.id, folder.id)
+          end
 
           {:ok, socket}
         end

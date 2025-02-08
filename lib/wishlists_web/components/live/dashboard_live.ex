@@ -11,9 +11,17 @@ defmodule WishlistsWeb.DashboardLive do
   def mount(_params, _session, socket) do
     if socket.assigns.current_user do
       folders = Folders.list_user_folders(socket.assigns.current_user.id)
+      followed_folders = Folders.list_followed_folders(socket.assigns.current_user.id)
 
+      # Добавляем card_count для обоих типов папок
       folders_with_counts =
         Enum.map(folders, fn folder ->
+          card_count = Folders.get_folder_card_count(folder.id)
+          Map.put(folder, :card_count, card_count)
+        end)
+
+      followed_folders_with_counts =
+        Enum.map(followed_folders, fn folder ->
           card_count = Folders.get_folder_card_count(folder.id)
           Map.put(folder, :card_count, card_count)
         end)
@@ -23,9 +31,11 @@ defmodule WishlistsWeb.DashboardLive do
       {:ok,
        socket
        |> assign(folders: folders_with_counts)
+       |> assign(followed_folders: followed_folders_with_counts)
        |> assign(cards: cards)
        |> assign(show_modal: false)
        |> assign(modal_type: nil)
+       |> assign(current_filter: "all")
        |> assign(show_folders_panel: false)}
     else
       {:ok,
@@ -170,6 +180,10 @@ defmodule WishlistsWeb.DashboardLive do
     end
   end
 
+  def handle_event("filter_folders", %{"filter" => filter}, socket) do
+    {:noreply, assign(socket, :current_filter, filter)}
+  end
+
   @impl true
   def handle_info(:close_modal, socket) do
     {:noreply, assign(socket, show_modal: false, modal_type: nil)}
@@ -219,5 +233,22 @@ defmodule WishlistsWeb.DashboardLive do
 
   def handle_info({:new_notification}, socket) do
     {:noreply, socket}
+  end
+
+  defp filter_folders(folders, followed_folders, "all"), do: folders ++ followed_folders
+  defp filter_folders(folders, _followed_folders, "own"), do: folders
+  defp filter_folders(_folders, followed_folders, "shared"), do: followed_folders
+
+  defp get_folder_path(folder, current_user) do
+    cond do
+      folder.user_id == current_user.id ->
+        ~p"/folders/#{folder.id}"
+
+      true ->
+        case Folders.get_shared_folder_by_folder_id(folder.id) do
+          %{share_token: token} -> ~p"/shared/#{token}"
+          nil -> ~p"/folders/#{folder.id}"
+        end
+    end
   end
 end

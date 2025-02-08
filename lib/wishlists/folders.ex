@@ -1,7 +1,7 @@
 defmodule Wishlists.Folders do
   import Ecto.Query
   alias Wishlists.Repo
-  alias Wishlists.Folders.{Folder, SharedFolder}
+  alias Wishlists.Folders.{Folder, FollowedFolder, SharedFolder}
   alias Wishlists.Cards.Card
   alias Wishlists.Cards
 
@@ -81,7 +81,6 @@ defmodule Wishlists.Folders do
     Repo.delete(shared_folder)
   end
 
-  # Можно добавить функцию для проверки срока действия
   def get_valid_shared_folder_by_token(token) do
     now = DateTime.utc_now()
 
@@ -97,5 +96,32 @@ defmodule Wishlists.Folders do
       nil ->
         nil
     end
+  end
+
+  def follow_folder(user_id, folder_id) do
+    %FollowedFolder{}
+    |> FollowedFolder.changeset(%{user_id: user_id, folder_id: folder_id})
+    |> Repo.insert(on_conflict: :nothing)
+  end
+
+  def unfollow_folder(user_id, folder_id) do
+    from(f in FollowedFolder, where: f.user_id == ^user_id and f.folder_id == ^folder_id)
+    |> Repo.delete_all()
+  end
+
+  def is_following?(user_id, folder_id) do
+    Repo.exists?(
+      from f in FollowedFolder, where: f.user_id == ^user_id and f.folder_id == ^folder_id
+    )
+  end
+
+  def list_followed_folders(user_id) do
+    from(f in Folder,
+      join: ff in FollowedFolder,
+      on: ff.folder_id == f.id,
+      where: ff.user_id == ^user_id,
+      preload: [:user]
+    )
+    |> Repo.all()
   end
 end
