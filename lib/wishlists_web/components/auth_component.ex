@@ -68,7 +68,7 @@ defmodule WishlistsWeb.AuthComponent do
       phx-click="close_modal"
       phx-target={@myself}
     >
-      <span class="sr-only">Close</span>
+      <span class="sr-only">{gettext("Close")}</span>
       <.icon name="hero-x-mark-solid" class="h-5 w-5" />
     </button>
     """
@@ -83,12 +83,12 @@ defmodule WishlistsWeb.AuthComponent do
         </div>
       </div>
       <h2 class="text-2xl font-bold text-gray-900 mb-2">
-        {if @view == :sign_in, do: "Welcome Back!", else: "Create Your Wishlist"}
+        {if @view == :sign_in, do: gettext("Welcome Back!"), else: gettext("Create Your Wishlist")}
       </h2>
       <p class="text-sm text-gray-500">
         {if @view == :sign_in,
-          do: "Sign in to manage your wishlists and discover new items",
-          else: "Join us to create and share your perfect wishlist"}
+          do: gettext("Sign in to manage your wishlists and discover new items"),
+          else: gettext("Join us to create and share your perfect wishlist")}
       </p>
     </div>
     """
@@ -127,7 +127,7 @@ defmodule WishlistsWeb.AuthComponent do
         phx-target={@myself}
         required
         class="pl-10 w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
-        placeholder="Email address"
+        placeholder={gettext("Email address")}
       />
     </div>
     """
@@ -148,7 +148,7 @@ defmodule WishlistsWeb.AuthComponent do
           phx-keyup="validate_password"
           phx-target={@myself}
           class="pl-10 w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
-          placeholder="Password"
+          placeholder={gettext("Password")}
           phx-focus="password_focus"
           phx-blur="password_blur"
         />
@@ -170,8 +170,8 @@ defmodule WishlistsWeb.AuthComponent do
   defp password_requirements(assigns) do
     ~H"""
     <div class="text-sm">
-      <p class="font-medium text-gray-700 mb-1">Password requirement:</p>
-      <.requirement_item met={@password_requirement_met} text="At least 8 characters" />
+      <p class="font-medium text-gray-700 mb-1">{gettext("Password requirement:")}</p>
+      <.requirement_item met={@password_requirement_met} text={gettext("At least 8 characters")} />
     </div>
     """
   end
@@ -202,7 +202,7 @@ defmodule WishlistsWeb.AuthComponent do
         phx-target={@myself}
         required
         class="pl-10 w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
-        placeholder="Choose a username"
+        placeholder={gettext("Choose a username")}
       />
     </div>
     """
@@ -214,7 +214,7 @@ defmodule WishlistsWeb.AuthComponent do
       type="submit"
       class="w-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:from-indigo-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-[1.02]"
     >
-      {if @view == :sign_in, do: "Sign in", else: "Create account"}
+      {if @view == :sign_in, do: gettext("Sign in"), else: gettext("Create account")}
     </button>
     """
   end
@@ -223,14 +223,16 @@ defmodule WishlistsWeb.AuthComponent do
     ~H"""
     <div class="mt-6 text-center text-sm">
       <span class="text-gray-500">
-        {if @view == :sign_in, do: "New to Wishlists?", else: "Already have an account?"}
+        {if @view == :sign_in,
+          do: gettext("New to Wishlists?"),
+          else: gettext("Already have an account?")}
       </span>
       <button
         class="ml-1 text-indigo-600 hover:text-indigo-500 font-medium"
         phx-click={if @view == :sign_in, do: "switch_to_signup", else: "switch_to_signin"}
         phx-target={@myself}
       >
-        {if @view == :sign_in, do: "Create an account", else: "Sign in"}
+        {if @view == :sign_in, do: gettext("Create an account"), else: gettext("Sign in")}
       </button>
     </div>
     """
@@ -255,11 +257,11 @@ defmodule WishlistsWeb.AuthComponent do
               {:noreply, socket}
 
             {:error, _reason} ->
-              {:noreply, assign(socket, error_message: "Authentication failed")}
+              {:noreply, assign(socket, error_message: gettext("Authentication failed"))}
           end
 
         {:error, _reason} ->
-          {:noreply, assign(socket, error_message: "Invalid email or password")}
+          {:noreply, assign(socket, error_message: gettext("Invalid email or password"))}
       end
     else
       case Accounts.register_user(socket.assigns.form_data) do
@@ -270,7 +272,7 @@ defmodule WishlistsWeb.AuthComponent do
               {:noreply, socket}
 
             {:error, _reason} ->
-              {:noreply, assign(socket, error_message: "Authentication failed")}
+              {:noreply, assign(socket, error_message: gettext("Authentication failed"))}
           end
 
         {:error, changeset} ->

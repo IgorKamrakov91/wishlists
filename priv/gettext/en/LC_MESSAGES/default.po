@@ -450,6 +450,7 @@ msgstr ""
 msgid "Image URL"
 msgstr ""
 
+#: lib/wishlists_web/components/auth_component.ex:264
 #: lib/wishlists_web/components/live/shared_folder_live/show.ex:122
 #, elixir-autogen, elixir-format
 msgid "Invalid email or password"
@@ -675,4 +676,86 @@ msgstr ""
 #: lib/wishlists_web/components/notification_component.ex:92
 #, elixir-autogen, elixir-format
 msgid "WISH RESERVED! \"%{title}\" in %{folder_name}"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:228
+#, elixir-autogen, elixir-format
+msgid "Already have an account?"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:174
+#, elixir-autogen, elixir-format
+msgid "At least 8 characters"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:260
+#: lib/wishlists_web/components/auth_component.ex:275
+#, elixir-autogen, elixir-format
+msgid "Authentication failed"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:205
+#, elixir-autogen, elixir-format
+msgid "Choose a username"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:71
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Close"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:86
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Create Your Wishlist"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:217
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Create account"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:235
+#, elixir-autogen, elixir-format
+msgid "Create an account"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:130
+#, elixir-autogen, elixir-format
+msgid "Email address"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:91
+#, elixir-autogen, elixir-format
+msgid "Join us to create and share your perfect wishlist"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:227
+#, elixir-autogen, elixir-format
+msgid "New to Wishlists?"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:151
+#, elixir-autogen, elixir-format
+msgid "Password"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:173
+#, elixir-autogen, elixir-format
+msgid "Password requirement:"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:217
+#: lib/wishlists_web/components/auth_component.ex:235
+#, elixir-autogen, elixir-format
+msgid "Sign in"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:90
+#, elixir-autogen, elixir-format
+msgid "Sign in to manage your wishlists and discover new items"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:86
+#, elixir-autogen, elixir-format
+msgid "Welcome Back!"
 msgstr ""

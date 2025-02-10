@@ -465,6 +465,7 @@ msgstr "Если вы установите дату события, эта ко�
 msgid "Image URL"
 msgstr "Ссылка на Изображение"
 
+#: lib/wishlists_web/components/auth_component.ex:264
 #: lib/wishlists_web/components/live/shared_folder_live/show.ex:122
 #, elixir-autogen, elixir-format
 msgid "Invalid email or password"
@@ -694,3 +695,86 @@ msgstr "Уведомление"
 #, elixir-autogen, elixir-format
 msgid "WISH RESERVED! \"%{title}\" in %{folder_name}"
 msgstr "ЖЕЛАНИЕ ЗАРЕЗЕРВИРОВАНО! \"%{title}\" в коллекции %{folder_name}"
+
+#: lib/wishlists_web/components/auth_component.ex:228
+#, elixir-autogen, elixir-format
+msgid "Already have an account?"
+msgstr "Уже есть аккаунт?"
+
+#: lib/wishlists_web/components/auth_component.ex:174
+#, elixir-autogen, elixir-format
+msgid "At least 8 characters"
+msgstr "Минимум 8 символов"
+
+#: lib/wishlists_web/components/auth_component.ex:260
+#: lib/wishlists_web/components/auth_component.ex:275
+#, elixir-autogen, elixir-format
+msgid "Authentication failed"
+msgstr "Ошибка аутентификации"
+
+#: lib/wishlists_web/components/auth_component.ex:205
+#, elixir-autogen, elixir-format
+msgid "Choose a username"
+msgstr "Выберите имя пользователя"
+
+#: lib/wishlists_web/components/auth_component.ex:71
+#, elixir-autogen, elixir-format
+msgid "Close"
+msgstr "Закрыть"
+
+#: lib/wishlists_web/components/auth_component.ex:86
+#, elixir-autogen, elixir-format
+msgid "Create Your Wishlist"
+msgstr "Создайте Свой Список Желаний"
+
+#: lib/wishlists_web/components/auth_component.ex:217
+#, elixir-autogen, elixir-format
+msgid "Create account"
+msgstr "Создать аккаунт"
+
+#: lib/wishlists_web/components/auth_component.ex:235
+#, elixir-autogen, elixir-format
+msgid "Create an account"
+msgstr "Создать аккаунт"
+
+#: lib/wishlists_web/components/auth_component.ex:130
+#, elixir-autogen, elixir-format
+msgid "Email address"
+msgstr "Email адрес"
+
+#: lib/wishlists_web/components/auth_component.ex:91
+#, elixir-autogen, elixir-format
+msgid "Join us to create and share your perfect wishlist"
+msgstr "Присоединяйтесь, чтобы создавать и делиться своим идеальным списком желаний"
+
+#: lib/wishlists_web/components/auth_component.ex:227
+#, elixir-autogen, elixir-format
+msgid "New to Wishlists?"
+msgstr "Впервые здесь?"
+
+#: lib/wishlists_web/components/auth_component.ex:151
+#, elixir-autogen, elixir-format
+msgid "Password"
+msgstr "Пароль"
+
+#: lib/wishlists_web/components/auth_component.ex:173
+#, elixir-autogen, elixir-format
+msgid "Password requirement:"
+msgstr "Требования к паролю:"
+
+#: lib/wishlists_web/components/auth_component.ex:217
+#: lib/wishlists_web/components/auth_component.ex:235
+#, elixir-autogen, elixir-format
+msgid "Sign in"
+msgstr "Войти"
+
+#: lib/wishlists_web/components/auth_component.ex:90
+#, elixir-autogen, elixir-format
+msgid "Sign in to manage your wishlists and discover new items"
+msgstr "Войдите, чтобы управлять списками желаний и открывать новые товары"
+
+# Auth Component translations
+#: lib/wishlists_web/components/auth_component.ex:86
+#, elixir-autogen, elixir-format
+msgid "Welcome Back!"
+msgstr "С возвращением!"
