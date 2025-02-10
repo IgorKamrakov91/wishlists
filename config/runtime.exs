@@ -49,9 +49,7 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "4000")
-
+  host = System.get_env("PHX_HOST") || "hochu-hochu.com"
   config :wishlists, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
   config :wishlists, WishlistsWeb.Endpoint,
@@ -64,7 +62,11 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: String.to_integer(System.get_env("PORT") || "8080")
     ],
-    secret_key_base: secret_key_base
+    secret_key_base: secret_key_base,
+    check_origin: [
+      "https://hochu-hochu.com",
+      "https://www.hochu-hochu.com"
+    ]
 
   # ## SSL Support
   #
