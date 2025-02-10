@@ -7,6 +7,7 @@ import FloatingBar from "./hooks/floating_bar"
 import SparkleEffect from "./hooks/sparkle_effect"
 import DeleteBucket from "./hooks/delete_bucket"
 import DragCard from "./hooks/drag_card"
+import LocaleHook from "./hooks/locale"
 import CountdownTimer from "./hooks/countdown_timer"
 import topbar from "../vendor/topbar"
 
@@ -31,7 +32,8 @@ let Hooks = {
       });
     }
   },
-  CountdownTimer: CountdownTimer
+  CountdownTimer: CountdownTimer,
+  Locale: LocaleHook
 }
 
 function getCookie(name) {
@@ -73,6 +75,22 @@ window.addEventListener("phx:set-cookie", (e) => {
 window.addEventListener("phx:clear-cookie", (e) => {
   const { key } = e.detail;
   document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+});
+
+window.addEventListener("phx:page-loading-stop", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const locale = urlParams.get('locale');
+  if (locale) {
+    localStorage.setItem('locale', locale);
+  }
+});
+
+// При загрузке страницы установить язык из localStorage
+document.addEventListener("DOMContentLoaded", () => {
+  const savedLocale = localStorage.getItem('locale');
+  if (savedLocale && !window.location.search.includes('locale=')) {
+    window.location.search = `?locale=${savedLocale}`;
+  }
 });
 
 // connect if there are any LiveViews on the page

@@ -1,0 +1,59 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: ru\n"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:13
+msgid "Wishlists Manager"
+msgstr "Список Ваших Желаний"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:17
+msgid "Create and manage your wishlists effortlessly. Keep track of all the things you dream about!"
+msgstr "Создавайте и управляйте списками желаний без усилий. Отслеживайте все, о чем мечтаете!"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:24
+msgid "Get Started"
+msgstr "Начать"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:49
+msgid "Contact"
+msgstr "Контакты"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:51
+msgid "Email: i.kamrakov@yahoo.com"
+msgstr "Email: igor@kamrakov.ru"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:51
+msgid "Phone: (555) 123-4567"
+msgstr "Телефон: (555) 123-4567"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:58
+msgid "Quick Links"
+msgstr "Быстрые ссылки"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:60
+msgid "About Us"
+msgstr "О нас"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:63
+msgid "Terms of Service"
+msgstr "Условия использования"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:66
+msgid "Privacy Policy"
+msgstr "Политика конфиденциальности"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:74
+msgid "Follow Us"
+msgstr "Подписывайтесь"
+
+#: lib/wishlists_web/components/live/page_live.html.heex:89
+msgid "© 2025 Wishlists Manager. All rights reserved."
+msgstr "© 2025 Менеджер Списков Желаний. Все права защищены."

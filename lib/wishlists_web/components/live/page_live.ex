@@ -1,20 +1,27 @@
 defmodule WishlistsWeb.PageLive do
   use WishlistsWeb, :live_view
   alias Wishlists.Accounts.Guardian
+  alias WishlistsWeb.LocaleContext
 
   on_mount {WishlistsWeb.UserAuth, :mount_current_user}
 
   def mount(_params, session, socket) do
+    locale = session["locale"] || "en"
+    Gettext.put_locale(WishlistsWeb.Gettext, locale)
+
     case Guardian.decode_and_verify(session["guardian_default_token"]) do
       {:ok, claims} ->
         case Guardian.resource_from_claims(claims) do
-          {:ok, _user} ->
+          {:ok, user} ->
             {:ok, push_navigate(socket, to: "/dashboard")}
 
           {:error, _reason} ->
             {:ok,
              socket
              |> assign(show_auth_modal: false)
+             |> assign(locale: locale)
+             |> assign(translations: get_translations(locale))
+             |> assign(current_user: nil)
              |> clear_flash()}
         end
 
@@ -22,8 +29,26 @@ defmodule WishlistsWeb.PageLive do
         {:ok,
          socket
          |> assign(show_auth_modal: false)
+         |> assign(locale: locale)
+         |> assign(translations: get_translations(locale))
+         |> assign(current_user: nil)
          |> clear_flash()}
     end
+  end
+
+  def handle_event("switch_locale", %{"locale" => locale}, socket) when locale in ["en", "ru"] do
+    Gettext.put_locale(WishlistsWeb.Gettext, locale)
+
+    {:noreply,
+     socket
+     |> assign(:locale, locale)
+     |> assign(:translations, get_translations(locale))
+     |> push_event("store-locale", %{locale: locale})
+     |> push_patch(to: ~p"/?locale=#{locale}")}
+  end
+
+  def handle_event("open_auth_modal", _, socket) do
+    {:noreply, assign(socket, show_auth_modal: true)}
   end
 
   def handle_info({:login_success, _user, token}, socket) do
@@ -44,7 +69,36 @@ defmodule WishlistsWeb.PageLive do
     {:noreply, assign(socket, show_auth_modal: false)}
   end
 
-  def handle_event("open_auth_modal", _, socket) do
-    {:noreply, assign(socket, show_auth_modal: true)}
+  def handle_info({:locale_changed, locale}, socket) do
+    {:noreply, assign(socket, :locale, locale)}
+  end
+
+  def handle_params(%{"locale" => locale}, _uri, socket) when locale in ["en", "ru"] do
+    {:noreply, LocaleContext.put_locale(socket, locale)}
+  end
+
+  def handle_params(_params, _uri, socket) do
+    {:noreply, socket}
+  end
+
+  defp get_translations(locale) do
+    Gettext.with_locale(locale, fn ->
+      %{
+        "title" => gettext("Wishlists Manager"),
+        "description" =>
+          gettext(
+            "Create and manage your wishlists effortlessly. Keep track of all the things you dream about!"
+          ),
+        "get_started" => gettext("Get Started"),
+        "contact" => gettext("Contact"),
+        "quick_links" => gettext("Quick Links"),
+        "about_us" => gettext("About Us"),
+        "terms" => gettext("Terms of Service"),
+        "privacy" => gettext("Privacy Policy"),
+        "follow_us" => gettext("Follow Us"),
+        "copyright" => gettext("© 2024 Wishlists Manager. All rights reserved."),
+        "email" => gettext("Email: i.kamrakov@yahoo.com")
+      }
+    end)
   end
 end

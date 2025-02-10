@@ -8,6 +8,7 @@ defmodule WishlistsWeb.Router do
     plug :put_root_layout, html: {WishlistsWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :put_locale
   end
 
   pipeline :auth do
@@ -49,5 +50,17 @@ defmodule WishlistsWeb.Router do
   live_session :notifications,
     on_mount: [{WishlistsWeb.UserAuth, :ensure_authenticated}] do
     live "/notifications", NotificationLive
+  end
+
+  defp put_locale(conn, _opts) do
+    locale =
+      conn.params["locale"] ||
+        get_session(conn, :locale) ||
+        "en"
+
+    locale = if locale in ["en", "ru"], do: locale, else: "en"
+
+    conn
+    |> put_session(:locale, locale)
   end
 end
