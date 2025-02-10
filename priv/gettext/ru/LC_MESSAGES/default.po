@@ -57,3 +57,82 @@ msgstr "Подписывайтесь"
 #: lib/wishlists_web/components/live/page_live.html.heex:89
 msgid "© 2025 Wishlists Manager. All rights reserved."
 msgstr "© 2025 Менеджер Списков Желаний. Все права защищены."
+
+# Dashboard translations
+msgid "Dashboard"
+msgstr "Панель управления"
+
+msgid "Your Wishverse"
+msgstr "Ваша Вселенная Желаний"
+
+msgid "Where dreams come true"
+msgstr "Где мечты сбываются"
+
+msgid "Logout"
+msgstr "Выйти"
+
+msgid "Magic Collections"
+msgstr "Магические Коллекции"
+
+msgid "Organize your wishes into magical collections"
+msgstr "Организуйте свои желания в магические коллекции"
+
+msgid "New Collection"
+msgstr "Новая Коллекция"
+
+msgid "All Collections"
+msgstr "Все"
+
+msgid "My Collections"
+msgstr "Мои "
+
+msgid "Shared"
+msgstr "Общие"
+
+msgid "item"
+msgstr "вещь"
+
+msgid "items"
+msgstr "вещей"
+
+msgid "Your Wishes"
+msgstr "Ваши Желания"
+
+msgid "Dreams waiting to come true"
+msgstr "Мечты, ждущие исполнения"
+
+msgid "Make a Wish"
+msgstr "Загадать Желание"
+
+msgid "No event date set"
+msgstr "Без даты"
+
+msgid "Open Collection"
+msgstr "Открыть Коллекцию"
+
+msgid "Visit Link"
+msgstr "Ссылка"
+
+msgid "Drag to add to Collection"
+msgstr "Перетащите в Коллекцию"
+
+msgid "This collection is empty"
+msgstr "Эта коллекция пуста"
+
+msgid "Start by dragging wishes from your dashboard to this collection"
+msgstr "Начните с перетаскивания желаний с панели управления в эту коллекцию"
+
+msgid "Add Wishes"
+msgstr "Добавить Желания"
+
+msgid "Shared by"
+msgstr "Поделился"
+
+msgid "Loading timer"
+msgstr "Загрузка"
+
+msgid "Are you sure you want to delete this wish?"
+msgstr "Вы уверены, что хотите удалить это желание?"
+
+msgid "This action cannot be undone."
+msgstr "Это действие нельзя отменить."

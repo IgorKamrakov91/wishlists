@@ -8,12 +8,14 @@ defmodule WishlistsWeb.DashboardLive do
   on_mount {WishlistsWeb.UserAuth, :ensure_authenticated}
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if socket.assigns.current_user do
+      locale = session["locale"] || "en"
+      Gettext.put_locale(WishlistsWeb.Gettext, locale)
+
       folders = Folders.list_user_folders(socket.assigns.current_user.id)
       followed_folders = Folders.list_followed_folders(socket.assigns.current_user.id)
 
-      # Добавляем card_count для обоих типов папок
       folders_with_counts =
         Enum.map(folders, fn folder ->
           card_count = Folders.get_folder_card_count(folder.id)
@@ -36,7 +38,8 @@ defmodule WishlistsWeb.DashboardLive do
        |> assign(show_modal: false)
        |> assign(modal_type: nil)
        |> assign(current_filter: "all")
-       |> assign(show_folders_panel: false)}
+       |> assign(show_folders_panel: false)
+       |> assign(locale: locale)}
     else
       {:ok,
        socket
