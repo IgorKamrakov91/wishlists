@@ -239,7 +239,7 @@ msgstr "© 2025 Менеджер Списков Желаний. Все прав�
 #: lib/wishlists_web/components/live/folder_live/show.html.heex:87
 #, elixir-autogen, elixir-format
 msgid "Add Wishes"
-msgstr ""
+msgstr "Добавить Желания"
 
 #: lib/wishlists_web/components/live/card_live/card_form_component.ex:52
 #, elixir-autogen, elixir-format
@@ -599,12 +599,12 @@ msgstr "Войти / Зарегистрироваться"
 #: lib/wishlists_web/components/live/folder_live/show.html.heex:80
 #, elixir-autogen, elixir-format
 msgid "Start by dragging wishes from your dashboard to this collection"
-msgstr ""
+msgstr "Начните с того, что перетащите желания с вашей панели управления в эту коллекцию"
 
 #: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:295
 #, elixir-autogen, elixir-format
 msgid "Submit Suggestion"
-msgstr ""
+msgstr "Предложить"
 
 #: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:96
 #: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:294
