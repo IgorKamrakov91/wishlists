@@ -22,9 +22,6 @@ defmodule Wishlists.Notifications do
   end
 
   def broadcast_notification(user_id) do
-    IO.inspect("Broadcasting notification to user #{user_id}")
-
-    # Broadcast через PubSub
     Phoenix.PubSub.broadcast!(
       Wishlists.PubSub,
       "user_notifications:#{user_id}",
@@ -33,18 +30,24 @@ defmodule Wishlists.Notifications do
   end
 
   def notify_reservation(folder, folder_card, reserver_name) do
+    title = String.slice(folder_card.card.title, 0, 50)
+    title = if String.length(folder_card.card.title) > 50, do: title <> "...", else: title
+
+    data = %{
+      folder_id: folder.id,
+      folder_card_id: folder_card.id,
+      card_id: folder_card.card_id,
+      reserver_name: reserver_name,
+      card_title: title,
+      folder_name: folder.name
+    }
+
     notification_attrs = %{
       user_id: folder.user_id,
       type: "card_reserved",
-      title: "New Reservation",
-      message:
-        "#{reserver_name} reserved \"#{String.slice(folder_card.card.title, 0, 50)}#{if String.length(folder_card.card.title) > 50, do: "...", else: ""}\" in #{folder.name}",
-      data: %{
-        folder_id: folder.id,
-        folder_card_id: folder_card.id,
-        card_id: folder_card.card_id,
-        reserver_name: reserver_name
-      }
+      title: "Hooray!",
+      message: "#{title} in #{folder.name} has been reserved",
+      data: data
     }
 
     with {:ok, notification} <- create_notification(notification_attrs) do

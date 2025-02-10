@@ -30,17 +30,17 @@ defmodule WishlistsWeb.FolderLive.FolderFormComponent do
                   <.input
                     field={@form[:name]}
                     type="text"
-                    label="Collection Name"
+                    label={gettext("Collection Name")}
                     required
-                    placeholder="My Awesome Collection"
+                    placeholder={gettext("My Awesome Collection")}
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
                   <.input
                     field={@form[:description]}
                     type="textarea"
-                    label="Description (optional)"
-                    placeholder="What's this collection about?"
+                    label={gettext("Description (optional)")}
+                    placeholder={gettext("What's this collection about?")}
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                     rows={4}
                   />
@@ -49,7 +49,7 @@ defmodule WishlistsWeb.FolderLive.FolderFormComponent do
                     <.input
                       field={@form[:event_date]}
                       type="date"
-                      label="Event Date (optional)"
+                      label={gettext("Event Date (optional)")}
                       class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                     />
 
@@ -58,11 +58,10 @@ defmodule WishlistsWeb.FolderLive.FolderFormComponent do
                         <.icon name="hero-information-circle" class="h-5 w-5 text-amber-600" />
                       </div>
                       <div class="text-sm text-amber-800">
-                        <p class="font-medium">Automatic Cleanup</p>
-                        <p class="mt-1">
-                          If you set an event date, this collection and all reserved items will be automatically deleted
-                          24 hours after the event. Unreserved items will return to your general list.
-                        </p>
+                        <p class="font-medium">{gettext("Automatic Cleanup")}</p>
+                        {gettext(
+                          "If you set an event date, this collection and all reserved items will be automatically deleted 24 hours after the event. Unreserved items will return to your general list."
+                        )}
                       </div>
                     </div>
                   </div>
@@ -70,9 +69,11 @@ defmodule WishlistsWeb.FolderLive.FolderFormComponent do
                   <%= if @action == :edit do %>
                     <div class="flex items-center justify-between">
                       <div class="flex flex-col">
-                        <span class="text-sm font-medium text-gray-700">Show Reserver Names</span>
+                        <span class="text-sm font-medium text-gray-700">
+                          {gettext("Show Reserver Names")}
+                        </span>
                         <span class="text-xs text-gray-500">
-                          Allow yourself to see who reserved items
+                          {gettext("Allow yourself to see who reserved items")}
                         </span>
                       </div>
                       <label class="relative inline-flex items-center cursor-pointer">
@@ -80,11 +81,6 @@ defmodule WishlistsWeb.FolderLive.FolderFormComponent do
                           type="checkbox"
                           name="folder[show_reserver_names]"
                           value="true"
-                          #
-                          Добавляем
-                          явное
-                          значение
-                          true
                           class="sr-only peer"
                           checked={@form[:show_reserver_names].value}
                         />

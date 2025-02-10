@@ -12,7 +12,7 @@ defmodule WishlistsWeb.PageLive do
     case Guardian.decode_and_verify(session["guardian_default_token"]) do
       {:ok, claims} ->
         case Guardian.resource_from_claims(claims) do
-          {:ok, user} ->
+          {:ok, _user} ->
             {:ok, push_navigate(socket, to: "/dashboard")}
 
           {:error, _reason} ->

@@ -36,8 +36,8 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                   <.input
                     field={@form[:link_url]}
                     type="url"
-                    label="Product URL"
-                    placeholder="Paste product URL here"
+                    label={gettext("Product URL")}
+                    placeholder={gettext("Paste product URL here")}
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
@@ -49,7 +49,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                       class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
                     >
                       <.icon name="hero-pencil" class="h-4 w-4" />
-                      <span>Add manually instead</span>
+                      <span>{gettext("Add manually instead")}</span>
                     </button>
 
                     <.button
@@ -62,18 +62,17 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                           <div class="animate-spin">
                             <.icon name="hero-arrow-path" class="h-5 w-5" />
                           </div>
-                          <span>Fetching...</span>
+                          <span>{gettext("Fetching")}...</span>
                         </div>
                       <% else %>
                         <.icon name="hero-sparkles" class="h-5 w-5" />
-                        <span>Fetch Data</span>
+                        <span>{gettext("Woosh!")}</span>
                       <% end %>
                     </.button>
                   </div>
                 </div>
               </.form>
 
-    <!-- Manual Input Form -->
               <.form
                 :if={@action == :edit || @show_manual_form}
                 for={@form}
@@ -97,18 +96,18 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                         <.input
                           field={@form[:image_url]}
                           type="text"
-                          label="Image URL"
+                          label={gettext("Image URL")}
                           class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
-                          placeholder="Image URL"
+                          placeholder={gettext("Image URL")}
                         />
                       </div>
                     <% else %>
                       <.input
                         field={@form[:image_url]}
                         type="text"
-                        label="Image URL"
+                        label={gettext("Image URL")}
                         class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
-                        placeholder="Paste image URL here"
+                        placeholder={gettext("Paste image URL here")}
                       />
                     <% end %>
                   </div>
@@ -116,7 +115,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                   <.input
                     field={@form[:link_url]}
                     type="url"
-                    label="Product URL"
+                    label={gettext("Product URL")}
                     required
                     placeholder="https://example.com"
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
@@ -125,25 +124,25 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                   <.input
                     field={@form[:title]}
                     type="text"
-                    label="Title"
+                    label={gettext("Title")}
                     required
-                    placeholder="Product title"
+                    placeholder={gettext("Product title")}
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
                   <.input
                     field={@form[:description]}
                     type="textarea"
-                    label="Description (optional)"
+                    label={gettext("Description (optional)")}
                     rows="4"
-                    placeholder="Product description"
+                    placeholder={gettext("Product description")}
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
                   <.input
                     field={@form[:price]}
                     type="text"
-                    label="Price (in RUB)"
+                    label={gettext("Price (in RUB)")}
                     required
                     pattern="[0-9]*\.?[0-9]*"
                     inputmode="decimal"
@@ -157,7 +156,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                       class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
                     >
                       <.icon name="hero-sparkles" class="h-5 w-5" />
-                      <span>Save</span>
+                      <span>{gettext("Save")}</span>
                     </.button>
                   </div>
                 </div>
@@ -241,7 +240,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
          |> assign(form: to_form(changeset))
          |> put_flash(
            :error,
-           "Could not fetch data automatically. Please fill in the details manually."
+           gettext("Could not fetch data automatically. Please fill in the details manually.")
          )}
     end
   end

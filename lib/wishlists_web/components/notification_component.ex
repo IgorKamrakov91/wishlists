@@ -34,10 +34,10 @@ defmodule WishlistsWeb.NotificationComponent do
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-gray-900 mb-1">
-                {notification.title}
+                {translate_notification_title(notification.type)}
               </p>
               <p class="text-sm text-gray-500 break-words">
-                {notification.message}
+                {translate_notification_message(notification)}
               </p>
               <p class="text-xs text-gray-400 mt-1">
                 {format_time(notification.inserted_at)}
@@ -49,6 +49,7 @@ defmodule WishlistsWeb.NotificationComponent do
                 phx-value-id={notification.id}
                 phx-target={@myself}
                 class="text-gray-400 hover:text-gray-500 focus:outline-none"
+                title={gettext("Mark as read")}
               >
                 <.icon name="hero-x-mark" class="h-5 w-5" />
               </button>
@@ -83,4 +84,16 @@ defmodule WishlistsWeb.NotificationComponent do
   defp format_time(datetime) do
     Calendar.strftime(datetime, "%H:%M")
   end
+
+  defp translate_notification_title("card_reserved"), do: gettext("Hooray!")
+  defp translate_notification_title(_), do: gettext("Notification")
+
+  defp translate_notification_message(%{type: "card_reserved"} = notification) do
+    gettext("WISH RESERVED! \"%{title}\" in %{folder_name}",
+      title: notification.data["card_title"],
+      folder_name: notification.data["folder_name"]
+    )
+  end
+
+  defp translate_notification_message(_notification), do: gettext("New notification")
 end

@@ -6,6 +6,9 @@ defmodule WishlistsWeb.FolderLive.Show do
 
   @impl true
   def mount(%{"id" => folder_id}, session, socket) do
+    locale = session["locale"] || "en"
+    Gettext.put_locale(WishlistsWeb.Gettext, locale)
+
     case Guardian.decode_and_verify(session["guardian_default_token"]) do
       {:ok, claims} ->
         {:ok, user} = Guardian.resource_from_claims(claims)
@@ -31,14 +34,14 @@ defmodule WishlistsWeb.FolderLive.Show do
         else
           {:ok,
            socket
-           |> put_flash(:error, "You don't have access to this folder")
+           |> put_flash(:error, gettext("You don't have access to this folder"))
            |> redirect(to: ~p"/dashboard")}
         end
 
       _ ->
         {:ok,
          socket
-         |> put_flash(:error, "You must log in to access this page")
+         |> put_flash(:error, gettext("You must log in to access this page"))
          |> redirect(to: ~p"/")}
     end
   end
@@ -62,8 +65,8 @@ defmodule WishlistsWeb.FolderLive.Show do
   def handle_event("edit_folder", _, socket) do
     {:noreply,
      socket
-     |> assign(:modal_title, "Edit Folder")
-     |> assign(:submit_button_text, "Save Changes")
+     |> assign(:modal_title, gettext("Edit Folder"))
+     |> assign(:submit_button_text, gettext("Save"))
      |> assign(:action, :edit)
      |> assign(:show_modal, true)}
   end
@@ -76,13 +79,13 @@ defmodule WishlistsWeb.FolderLive.Show do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Folder deleted successfully")
+         |> put_flash(:info, gettext("Folder deleted successfully"))
          |> redirect(to: ~p"/dashboard")}
 
       {:error, _} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Could not delete folder")
+         |> put_flash(:error, gettext("Could not delete folder"))
          |> assign(show_delete_modal: false)}
     end
   end
@@ -104,7 +107,7 @@ defmodule WishlistsWeb.FolderLive.Show do
       {:error, _changeset} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Could not create share link")}
+         |> put_flash(:error, gettext("Could not create share link"))}
     end
   end
 
@@ -125,7 +128,7 @@ defmodule WishlistsWeb.FolderLive.Show do
       {:noreply, assign(socket, :cards, cards)}
     else
       {:error, _reason} ->
-        {:noreply, put_flash(socket, :error, "Failed to reorder card")}
+        {:noreply, put_flash(socket, :error, gettext("Failed to reorder card"))}
     end
   end
 
@@ -141,17 +144,17 @@ defmodule WishlistsWeb.FolderLive.Show do
         {:noreply,
          socket
          |> assign(:cards, cards)
-         |> put_flash(:info, "Card removed from folder")}
+         |> put_flash(:info, gettext("Card removed from folder"))}
 
       {:error, :not_found} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Card was already removed from folder")}
+         |> put_flash(:error, gettext("Card was already removed from folder"))}
 
       {:error, _} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Could not remove card from folder")}
+         |> put_flash(:error, gettext("Could not remove card from folder"))}
     end
   end
 
@@ -188,12 +191,12 @@ defmodule WishlistsWeb.FolderLive.Show do
         {:noreply,
          socket
          |> assign(:cards, cards)
-         |> put_flash(:info, "Gift suggestion approved successfully!")}
+         |> put_flash(:info, gettext("Gift suggestion approved successfully!"))}
 
       {:error, _} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Failed to approve gift suggestion")}
+         |> put_flash(:error, gettext("Failed to approve gift suggestion"))}
     end
   end
 
@@ -207,12 +210,12 @@ defmodule WishlistsWeb.FolderLive.Show do
         {:noreply,
          socket
          |> assign(:cards, cards)
-         |> put_flash(:info, "Gift suggestion rejected successfully!")}
+         |> put_flash(:info, gettext("Gift suggestion rejected successfully!"))}
 
       {:error, _} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Failed to reject gift suggestion")}
+         |> put_flash(:error, gettext("Failed to reject gift suggestion"))}
     end
   end
 
@@ -236,7 +239,7 @@ defmodule WishlistsWeb.FolderLive.Show do
      socket
      |> assign(folder: folder)
      |> assign(show_modal: false)
-     |> put_flash(:info, "Folder updated successfully")}
+     |> put_flash(:info, gettext("Folder updated successfully"))}
   end
 
   def handle_info({:new_notification}, socket) do
@@ -251,10 +254,10 @@ defmodule WishlistsWeb.FolderLive.Show do
 
       card.suggested_by_guest_id ->
         guest = Wishlists.Accounts.get_guest_viewer!(card.suggested_by_guest_id)
-        "Guest: #{guest.name}"
+        gettext("Guest: %{name}", name: guest.name)
 
       true ->
-        "Unknown"
+        gettext("Unknown")
     end
   end
 end

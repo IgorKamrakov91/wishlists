@@ -13,9 +13,6 @@
               name="hero-home"
               class="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300"
             />
-            <span class="text-indigo-600 font-medium group-hover:text-indigo-800 transition-colors duration-300">
-              Dashboard
-            </span>
           </.link>
         <% else %>
           <.link
@@ -29,7 +26,7 @@
               class="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300"
             />
             <span class="text-indigo-600 font-medium group-hover:text-indigo-800 transition-colors duration-300">
-              Join Wishverse
+              <%= gettext("Join Wishverse") %>
             </span>
           </.link>
         <% end %>
@@ -60,7 +57,7 @@
               <div class="flex items-center space-x-2">
                 <div class="px-4 py-2 bg-purple-100 rounded-full">
                   <span class="text-purple-700 font-medium">
-                    Guest: {@guest_viewer.name}
+                    <%= gettext("Guest: %{name}", name: @guest_viewer.name) %>
                   </span>
                 </div>
                 <button
@@ -86,7 +83,7 @@
       <div class="mb-6 flex justify-between items-center">
         <h2 class="text-xl font-semibold text-indigo-900">
           <%= if @current_user && @current_user.id == @folder.user_id do %>
-            {length(Enum.filter(@cards, &(&1.card.status == "pending")))} pending suggestions
+            {length(Enum.filter(@cards, &(&1.card.status == "pending")))} <%= gettext("pending suggestions") %>
           <% end %>
         </h2>
 
@@ -96,7 +93,7 @@
             class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
           >
             <.icon name="hero-gift" class="h-5 w-5" />
-            <span>Suggest a Gift</span>
+            <span><%= gettext("Suggest a Gift") %></span>
           </button>
         <% end %>
       </div>
@@ -106,9 +103,9 @@
           <div class="mx-auto h-24 w-24 text-indigo-300 mb-6">
             <.icon name="hero-folder-open" class="h-24 w-24" />
           </div>
-          <h3 class="text-2xl font-bold text-indigo-900 mb-4">This collection is empty</h3>
+          <h3 class="text-2xl font-bold text-indigo-900 mb-4"><%= gettext("This collection is empty") %></h3>
           <p class="text-indigo-600 mb-8">
-            There are no wishes in this collection yet
+            <%= gettext("There are no wishes in this collection yet") %>
           </p>
         </div>
       <% else %>
@@ -120,10 +117,9 @@
                 folder_card.card.status == "pending" && "opacity-75 bg-gray-100/80",
                 folder_card.reservation && "bg-purple-50/80"
               ]}>
-                <!-- Status Badge for Pending Cards -->
                 <%= if folder_card.card.status == "pending" do %>
                   <div class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium z-10">
-                    Pending Approval
+                    <%= gettext("Pending Approval") %>
                   </div>
 
 <!-- Approval Controls for Owner -->
@@ -133,7 +129,7 @@
                         phx-click="approve_card"
                         phx-value-id={folder_card.card.id}
                         class="bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600 transition-colors duration-200 flex items-center space-x-1"
-                        title="Approve suggestion"
+                        title={gettext("Approve suggestion")}
                       >
                         <.icon name="hero-check" class="h-4 w-4" />
                       </button>
@@ -141,7 +137,7 @@
                         phx-click="reject_card"
                         phx-value-id={folder_card.card.id}
                         class="bg-rose-500 text-white p-2 rounded-full hover:bg-rose-600 transition-colors duration-200 flex items-center space-x-1"
-                        title="Reject suggestion"
+                        title={gettext("Reject suggestion")}
                       >
                         <.icon name="hero-x-mark" class="h-4 w-4" />
                       </button>
@@ -167,16 +163,16 @@
                     <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
                       <%= if @current_user && @current_user.id == @folder.user_id do %>
                         <%= if @folder.show_reserver_names do %>
-                          Reserved by {folder_card.reservation.reserver_name}
+                          <%= gettext("Reserved by %{name}", name: folder_card.reservation.reserver_name) %>
                         <% else %>
-                          Reserved
+                          <%= gettext("Reserved") %>
                         <% end %>
                       <% else %>
-                        <%= if folder_card.reservation.reserved_by_user_id == @current_user && @current_user.id ||
-                            (folder_card.reservation.reserved_by_guest_id == @guest_viewer && @guest_viewer.id) do %>
-                          Reserved by you
+                        <%= if (@current_user && folder_card.reservation.reserved_by_user_id == @current_user.id) ||
+                            (@guest_viewer && folder_card.reservation.reserved_by_guest_id == @guest_viewer.id) do %>
+                          <%= gettext("Reserved by you") %>
                         <% else %>
-                          Reserved by {folder_card.reservation.reserver_name}
+                          <%= gettext("Reserved by %{name}", name: folder_card.reservation.reserver_name) %>
                         <% end %>
                       <% end %>
                     </div>
@@ -185,7 +181,7 @@
 
                 <%= if folder_card.card.status == "pending" do %>
                   <div class="mb-3 text-sm text-gray-500">
-                    Suggested by: {get_suggester_name(folder_card.card)}
+                    <%= gettext("Suggested by: %{name}", name: get_suggester_name(folder_card.card)) %>
                   </div>
                 <% end %>
 
@@ -201,7 +197,7 @@
                       rel="noopener noreferrer"
                       class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
                     >
-                      <span>Visit Link</span>
+                      <span><%= gettext("Visit Link") %></span>
                       <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
                     </a>
                   <% end %>
@@ -211,7 +207,7 @@
                       <%= if folder_card.card.price && folder_card.card.price > 0 do %>
                         {"#{:erlang.float_to_binary(folder_card.card.price, decimals: 0)} ₽"}
                       <% else %>
-                        <span class="text-indigo-400 text-sm">No Price</span>
+                        <span class="text-indigo-400 text-sm"><%= gettext("No Price") %></span>
                       <% end %>
                     </span>
                   </div>
@@ -224,7 +220,7 @@
                         class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
                       >
                         <.icon name="hero-gift" class="h-4 w-4" />
-                        <span>Reserve</span>
+                        <span><%= gettext("Reserve") %></span>
                       </button>
                     <% else %>
                       <%= if can_unreserve?(folder_card.reservation, @current_user, @guest_viewer) do %>
@@ -234,7 +230,7 @@
                           class="text-rose-600 hover:text-rose-800 text-sm flex items-center space-x-1"
                         >
                           <.icon name="hero-x-mark" class="h-4 w-4" />
-                          <span>Cancel Reservation</span>
+                          <span><%= gettext("Cancel Reservation") %></span>
                         </button>
                       <% end %>
                     <% end %>
@@ -252,15 +248,15 @@
     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-8 max-w-md w-full">
         <div class="mb-6">
-          <h2 class="text-2xl font-bold text-center text-indigo-900">Welcome to Wishverse!</h2>
-          <p class="text-center text-gray-600 mt-2">Choose how you'd like to continue</p>
+          <h2 class="text-2xl font-bold text-center text-indigo-900"><%= gettext("Welcome to Wishverse!") %></h2>
+          <p class="text-center text-gray-600 mt-2"><%= gettext("Choose how you'd like to continue") %></p>
         </div>
 
         <div class="space-y-4">
           <.form :let={f} for={%{}} as={:guest_viewer} phx-submit="save_viewer_name">
             <.input field={f[:name]} type="text" required placeholder="Your name" />
             <.button type="submit" class="mt-4 w-full">
-              Continue as Guest
+              <%= gettext("Continue as Guest") %>
             </.button>
           </.form>
 
@@ -269,7 +265,7 @@
               <div class="w-full border-t border-gray-300"></div>
             </div>
             <div class="relative flex justify-center text-sm">
-              <span class="px-2 bg-white text-gray-500">Or</span>
+              <span class="px-2 bg-white text-gray-500"><%= gettext("Or") %></span>
             </div>
           </div>
 
@@ -278,7 +274,7 @@
             phx-click="open_auth_modal"
             class="w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Sign In / Sign Up
+            <%= gettext("Sign In / Sign Up") %>
           </button>
         </div>
       </div>
@@ -295,8 +291,8 @@
       id="suggest-card"
       action={:new}
       card={@suggested_card}
-      modal_title="Suggest a Gift"
-      submit_button_text="Submit Suggestion"
+      modal_title={gettext("Suggest a Gift")}
+      submit_button_text={gettext("Submit Suggestion")}
       current_user={@current_user}
       guest_viewer={@guest_viewer}
       folder={@folder}

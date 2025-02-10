@@ -59,8 +59,8 @@ defmodule WishlistsWeb.DashboardLive do
     {:noreply,
      socket
      |> assign(:folder, %Folder{})
-     |> assign(:modal_title, "Create New Folder")
-     |> assign(:submit_button_text, "Create")
+     |> assign(:modal_title, gettext("Create New Folder"))
+     |> assign(:submit_button_text, gettext("Create"))
      |> assign(:action, :new)
      |> assign(:modal_type, :folder)
      |> assign(:show_modal, true)}
@@ -71,8 +71,8 @@ defmodule WishlistsWeb.DashboardLive do
     {:noreply,
      socket
      |> assign(:card, %Card{})
-     |> assign(:modal_title, "Create A Wish!")
-     |> assign(:submit_button_text, "Create")
+     |> assign(:modal_title, gettext("Create A Wish!"))
+     |> assign(:submit_button_text, gettext("Create"))
      |> assign(:action, :new)
      |> assign(:modal_type, :card)
      |> assign(:show_modal, true)}
@@ -110,8 +110,8 @@ defmodule WishlistsWeb.DashboardLive do
     {:noreply,
      socket
      |> assign(:card, card)
-     |> assign(:modal_title, "Edit Card")
-     |> assign(:submit_button_text, "Save Changes")
+     |> assign(:modal_title, gettext("Edit Card"))
+     |> assign(:submit_button_text, gettext("Save Changes"))
      |> assign(:action, :edit)
      |> assign(:modal_type, :card)
      |> assign(:show_modal, true)}
@@ -219,7 +219,7 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(cards: cards)
      |> assign(show_modal: false)
      |> assign(modal_type: nil)
-     |> put_flash(:info, "Card created successfully")}
+     |> put_flash(:info, gettext("Card created successfully"))}
   end
 
   @impl true

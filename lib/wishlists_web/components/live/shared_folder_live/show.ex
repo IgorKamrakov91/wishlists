@@ -8,6 +8,8 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
   def mount(%{"token" => token}, session, socket) do
     Logger.debug("Mounting SharedFolderLive.Show with token: #{token}")
+    locale = session["locale"] || "en"
+    Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
     case Folders.get_shared_folder_by_token(token) do
       nil ->
@@ -57,7 +59,6 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
             |> assign(:suggested_card, %Cards.Card{})
             |> assign(:is_suggestion, false)
 
-          # Автоматически подписываемся на папку, если пользователь авторизован
           if current_user && !is_following do
             Folders.follow_folder(current_user.id, folder.id)
           end
@@ -118,7 +119,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
       {:error, _reason} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Invalid email or password")
+         |> put_flash(:error, gettext("Invalid email or password"))
          |> assign(:show_name_modal, true)}
     end
   end
@@ -136,7 +137,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Registration failed")
+         |> put_flash(:error, gettext("Registration failed"))
          |> assign(:show_name_modal, true)
          |> assign(:registration_changeset, changeset)}
     end
@@ -150,7 +151,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
     if folder_card.card.status != "approved" do
       {:noreply,
        socket
-       |> put_flash(:error, "Can't reserve pending or rejected gifts")}
+       |> put_flash(:error, gettext("Can't reserve pending or rejected gifts"))}
     else
       reserver_name =
         cond do
@@ -189,7 +190,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
           {:noreply, assign(socket, :cards, cards)}
 
         {:error, _changeset} ->
-          {:noreply, put_flash(socket, :error, "Could not reserve card")}
+          {:noreply, put_flash(socket, :error, gettext("Could not reserve card"))}
       end
     end
   end
@@ -203,7 +204,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
         {:noreply, assign(socket, :cards, cards)}
 
       {:error, _} ->
-        {:noreply, put_flash(socket, :error, "Could not unreserve card")}
+        {:noreply, put_flash(socket, :error, gettext("Could not unreserve card"))}
     end
   end
 
@@ -237,7 +238,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
       {:ok, _card} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Card suggested successfully! Waiting for approval.")
+         |> put_flash(:info, gettext("Card suggested successfully! Waiting for approval."))
          |> assign(:show_suggest_modal, false)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -255,12 +256,12 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
         {:noreply,
          socket
          |> assign(:cards, cards)
-         |> put_flash(:info, "Gift suggestion approved successfully!")}
+         |> put_flash(:info, gettext("Gift suggestion approved successfully!"))}
 
       {:error, _} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Failed to approve gift suggestion")}
+         |> put_flash(:error, gettext("Failed to approve gift suggestion"))}
     end
   end
 
@@ -274,17 +275,18 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
         {:noreply,
          socket
          |> assign(:cards, cards)
-         |> put_flash(:info, "Gift suggestion rejected successfully!")}
+         |> put_flash(:info, gettext("Gift suggestion rejected successfully!"))}
 
       {:error, _} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Failed to reject gift suggestion")}
+         |> put_flash(:error, gettext("Failed to reject gift suggestion"))}
     end
   end
 
   defp can_unreserve?(reservation, current_user, guest_viewer) do
     cond do
+      is_nil(reservation) -> false
       current_user && reservation.reserved_by_user_id == current_user.id -> true
       guest_viewer && reservation.reserved_by_guest_id == guest_viewer.id -> true
       true -> false
@@ -324,12 +326,15 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
          socket
          |> assign(:cards, cards)
          |> assign(:show_suggest_modal, false)
-         |> put_flash(:info, "Gift suggestion submitted successfully! Waiting for approval.")}
+         |> put_flash(
+           :info,
+           gettext("Gift suggestion submitted successfully! Waiting for approval.")
+         )}
 
       {:error, _} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Failed to submit gift suggestion")}
+         |> put_flash(:error, gettext("Failed to submit gift suggestion"))}
     end
   end
 
@@ -350,10 +355,10 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
       card.suggested_by_guest_id ->
         guest = Wishlists.Accounts.get_guest_viewer!(card.suggested_by_guest_id)
-        "Guest: #{guest.name}"
+        gettext("Guest: %{name}", name: guest.name)
 
       true ->
-        "Unknown"
+        gettext("Unknown")
     end
   end
 end
