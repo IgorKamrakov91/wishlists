@@ -261,72 +261,94 @@
         </button>
       </div>
 
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        id="cards-container"
-        phx-hook="DragOrder"
-      >
-        <%= for {card, index} <- Enum.with_index(@cards, 1) do %>
-          <div
-            data-card-id={card.id}
-            draggable="true"
-            data-position={index}
-            class="cursor-move w-full"
-            id={"card-#{card.id}"}
-            phx-hook="DragCard"
+      <%= if Enum.empty?(@cards) do %>
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-12 text-center">
+          <div class="mx-auto h-24 w-24 text-indigo-300 mb-6">
+            <.icon name="hero-gift" class="h-24 w-24" />
+          </div>
+          <h3 class="text-2xl font-bold text-indigo-900 mb-4">
+            {gettext("Your wish list is empty")}
+          </h3>
+          <p class="text-indigo-600 mb-8">
+            {gettext(
+              "Add your first wish by clicking 'Make a Wish' button. Then you can drag it to any collection above!"
+            )}
+          </p>
+          <button
+            phx-click="new_card"
+            class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2 mx-auto"
           >
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 h-full">
-              <!-- Image section with click handler -->
-              <div
-                class="relative h-48 mb-4 cursor-pointer"
-                phx-click="edit_card"
-                phx-value-id={card.id}
-              >
-                <img
-                  src={
-                    if card.image_url && card.image_url != "",
-                      do: card.image_url,
-                      else: "/images/gift.jpg"
-                  }
-                  alt={card.title}
-                  class="w-full h-full object-cover rounded-xl"
-                  loading="lazy"
-                  phx-hook="ImageLoader"
-                  id={"image-#{card.id}"}
-                />
-                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div class="absolute top-2 right-2 bg-white/90 w-8 h-8 rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-50 hover:text-rose-700 flex items-center justify-center">
-                    <.icon name="hero-pencil" class="h-5 w-5 text-purple-600" />
-                    <!-- Changed to pencil icon to indicate edit -->
+            <.icon name="hero-sparkles" class="h-5 w-5" />
+            <span>{gettext("Make Your First Wish")}</span>
+          </button>
+        </div>
+      <% else %>
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          id="cards-container"
+          phx-hook="DragOrder"
+        >
+          <%= for {card, index} <- Enum.with_index(@cards, 1) do %>
+            <div
+              data-card-id={card.id}
+              draggable="true"
+              data-position={index}
+              class="cursor-move w-full"
+              id={"card-#{card.id}"}
+              phx-hook="DragCard"
+            >
+              <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 h-full">
+                <!-- Image section with click handler -->
+                <div
+                  class="relative h-48 mb-4 cursor-pointer"
+                  phx-click="edit_card"
+                  phx-value-id={card.id}
+                >
+                  <img
+                    src={
+                      if card.image_url && card.image_url != "",
+                        do: card.image_url,
+                        else: "/images/gift.jpg"
+                    }
+                    alt={card.title}
+                    class="w-full h-full object-cover rounded-xl"
+                    loading="lazy"
+                    phx-hook="ImageLoader"
+                    id={"image-#{card.id}"}
+                  />
+                  <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute top-2 right-2 bg-white/90 w-8 h-8 rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-50 hover:text-rose-700 flex items-center justify-center">
+                      <.icon name="hero-pencil" class="h-5 w-5 text-purple-600" />
+                      <!-- Changed to pencil icon to indicate edit -->
+                    </div>
+                  </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">{card.title}</h3>
+
+                <div class="flex items-center justify-between">
+                  <%= if card.link_url do %>
+                    <a
+                      href={card.link_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
+                    >
+                      <span>{gettext("Visit Link")}</span>
+                      <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
+                    </a>
+                  <% end %>
+
+                  <div class="text-indigo-400 text-sm flex items-center space-x-1">
+                    <.icon name="hero-sparkles" class="h-4 w-4" />
+                    <span>{gettext("Drag to add to Collection")}</span>
                   </div>
                 </div>
               </div>
-
-<!-- Rest of the card content -->
-              <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">{card.title}</h3>
-
-              <div class="flex items-center justify-between">
-                <%= if card.link_url do %>
-                  <a
-                    href={card.link_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
-                  >
-                    <span>{gettext("Visit Link")}</span>
-                    <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
-                  </a>
-                <% end %>
-
-                <div class="text-indigo-400 text-sm flex items-center space-x-1">
-                  <.icon name="hero-sparkles" class="h-4 w-4" />
-                  <span>{gettext("Drag to add to Collection")}</span>
-                </div>
-              </div>
             </div>
-          </div>
-        <% end %>
-      </div>
+          <% end %>
+        </div>
+      <% end %>
 
       <div
         id="delete-bucket"
