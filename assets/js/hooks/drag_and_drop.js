@@ -27,12 +27,20 @@ const DragAndDrop = {
         e.preventDefault();
         dragCounter = 0;
         folder.classList.remove("drag-over");
+
         const cardId = e.dataTransfer.getData("application/x-card-id");
         const folderId = folder.dataset.folderId;
+        const isOwner = folder.dataset.owner === "true";
+
+        console.log("Drop event:", { cardId, folderId, isOwner });
+
+        if (!isOwner) {
+          return;
+        }
 
         if (cardId && folderId && !folder.dataset.processing) {
           folder.dataset.processing = "true";
-          this.pushEventTo(folder, "assign_card", {
+          this.pushEvent("assign_card", {
             card_id: cardId,
             folder_id: folderId
           });
@@ -58,22 +66,9 @@ const DragAndDrop = {
       });
     });
 
-    // Handle all folder drop zones (both main and floating bar)
+    // Handle all folder drop zones
     const folders = document.querySelectorAll('[data-folder-id]');
     folders.forEach(setupDropTarget);
-
-    // Observe DOM for dynamically added folders
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === 1 && node.hasAttribute('data-folder-id')) {
-            setupDropTarget(node);
-          }
-        });
-      });
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
   }
 };
 
