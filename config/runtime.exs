@@ -65,7 +65,8 @@ if config_env() == :prod do
     secret_key_base: secret_key_base,
     check_origin: [
       "https://hochu-hochu.com",
-      "https://www.hochu-hochu.com"
+      "https://www.hochu-hochu.com",
+      "https://hochu-hochu.fly.dev"
     ]
 
   # ## SSL Support
