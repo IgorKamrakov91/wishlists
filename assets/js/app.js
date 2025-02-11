@@ -8,6 +8,7 @@ import SparkleEffect from "./hooks/sparkle_effect"
 import DeleteBucket from "./hooks/delete_bucket"
 import DragCard from "./hooks/drag_card"
 import LocaleHook from "./hooks/locale"
+import CardConfettiEffect from "./hooks/card_conferri_effect"
 import topbar from "../vendor/topbar"
 
 let Hooks = {
@@ -22,6 +23,7 @@ let Hooks = {
   },
   DragOrder: DragOrder,
   SparkleEffect: SparkleEffect,
+  CardConfettiEffect: CardConfettiEffect,
   DragCard: DragCard,
   DeleteBucket: DeleteBucket,
   CopyToClipboard: {
