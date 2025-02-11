@@ -5,13 +5,8 @@ defmodule WishlistsWeb.Plugs.Locale do
 
   def call(conn, _opts) do
     locale = get_locale_from_conn(conn)
-
-    if locale do
-      Gettext.put_locale(WishlistsWeb.Gettext, locale)
-      put_session(conn, :locale, locale)
-    else
-      conn
-    end
+    Gettext.put_locale(WishlistsWeb.Gettext, locale)
+    put_session(conn, :locale, locale)
   end
 
   defp get_locale_from_conn(conn) do

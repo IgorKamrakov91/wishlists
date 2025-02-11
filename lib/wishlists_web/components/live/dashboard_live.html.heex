@@ -85,9 +85,16 @@
         </div>
         <button
           phx-click="new_folder"
-          class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
+          class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2 group"
         >
-          <.icon name="hero-plus" class="h-5 w-5" />
+          <div class="relative">
+            <.icon
+              name="hero-plus"
+              class="h-5 w-5 transition-transform duration-300 group-hover:scale-110"
+            />
+            <div class="absolute inset-0 animate-ping bg-white rounded-full opacity-30 duration-1000">
+            </div>
+          </div>
           <span>{gettext("New Collection")}</span>
         </button>
       </div>
