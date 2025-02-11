@@ -37,7 +37,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                     field={@form[:link_url]}
                     type="url"
                     label={gettext("Product URL")}
-                    placeholder={gettext("Paste product URL here")}
+                    placeholder={gettext("https://example.com")}
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 

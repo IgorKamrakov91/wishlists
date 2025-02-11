@@ -38,7 +38,7 @@ defmodule Wishlists.Cards.Card do
     ])
     |> validate_required([:title, :user_id])
     |> validate_inclusion(:status, ["pending", "approved", "rejected"])
-    |> validate_length(:title, min: 1, max: 13)
+    |> validate_length(:title, min: 1, max: 50)
     |> validate_length(:description, max: 500)
     |> validate_url(:image_url)
     |> validate_url(:link_url)

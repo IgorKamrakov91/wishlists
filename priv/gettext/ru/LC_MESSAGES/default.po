@@ -506,8 +506,8 @@ msgstr "Вставьте ссылку на изображение"
 
 #: lib/wishlists_web/components/live/card_live/card_form_component.ex:40
 #, elixir-autogen, elixir-format
-msgid "Paste product URL here"
-msgstr "Вставьте ссылку на товар"
+msgid "https://example.com"
+msgstr "https://example.com"
 
 #: lib/wishlists_web/components/live/folder_live/show.html.heex:106
 #: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:122
