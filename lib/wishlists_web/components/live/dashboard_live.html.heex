@@ -3,29 +3,31 @@
   phx-hook="CardConfettiEffect"
   id="card-confetti-container"
 >
-  <header class="bg-white/80 backdrop-blur-sm shadow-lg">
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-wrap items-center justify-between gap-4">
+  <header class="bg-white/90 backdrop-blur-sm shadow-md">
+    <div class="max-w-7xl mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-center space-x-3">
-          <div class="h-12 w-12 bg-indigo-600 rounded-full flex items-center justify-center">
-            <.icon name="hero-sparkles" class="h-6 w-6 text-white" />
+          <div class="h-10 w-10 sm:h-12 sm:w-12 bg-indigo-600 rounded-full flex items-center justify-center">
+            <.icon name="hero-sparkles" class="h-5 w-5 sm:h-6 sm:w-6 text-white" />
           </div>
           <div>
             <h1
-              class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent cursor-pointer"
+              class="text-2xl sm:text-3xl font-bold text-indigo-600"
               id="wishverse-header"
               phx-hook="SparkleEffect"
             >
               {gettext("Your Wishverse")}
             </h1>
-            <p class="text-sm text-gray-600">{gettext("Where dreams come true")}</p>
+            <p class="text-sm text-gray-600 hidden sm:block">
+              {gettext("Where dreams come true")}
+            </p>
           </div>
         </div>
 
         <.link
           href={~p"/auth/sign_out"}
           method="delete"
-          class="bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-white px-4 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
+          class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center space-x-2 text-sm"
         >
           <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" />
           <span>{gettext("Logout")}</span>
@@ -34,9 +36,8 @@
     </div>
   </header>
 
-<!-- Add the floating folders bar -->
   <div
-    class="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-lg transform transition-all duration-300 z-30"
+    class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-lg transform transition-all duration-300 z-30 px-4 sm:px-0"
     id="floating-folders-bar"
     style="transform: translateY(-100%)"
     phx-hook="FloatingBar"
@@ -75,37 +76,37 @@
     </div>
   </div>
 
-  <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+  <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
     <!-- Wishlists Section -->
-    <div class="mb-8">
-      <div class="flex justify-between items-center mb-6 px-4 sm:px-0">
+    <section class="space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 class="text-2xl font-bold text-indigo-900">
-            <span class="inline-block animate-bounce">🎁</span> {gettext("Magic Collections")}
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <span>🎁</span> {gettext("Magic Collections")}
           </h2>
-          <p class="text-sm text-indigo-600">
+          <p class="text-sm text-gray-600">
             {gettext("Organize your wishes into magical collections")}
           </p>
         </div>
+
         <button
           phx-click="new_folder"
-          class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2 group"
+          class="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center space-x-2 group"
         >
           <div class="relative">
             <.icon
               name="hero-plus"
               class="h-5 w-5 transition-transform duration-300 group-hover:scale-110"
             />
-            <div class="absolute inset-0 animate-ping bg-white rounded-full opacity-30 duration-1000">
-            </div>
           </div>
           <span>{gettext("New Collection")}</span>
         </button>
       </div>
 
-      <div class="flex space-x-8">
-        <!-- Фильтры -->
-        <div class="w-48 bg-white/50 backdrop-blur-sm rounded-xl p-2 flex flex-col self-stretch mb-4">
+<!-- Filters and Folders -->
+      <div class="flex flex-col sm:flex-row gap-6">
+        <!-- Filters -->
+        <div class="w-full sm:w-48 bg-white/50 backdrop-blur-sm rounded-xl p-2 flex-shrink-0 mb-4">
           <div class="space-y-1">
             <button
               phx-click="filter_folders"
@@ -166,7 +167,7 @@
           </div>
         </div>
 
-        <div class="flex-1 overflow-hidden">
+        <div class="flex-1 min-w-0">
           <div class="relative" id="folders-container" phx-hook="DragAndDrop">
             <div class="overflow-x-auto hide-scrollbar -mr-4 min-h-[100px]">
               <div class="flex space-x-4 pb-4 pr-4">
@@ -259,20 +260,21 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
 <!-- Wishes Section -->
-    <div class="px-4 sm:px-0">
-      <div class="flex justify-between items-center mb-6">
+    <section class="space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 class="text-2xl font-bold text-indigo-900">
-            <span class="inline-block animate-pulse">⭐</span> {gettext("Your Wishes")}
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+            <span>⭐</span> {gettext("Your Wishes")}
           </h2>
-          <p class="text-sm text-indigo-600">{gettext("Dreams waiting to come true")}</p>
+          <p class="text-sm text-gray-600">{gettext("Dreams waiting to come true")}</p>
         </div>
+
         <button
           phx-click="new_card"
-          class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
+          class="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center space-x-2"
         >
           <.icon name="hero-sparkles" class="h-5 w-5" />
           <span>{gettext("Make a Wish")}</span>
@@ -280,18 +282,9 @@
       </div>
 
       <%= if Enum.empty?(@cards) do %>
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-12 text-center">
-          <div class="mx-auto h-24 w-24 text-indigo-300 mb-6">
-            <.icon name="hero-gift" class="h-24 w-24" />
-          </div>
-          <h3 class="text-2xl font-bold text-indigo-900 mb-4">
-            {gettext("Your wish list is empty")}
-          </h3>
-          <p class="text-indigo-600 mb-8">
-            {gettext(
-              "Add your first wish by clicking 'Make a Wish' button. Then you can drag it to any collection above!"
-            )}
-          </p>
+        <!-- Empty state -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 sm:p-12 text-center">
+          <!-- ... код пустого состояния ... -->
           <button
             phx-click="new_card"
             class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2 mx-auto"
@@ -302,7 +295,7 @@
         </div>
       <% else %>
         <div
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
           id="cards-container"
           phx-hook="DragOrder"
         >
@@ -311,7 +304,7 @@
               data-card-id={card.id}
               draggable="true"
               data-position={index}
-              class="cursor-move w-full"
+              class="cursor-move w-full touch-none"
               id={"card-#{card.id}"}
               phx-hook="DragCard"
             >
@@ -369,8 +362,8 @@
       <% end %>
 
       <div
+        class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8"
         id="delete-bucket"
-        class="fixed bottom-8 right-8 w-24 h-24 transform scale-0 transition-all duration-300 z-50"
         phx-hook="DeleteBucket"
       >
         <!-- Larger hit area for dropping -->
@@ -397,7 +390,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
   </main>
 
   <%= if @show_modal do %>

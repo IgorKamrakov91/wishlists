@@ -201,6 +201,14 @@ defmodule WishlistsWeb.DashboardLive do
     end
   end
 
+  def handle_event(
+        "card_dropped",
+        %{"card_data" => %{"cardId" => card_id}, "folder_id" => folder_id},
+        socket
+      ) do
+    handle_event("assign_card", %{"card_id" => card_id, "folder_id" => folder_id}, socket)
+  end
+
   def handle_event("filter_folders", %{"filter" => filter}, socket) do
     {:noreply, assign(socket, :current_filter, filter)}
   end
