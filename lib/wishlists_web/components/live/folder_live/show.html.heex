@@ -4,190 +4,189 @@
   id="clipboard-container"
 >
   <input type="text" id="share-url-input" value={@share_url} class="hidden" />
-  <header class="bg-white/80 backdrop-blur-sm shadow-lg">
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-      <div class="flex items-center justify-between w-full">
+
+  <header class="bg-white/90 backdrop-blur-sm shadow-md">
+    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between">
         <.link
           navigate={~p"/dashboard"}
-          class="group relative flex items-center space-x-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+          class="flex items-center justify-center w-8 h-8 sm:w-auto sm:h-auto sm:px-4 sm:py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-all duration-300"
         >
-          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          </div>
-          <.icon
-            name="hero-home"
-            class="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-300"
-          />
-          <span class="text-indigo-600 font-medium group-hover:text-indigo-800 transition-colors duration-300">
-          </span>
+          <.icon name="hero-arrow-left" class="h-4 w-4" />
+          <span class="hidden sm:ml-2 sm:block">{gettext("Back")}</span>
         </.link>
 
-        <div class="flex items-center gap-4 mx-auto">
-          <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            {@folder.name}
-          </h1>
+        <h1 class="text-xl sm:text-2xl font-bold text-indigo-600 truncate max-w-[200px] sm:max-w-none">
+          {@folder.name}
+        </h1>
+
+        <div class="flex items-center space-x-2 sm:space-x-3">
           <%= if @folder.event_date do %>
-            <span class="text-sm text-gray-600 bg-indigo-50 px-3 py-1 rounded-full">
+            <span class="hidden sm:inline-flex items-center bg-indigo-100 text-indigo-800 text-sm px-3 py-1 rounded-full">
+              <.icon name="hero-calendar" class="h-4 w-4 mr-1" />
               {Calendar.strftime(@folder.event_date, "%B %d, %Y")}
             </span>
           <% end %>
+
+          <button
+            phx-click="share_folder"
+            class="w-8 h-8 sm:w-auto sm:h-auto sm:px-4 sm:py-2 bg-emerald-100 text-emerald-700 rounded-full hover:bg-emerald-200 transition-all duration-300 flex items-center justify-center"
+            onclick={"copyToClipboard(event, '#{@share_url}')"}
+          >
+            <.icon name="hero-share" class="h-4 w-4" />
+            <span class="hidden sm:ml-2 sm:block">{gettext("Share")}</span>
+          </button>
+
+          <button
+            phx-click="edit_folder"
+            class="w-8 h-8 sm:w-auto sm:h-auto sm:px-4 sm:py-2 bg-indigo-100 text-indigo-700 rounded-full hover:bg-indigo-200 transition-all duration-300 flex items-center justify-center"
+          >
+            <.icon name="hero-pencil" class="h-4 w-4" />
+            <span class="hidden sm:ml-2 sm:block">{gettext("Edit")}</span>
+          </button>
+
+          <button
+            phx-click="show_delete_modal"
+            class="w-8 h-8 sm:w-auto sm:h-auto sm:px-4 sm:py-2 bg-rose-100 text-rose-700 rounded-full hover:bg-rose-200 transition-all duration-300 flex items-center justify-center"
+          >
+            <.icon name="hero-trash" class="h-4 w-4" />
+            <span class="hidden sm:ml-2 sm:block">{gettext("Delete")}</span>
+          </button>
         </div>
-
-        <%= if @folder.description do %>
-          <p class="text-sm text-gray-600">{@folder.description}</p>
-        <% end %>
-
-        <div class="w-[88px]"></div>
       </div>
 
-      <div class="flex items-center space-x-3">
-        <button
-          phx-click="share_folder"
-          class="bg-white/80 backdrop-blur-sm text-emerald-600 px-4 py-2 rounded-full hover:bg-emerald-50 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
-          onclick={"copyToClipboard(event, '#{@share_url}')"}
-        >
-          <.icon name="hero-share" class="h-4 w-4" />
-          <span>{gettext("Share")}</span>
-        </button>
-
-        <button
-          phx-click="edit_folder"
-          class="bg-white/80 backdrop-blur-sm text-indigo-600 px-4 py-2 rounded-full hover:bg-indigo-50 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
-        >
-          <.icon name="hero-pencil" class="h-4 w-4" />
-          <span>{gettext("Edit")}</span>
-        </button>
-
-        <button
-          phx-click="show_delete_modal"
-          class="bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-white px-4 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
-        >
-          <.icon name="hero-trash" class="h-4 w-4" />
-          <span>{gettext("Delete")}</span>
-        </button>
-      </div>
+<!-- Event date for mobile only -->
+      <%= if @folder.event_date do %>
+        <div class="flex justify-center mt-3 sm:hidden">
+          <span class="inline-flex items-center bg-indigo-100 text-indigo-800 text-sm px-3 py-1 rounded-full">
+            <.icon name="hero-calendar" class="h-4 w-4 mr-1" />
+            {Calendar.strftime(@folder.event_date, "%B %d, %Y")}
+          </span>
+        </div>
+      <% end %>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <div class="px-4 sm:px-0">
-      <%= if Enum.empty?(@cards) do %>
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-12 text-center">
-          <div class="mx-auto h-24 w-24 text-indigo-300 mb-6">
-            <.icon name="hero-folder-open" class="h-24 w-24" />
-          </div>
-          <h3 class="text-2xl font-bold text-indigo-900 mb-4">
-            {gettext("This collection is empty")}
-          </h3>
-          <p class="text-indigo-600 mb-8">
-            {gettext("Start by dragging wishes from your dashboard to this collection")}
-          </p>
-          <.link
-            navigate={~p"/dashboard"}
-            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 inline-flex items-center space-x-2"
-          >
-            <.icon name="hero-plus" class="h-5 w-5" />
-            <span>{gettext("Add Wishes")}</span>
-          </.link>
+  <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+    <%= if Enum.empty?(@cards) do %>
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 sm:p-12 text-center">
+        <div class="mx-auto h-24 w-24 text-indigo-300 mb-6">
+          <.icon name="hero-folder-open" class="h-24 w-24" />
         </div>
-      <% else %>
-        <div
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          id="folder-cards-container"
-          data-folder-id={@folder.id}
-          phx-hook="DragOrder"
+        <h3 class="text-2xl font-bold text-indigo-900 mb-4">
+          {gettext("This collection is empty")}
+        </h3>
+        <p class="text-indigo-600 mb-8">
+          {gettext("Start by dragging wishes from your dashboard to this collection")}
+        </p>
+        <.link
+          navigate={~p"/dashboard"}
+          class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 inline-flex items-center space-x-2"
         >
-          <%= for {folder_card, index} <- Enum.with_index(@cards, 1) do %>
-            <div data-card-id={folder_card.card.id} data-position={index} class="cursor-move">
-              <div class={[
-                "relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1",
-                folder_card.card.status == "pending" && "opacity-75 bg-gray-100/80",
-                folder_card.reservation && "bg-purple-50/80"
-              ]}>
-                <%= if folder_card.card.status == "pending" do %>
-                  <div class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium z-10">
-                    {gettext("Pending Approval")}
-                  </div>
-
-<!-- Approval Controls for Owner -->
-                  <div class="absolute top-2 left-2 flex space-x-2 z-10">
-                    <button
-                      phx-click="approve_card"
-                      phx-value-id={folder_card.card.id}
-                      class="bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600 transition-colors duration-200 flex items-center space-x-1"
-                      title={gettext("Approve suggestion")}
-                    >
-                      <.icon name="hero-check" class="h-4 w-4" />
-                    </button>
-                    <button
-                      phx-click="reject_card"
-                      phx-value-id={folder_card.card.id}
-                      class="bg-rose-500 text-white p-2 rounded-full hover:bg-rose-600 transition-colors duration-200 flex items-center space-x-1"
-                      title={gettext("Reject suggestion")}
-                    >
-                      <.icon name="hero-x-mark" class="h-4 w-4" />
-                    </button>
-                  </div>
-                <% end %>
-
-<!-- Image section -->
-                <div class="relative h-48 mb-4">
-                  <img
-                    src={
-                      if folder_card.card.image_url && folder_card.card.image_url != "",
-                        do: folder_card.card.image_url,
-                        else: "/images/gift.jpg"
-                    }
-                    alt={folder_card.card.title}
-                    class="w-full h-full object-cover rounded-xl"
-                    loading="lazy"
-                    phx-hook="ImageLoader"
-                    id={"image-#{folder_card.card.id}"}
-                  />
+          <.icon name="hero-plus" class="h-5 w-5" />
+          <span>{gettext("Add Wishes")}</span>
+        </.link>
+      </div>
+    <% else %>
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+        id="folder-cards-container"
+        data-folder-id={@folder.id}
+        phx-hook="DragOrder"
+      >
+        <%= for {folder_card, index} <- Enum.with_index(@cards, 1) do %>
+          <div data-card-id={folder_card.card.id} data-position={index} class="cursor-move">
+            <div class={[
+              "relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1",
+              folder_card.card.status == "pending" && "opacity-75 bg-gray-100/80",
+              folder_card.reservation && "bg-purple-50/80"
+            ]}>
+              <%= if folder_card.card.status == "pending" do %>
+                <div class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium z-10">
+                  {gettext("Pending Approval")}
                 </div>
 
-                <%= if folder_card.reservation do %>
-                  <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
-                    <%= if @folder.show_reserver_names do %>
-                      {gettext("Reserved by %{name}", name: folder_card.reservation.reserver_name)}
-                    <% else %>
-                      {gettext("Reserved")}
-                    <% end %>
-                  </div>
-                <% end %>
+<!-- Approval Controls for Owner -->
+                <div class="absolute top-2 left-2 flex space-x-2 z-10">
+                  <button
+                    phx-click="approve_card"
+                    phx-value-id={folder_card.card.id}
+                    class="bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600 transition-colors duration-200 flex items-center space-x-1"
+                    title={gettext("Approve suggestion")}
+                  >
+                    <.icon name="hero-check" class="h-4 w-4" />
+                  </button>
+                  <button
+                    phx-click="reject_card"
+                    phx-value-id={folder_card.card.id}
+                    class="bg-rose-500 text-white p-2 rounded-full hover:bg-rose-600 transition-colors duration-200 flex items-center space-x-1"
+                    title={gettext("Reject suggestion")}
+                  >
+                    <.icon name="hero-x-mark" class="h-4 w-4" />
+                  </button>
+                </div>
+              <% end %>
 
-                <%= if folder_card.card.status == "pending" do %>
-                  <div class="mb-3 text-sm text-gray-500">
-                    {gettext("Suggested by: %{name}", name: get_suggester_name(folder_card.card))}
-                  </div>
-                <% end %>
+<!-- Image section -->
+              <div class="relative h-48 mb-4">
+                <img
+                  src={
+                    if folder_card.card.image_url && folder_card.card.image_url != "",
+                      do: folder_card.card.image_url,
+                      else: "/images/gift.jpg"
+                  }
+                  alt={folder_card.card.title}
+                  class="w-full h-full object-cover rounded-xl"
+                  loading="lazy"
+                  phx-hook="ImageLoader"
+                  id={"image-#{folder_card.card.id}"}
+                />
+              </div>
 
-                <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">
-                  {folder_card.card.title}
-                </h3>
-
-                <div class="flex items-center justify-between">
-                  <%= if folder_card.card.link_url do %>
-                    <a
-                      href={folder_card.card.link_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
-                    >
-                      <span>{gettext("Visit Link")}</span>
-                      <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
-                    </a>
+              <%= if folder_card.reservation do %>
+                <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
+                  <%= if @folder.show_reserver_names do %>
+                    {gettext("Reserved by %{name}", name: folder_card.reservation.reserver_name)}
+                  <% else %>
+                    {gettext("Reserved")}
                   <% end %>
+                </div>
+              <% end %>
 
-                  <div class="flex items-center space-x-1">
-                    <span class="text-indigo-600 font-medium">
-                      <%= if folder_card.card.price && folder_card.card.price > 0 do %>
-                        {"#{:erlang.float_to_binary(folder_card.card.price, decimals: 0)} ₽"}
-                      <% else %>
-                        <span class="text-indigo-400 text-sm">{gettext("No Price")}</span>
-                      <% end %>
-                    </span>
-                  </div>
+              <%= if folder_card.card.status == "pending" do %>
+                <div class="mb-3 text-sm text-gray-500">
+                  {gettext("Suggested by: %{name}", name: get_suggester_name(folder_card.card))}
+                </div>
+              <% end %>
 
+              <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">
+                {folder_card.card.title}
+              </h3>
+
+              <div class="flex items-center justify-between">
+                <%= if folder_card.card.link_url do %>
+                  <a
+                    href={folder_card.card.link_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
+                  >
+                    <span>{gettext("Visit Link")}</span>
+                    <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
+                  </a>
+                <% end %>
+
+                <div class="flex items-center space-x-1">
+                  <span class="text-indigo-600 font-medium">
+                    <%= if folder_card.card.price && folder_card.card.price > 0 do %>
+                      {"#{:erlang.float_to_binary(folder_card.card.price, decimals: 0)} ₽"}
+                    <% else %>
+                      <span class="text-indigo-400 text-sm">{gettext("No Price")}</span>
+                    <% end %>
+                  </span>
+                </div>
+
+                <%= if folder_card.card.status == "approved" do %>
                   <button
                     phx-click="remove_card"
                     phx-value-card_id={folder_card.card.id}
@@ -195,13 +194,13 @@
                   >
                     <.icon name="hero-x-mark" class="h-4 w-4 text-rose-600" />
                   </button>
-                </div>
+                <% end %>
               </div>
             </div>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </main>
 
   <%= if @show_modal do %>
