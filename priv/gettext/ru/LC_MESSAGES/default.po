@@ -249,7 +249,7 @@ msgstr "Добавить вручную"
 #: lib/wishlists_web/components/live/folder_live/folder_form_component.ex:76
 #, elixir-autogen, elixir-format
 msgid "Allow yourself to see who reserved items"
-msgstr "Разрешить себе видеть, кто зарезервировал предметы"
+msgstr "Хочу знать, кто дарит подарок"
 
 #: lib/wishlists_web/components/live/folder_live/show.html.heex:115
 #: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:132
@@ -589,7 +589,7 @@ msgstr "Поделиться"
 #: lib/wishlists_web/components/live/folder_live/folder_form_component.ex:73
 #, elixir-autogen, elixir-format
 msgid "Show Reserver Names"
-msgstr "Показывать Имена Резервирующих"
+msgstr "Показывать имена резервирующих"
 
 #: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:277
 #, elixir-autogen, elixir-format
@@ -778,3 +778,24 @@ msgstr "Войдите, чтобы управлять списками жела�
 #, elixir-autogen, elixir-format
 msgid "Welcome Back!"
 msgstr "С возвращением!"
+
+msgid "Your wish list is empty"
+msgstr "Твой список желаний пока что пуст"
+
+msgid "Add your first wish by clicking 'Make a Wish' button. Then you can drag it to any collection above!"
+msgstr "Добавь свое первое желание, нажав кнопку 'Загадать Желание'. Затем ты сможешь перетащить его в любую коллекцию выше!"
+
+msgid "Make Your First Wish"
+msgstr "Загадай Первое Желание"
+
+msgid "Event has passed %{icon}"
+msgstr "Событие прошло %{icon}"
+
+msgid "Event is today %{icon}"
+msgstr "Сегодня событие %{icon}"
+
+msgid "Event is tomorrow %{icon}"
+msgstr "Завтра событие %{icon}"
+
+msgid "%{days} days remaining"
+msgstr "%{days} дней осталось"

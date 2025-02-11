@@ -30,6 +30,10 @@ defmodule WishlistsWeb.DashboardLive do
 
       cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
 
+      if connected?(socket) do
+        :timer.send_interval(60_000, self(), :update_times)
+      end
+
       {:ok,
        socket
        |> assign(folders: folders_with_counts)
@@ -39,6 +43,7 @@ defmodule WishlistsWeb.DashboardLive do
        |> assign(modal_type: nil)
        |> assign(current_filter: "all")
        |> assign(show_folders_panel: false)
+       |> assign(current_time: DateTime.utc_now())
        |> assign(locale: locale)}
     else
       {:ok,
@@ -80,27 +85,40 @@ defmodule WishlistsWeb.DashboardLive do
 
   @impl true
   def handle_event("assign_card", %{"card_id" => card_id, "folder_id" => folder_id}, socket) do
-    Logger.info("Received assign_card event with card_id: #{card_id}, folder_id: #{folder_id}")
+    folder_id = String.to_integer(folder_id)
+    all_folders = socket.assigns.folders ++ socket.assigns.followed_folders
+    folder = Enum.find(all_folders, &(&1.id == folder_id))
 
-    case Cards.assign_card_to_folder(card_id, folder_id) do
-      {:ok, _folder_card} ->
-        cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
-        folders = Folders.list_user_folders(socket.assigns.current_user.id)
+    cond do
+      folder && folder.user_id == socket.assigns.current_user.id ->
+        case Cards.assign_card_to_folder(card_id, folder_id) do
+          {:ok, _folder_card} ->
+            cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
+            folders = Folders.list_user_folders(socket.assigns.current_user.id)
 
-        folders_with_counts =
-          Enum.map(folders, fn folder ->
-            card_count = Folders.get_folder_card_count(folder.id)
-            Map.put(folder, :card_count, card_count)
-          end)
+            folders_with_counts =
+              Enum.map(folders, fn folder ->
+                card_count = Folders.get_folder_card_count(folder.id)
+                Map.put(folder, :card_count, card_count)
+              end)
 
+            {:noreply,
+             socket
+             |> assign(cards: cards)
+             |> assign(folders: folders_with_counts)
+             |> push_event("trigger_card_confetti", %{})
+             |> put_flash(:info, "Card assigned to folder successfully")}
+
+          {:error, _changeset} ->
+            {:noreply,
+             socket
+             |> put_flash(:error, "Failed to assign card to folder")}
+        end
+
+      true ->
         {:noreply,
          socket
-         |> assign(cards: cards)
-         |> assign(folders: folders_with_counts)
-         |> put_flash(:info, "Card assigned to folder successfully")}
-
-      {:error, _changeset} ->
-        {:noreply, socket}
+         |> put_flash(:error, "You don't have permission to add cards to this folder")}
     end
   end
 
@@ -187,6 +205,10 @@ defmodule WishlistsWeb.DashboardLive do
     {:noreply, assign(socket, :current_filter, filter)}
   end
 
+  def handle_event("show_error", %{"message" => message}, socket) do
+    {:noreply, put_flash(socket, :error, message)}
+  end
+
   @impl true
   def handle_info(:close_modal, socket) do
     {:noreply, assign(socket, show_modal: false, modal_type: nil)}
@@ -219,6 +241,7 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(cards: cards)
      |> assign(show_modal: false)
      |> assign(modal_type: nil)
+     |> push_event("trigger_card_confetti", %{})
      |> put_flash(:info, gettext("Card created successfully"))}
   end
 
@@ -238,6 +261,10 @@ defmodule WishlistsWeb.DashboardLive do
     {:noreply, socket}
   end
 
+  def handle_info(:update_times, socket) do
+    {:noreply, assign(socket, current_time: DateTime.utc_now())}
+  end
+
   defp filter_folders(folders, followed_folders, "all"), do: folders ++ followed_folders
   defp filter_folders(folders, _followed_folders, "own"), do: folders
   defp filter_folders(_folders, followed_folders, "shared"), do: followed_folders
@@ -252,6 +279,28 @@ defmodule WishlistsWeb.DashboardLive do
           %{share_token: token} -> ~p"/shared/#{token}"
           nil -> ~p"/folders/#{folder.id}"
         end
+    end
+  end
+
+  defp format_event_date(nil), do: gettext("No event date set")
+
+  defp format_event_date(event_date) do
+    today = Date.utc_today()
+    days_until = Date.diff(event_date, today)
+
+    cond do
+      days_until < 0 ->
+        gettext("Event has passed %{icon}", icon: "🗓️")
+
+      days_until == 0 ->
+        gettext("Event is today %{icon}", icon: "✨")
+
+      days_until == 1 ->
+        gettext("Event is tomorrow %{icon}", icon: "🎉")
+        "Event is tomorrow! 🎉"
+
+      true ->
+        gettext("%{days} days remaining", days: days_until)
     end
   end
 end
