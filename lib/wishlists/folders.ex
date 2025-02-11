@@ -9,6 +9,7 @@ defmodule Wishlists.Folders do
     Folder
     |> where(user_id: ^user_id)
     |> order_by([f], f.inserted_at)
+    |> preload(user: [:account])
     |> Repo.all()
   end
 
@@ -120,7 +121,7 @@ defmodule Wishlists.Folders do
       join: ff in FollowedFolder,
       on: ff.folder_id == f.id,
       where: ff.user_id == ^user_id,
-      preload: [:user]
+      preload: [user: [:account]]
     )
     |> Repo.all()
   end

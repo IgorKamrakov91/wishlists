@@ -122,7 +122,6 @@
                     <%= gettext("Pending Approval") %>
                   </div>
 
-<!-- Approval Controls for Owner -->
                   <%= if @current_user && @current_user.id == @folder.user_id do %>
                     <div class="absolute top-2 left-2 flex space-x-2 z-10">
                       <button
