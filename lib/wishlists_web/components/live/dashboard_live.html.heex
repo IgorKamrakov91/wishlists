@@ -195,22 +195,28 @@
 
                       <div class="mb-3 min-h-[1.5rem]">
                         <%= if folder.event_date do %>
-                          <div class="flex items-center space-x-2 text-sm">
-                            <.icon name="hero-calendar" class="h-4 w-4 text-indigo-600" />
-                            <div
-                              class="countdown-timer"
-                              data-target-date={Calendar.strftime(folder.event_date, "%Y-%m-%d")}
-                              phx-hook="CountdownTimer"
-                              id={"countdown-#{folder.id}"}
-                            >
-                              <span class="text-indigo-700">{gettext("Loading timer")}...</span>
-                            </div>
-                          </div>
+                          <span class={[
+                            "font-medium",
+                            cond do
+                              Date.compare(folder.event_date, @current_time) == :lt ->
+                                "text-purple-600"
+
+                              Date.diff(folder.event_date, @current_time) == 0 ->
+                                "text-emerald-600"
+
+                              Date.diff(folder.event_date, @current_time) == 1 ->
+                                "text-indigo-600"
+
+                              true ->
+                                "text-indigo-700"
+                            end
+                          ]}>
+                            {format_event_date(folder.event_date)}
+                          </span>
                         <% else %>
-                          <div class="flex items-center space-x-2 text-sm text-gray-400">
-                            <.icon name="hero-calendar" class="h-4 w-4" />
-                            <span>{gettext("No event date set")}</span>
-                          </div>
+                          <span class="text-gray-400">
+                            {gettext("No event date set")}
+                          </span>
                         <% end %>
                       </div>
 

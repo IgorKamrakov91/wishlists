@@ -8,7 +8,6 @@ import SparkleEffect from "./hooks/sparkle_effect"
 import DeleteBucket from "./hooks/delete_bucket"
 import DragCard from "./hooks/drag_card"
 import LocaleHook from "./hooks/locale"
-import CountdownTimer from "./hooks/countdown_timer"
 import topbar from "../vendor/topbar"
 
 let Hooks = {
@@ -32,7 +31,6 @@ let Hooks = {
       });
     }
   },
-  CountdownTimer: CountdownTimer,
   Locale: LocaleHook
 }
 
