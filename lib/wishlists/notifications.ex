@@ -51,6 +51,13 @@ defmodule Wishlists.Notifications do
     }
 
     with {:ok, notification} <- create_notification(notification_attrs) do
+      Wishlists.Email.EmailService.send_reservation_notification(
+        folder,
+        folder_card,
+        reserver_name
+      )
+      |> Wishlists.Email.EmailService.handle_delivery()
+
       broadcast_notification(folder.user_id)
       {:ok, notification}
     end

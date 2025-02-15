@@ -60,10 +60,10 @@ defmodule Wishlists.MixProject do
       {:bandit, "~> 1.5"},
       {:bcrypt_elixir, "~> 3.0"},
       {:guardian, "~> 2.3"},
-      # Optional, for token tracking
       {:guardian_db, "~> 2.0"},
       {:jose, "~> 1.11"},
       {:req, "~> 0.5.0"},
+      {:resend, "~> 0.4.0"}
     ]
   end
 

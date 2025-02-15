@@ -1,12 +1,22 @@
 defmodule Wishlists.Accounts do
   alias Wishlists.Repo
   alias Wishlists.Accounts.{User, Account, GuestViewer}
+  alias Wishlists.Email.EmailService
 
   def register_user(attrs \\ %{}) do
     %User{}
     |> User.registration_changeset(attrs)
     |> Ecto.Changeset.cast_assoc(:account, with: &Account.changeset/2)
     |> Repo.insert()
+    |> case do
+      {:ok, user} = result ->
+        EmailService.send_welcome_email(user)
+        |> EmailService.handle_delivery()
+
+        result
+      error ->
+        error
+    end
   end
 
   def get_user_by_email(email) when is_binary(email) do

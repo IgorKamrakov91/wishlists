@@ -29,7 +29,7 @@ config :wishlists, WishlistsWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :wishlists, Wishlists.Mailer, adapter: Swoosh.Adapters.Local
+config :swoosh, :api_client, Swoosh.ApiClient.Hackney
 
 config :wishlists, Wishlists.Accounts.Guardian,
   issuer: "wishlists",
