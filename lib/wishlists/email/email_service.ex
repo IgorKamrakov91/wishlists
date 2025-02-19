@@ -9,6 +9,12 @@ defmodule Wishlists.Email.EmailService do
     |> deliver()
   end
 
+  def send_reset_password_email(user) do
+    user
+    |> EmailTemplates.reset_password_email()
+    |> deliver()
+  end
+
   def send_reservation_notification(folder, folder_card, reserver_name) do
     folder
     |> EmailTemplates.reservation_notification(folder_card, reserver_name)

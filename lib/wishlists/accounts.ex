@@ -14,6 +14,7 @@ defmodule Wishlists.Accounts do
         |> EmailService.handle_delivery()
 
         result
+
       error ->
         error
     end
@@ -62,6 +63,50 @@ defmodule Wishlists.Accounts do
 
   def get_guest_viewer!(id), do: Repo.get!(GuestViewer, id)
 
+  def generate_reset_password_token(email) when is_binary(email) do
+    case get_user_by_email(email) do
+      nil ->
+        {:error, :not_found}
+
+      user ->
+        token = :crypto.strong_rand_bytes(32) |> Base.url_encode64(padding: false)
+        now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+
+        user
+        |> Ecto.Changeset.change(%{
+          reset_password_token: token,
+          reset_password_sent_at: now
+        })
+        |> Repo.update()
+        |> case do
+          {:ok, user} ->
+            EmailService.send_reset_password_email(user)
+            |> EmailService.handle_delivery()
+
+            {:ok, user}
+
+          error ->
+            error
+        end
+    end
+  end
+
+  def reset_password(token, new_password) do
+    case get_user_by_reset_password_token(token) do
+      nil ->
+        {:error, :invalid_token}
+
+      user ->
+        if reset_password_token_expired?(user) do
+          {:error, :token_expired}
+        else
+          user
+          |> User.reset_password_changeset(%{password: new_password})
+          |> Repo.update()
+        end
+    end
+  end
+
   defp valid_password?(%User{hashed_password: hashed_password}, password)
        when is_binary(hashed_password) and byte_size(password) > 0 do
     Bcrypt.verify_pass(password, hashed_password)
@@ -70,5 +115,14 @@ defmodule Wishlists.Accounts do
   defp valid_password?(_, _) do
     Bcrypt.no_user_verify()
     false
+  end
+
+  defp get_user_by_reset_password_token(token) do
+    Repo.get_by(User, reset_password_token: token)
+  end
+
+  defp reset_password_token_expired?(user) do
+    hours_ago = NaiveDateTime.add(NaiveDateTime.utc_now(), -24, :hour)
+    NaiveDateTime.compare(user.reset_password_sent_at, hours_ago) == :lt
   end
 end

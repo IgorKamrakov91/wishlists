@@ -109,6 +109,9 @@ defmodule WishlistsWeb.AuthComponent do
         <.username_input form_data={@form_data} myself={@myself} />
       <% end %>
       <.submit_button view={@view} />
+      <%= if @view == :sign_in do %>
+        <.reset_password myself={@myself} view={@view} />
+      <% end %>
     </.form>
     """
   end
@@ -238,6 +241,20 @@ defmodule WishlistsWeb.AuthComponent do
     """
   end
 
+  defp reset_password(assigns) do
+    ~H"""
+    <div class="mt-2 text-sm text-center">
+      <button
+        class="text-indigo-600 hover:text-indigo-500 font-medium"
+        phx-click="switch_to_reset_password"
+        phx-target={@myself}
+      >
+        {gettext("Forgot your password?")}
+      </button>
+    </div>
+    """
+  end
+
   # Event handlers remain the same
   def handle_event("close_modal", _, socket) do
     send(self(), :close_modal)
@@ -323,6 +340,11 @@ defmodule WishlistsWeb.AuthComponent do
       )
 
     {:noreply, assign(socket, form_data: form_data)}
+  end
+
+  def handle_event("switch_to_reset_password", _, socket) do
+    send(self(), :close_modal)
+    {:noreply, push_navigate(socket, to: ~p"/forgot-password")}
   end
 
   defp error_message(assigns) do

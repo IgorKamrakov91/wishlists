@@ -7,6 +7,8 @@ defmodule Wishlists.Accounts.User do
     field :password, :string, virtual: true
     field :hashed_password, :string
     field :confirmed_at, :naive_datetime
+    field :reset_password_token, :string
+    field :reset_password_sent_at, :naive_datetime
 
     has_one :account, Wishlists.Accounts.Account
 
@@ -46,6 +48,16 @@ defmodule Wishlists.Accounts.User do
     else
       changeset
     end
+  end
+
+  def reset_password_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:password])
+    |> validate_required([:password])
+    |> validate_password()
+    |> hash_password()
+    |> put_change(:reset_password_token, nil)
+    |> put_change(:reset_password_sent_at, nil)
   end
 
   defp put_account_username(changeset) do

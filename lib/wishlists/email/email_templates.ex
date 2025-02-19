@@ -19,6 +19,15 @@ defmodule Wishlists.Email.EmailTemplates do
     |> text_body(reservation_text_body(folder, folder_card, reserver_name))
   end
 
+  def reset_password_email(user) do
+    new()
+    |> to({user.email, user.email})
+    |> from({"Wishlists", "notifications@hochu-hochu.com"})
+    |> subject("Reset Your Password")
+    |> html_body(reset_password_html_body(user))
+    |> text_body(reset_password_text_body(user))
+  end
+
   defp welcome_html_body(user) do
     """
     <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 32px;">
@@ -107,6 +116,41 @@ defmodule Wishlists.Email.EmailTemplates do
 
     Best wishes,
     The Wishlists Team
+    """
+  end
+
+  defp reset_password_html_body(user) do
+    reset_url = "#{WishlistsWeb.Endpoint.url()}/reset-password/#{user.reset_password_token}"
+
+    """
+    <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <h2>Reset Your Password</h2>
+      <p>Hello,</p>
+      <p>You requested to reset your password. Click the link below to set a new password:</p>
+      <p>
+        <a href="#{reset_url}" style="background-color: #4F46E5; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+          Reset Password
+        </a>
+      </p>
+      <p>This link will expire in 24 hours.</p>
+      <p>If you didn't request this, please ignore this email.</p>
+    </div>
+    """
+  end
+
+  defp reset_password_text_body(user) do
+    reset_url = "#{WishlistsWeb.Endpoint.url()}/reset-password/#{user.reset_password_token}"
+
+    """
+    Reset Your Password
+
+    You requested to reset your password. Visit the following link to set a new password:
+
+    #{reset_url}
+
+    This link will expire in 24 hours.
+
+    If you didn't request this, please ignore this email.
     """
   end
 end
