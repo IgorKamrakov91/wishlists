@@ -2,11 +2,23 @@ defmodule WishlistsWeb.PageLive do
   use WishlistsWeb, :live_view
   alias Wishlists.Accounts.Guardian
   alias WishlistsWeb.LocaleContext
+  alias Wishlists.Accounts
 
   on_mount {WishlistsWeb.UserAuth, :mount_current_user}
 
   def mount(_params, session, socket) do
-    locale = session["locale"] || "en"
+    locale =
+      cond do
+        socket.assigns[:current_user] ->
+          Accounts.get_user_locale(socket.assigns.current_user)
+
+        session["locale"] ->
+          session["locale"]
+
+        true ->
+          "en"
+      end
+
     Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
     case Guardian.decode_and_verify(session["guardian_default_token"]) do
@@ -38,6 +50,19 @@ defmodule WishlistsWeb.PageLive do
 
   def handle_event("switch_locale", %{"locale" => locale}, socket) when locale in ["en", "ru"] do
     Gettext.put_locale(WishlistsWeb.Gettext, locale)
+
+    socket =
+      if socket.assigns.current_user do
+        case Accounts.update_user_locale(socket.assigns.current_user, locale) do
+          {:ok, updated_user} ->
+            assign(socket, :current_user, updated_user)
+
+          {:error, _} ->
+            socket
+        end
+      else
+        socket
+      end
 
     {:noreply,
      socket
@@ -96,7 +121,7 @@ defmodule WishlistsWeb.PageLive do
         "terms" => gettext("Terms of Service"),
         "privacy" => gettext("Privacy Policy"),
         "follow_us" => gettext("Follow Us"),
-        "copyright" => gettext("© 2024 Wishlists Manager. All rights reserved."),
+        "copyright" => gettext("© 2025 Wishlists Manager. All rights reserved."),
         "email" => gettext("Email: i.kamrakov@yahoo.com")
       }
     end)

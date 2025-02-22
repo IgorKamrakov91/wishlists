@@ -123,17 +123,32 @@ defmodule Wishlists.Email.EmailTemplates do
     reset_url = "#{WishlistsWeb.Endpoint.url()}/reset-password/#{user.reset_password_token}"
 
     """
-    <div style="font-family: Arial, sans-serif; padding: 20px;">
-      <h2>Reset Your Password</h2>
-      <p>Hello,</p>
-      <p>You requested to reset your password. Click the link below to set a new password:</p>
-      <p>
-        <a href="#{reset_url}" style="background-color: #4F46E5; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-          Reset Password
+    <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 32px;">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 32px; font-weight: 800; letter-spacing: -0.5px;">
+          Reset Your Password
+        </div>
+      </div>
+
+      <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); padding: 2px; border-radius: 12px; margin-bottom: 32px;">
+        <div style="background: white; border-radius: 10px; padding: 24px;">
+          <p style="color: #1f2937; font-size: 18px; margin-bottom: 16px;">Hi #{user.email},</p>
+          <p style="color: #4b5563; line-height: 1.6; margin-bottom: 16px;">You requested to reset your password. Click the button below to set a new password.</p>
+          <p style="color: #4b5563; line-height: 1.6; font-weight: 500;">This link will expire in 24 hours.</p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="#{reset_url}"
+           style="display: inline-block; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);">
+          Reset Password 🔐
         </a>
-      </p>
-      <p>This link will expire in 24 hours.</p>
-      <p>If you didn't request this, please ignore this email.</p>
+      </div>
+
+      <div style="text-align: center; border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 32px;">
+        <p style="color: #6b7280; font-size: 16px; margin-bottom: 8px;">If you didn't request this, please ignore this email.</p>
+        <p style="color: #4f46e5; font-weight: 600; font-size: 14px;">The Wishlists Team</p>
+      </div>
     </div>
     """
   end
@@ -142,7 +157,9 @@ defmodule Wishlists.Email.EmailTemplates do
     reset_url = "#{WishlistsWeb.Endpoint.url()}/reset-password/#{user.reset_password_token}"
 
     """
-    Reset Your Password
+    🔐 Reset Your Password
+
+    Hi #{user.email},
 
     You requested to reset your password. Visit the following link to set a new password:
 
@@ -151,6 +168,9 @@ defmodule Wishlists.Email.EmailTemplates do
     This link will expire in 24 hours.
 
     If you didn't request this, please ignore this email.
+
+    Best wishes,
+    The Wishlists Team
     """
   end
 end

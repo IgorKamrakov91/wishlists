@@ -9,6 +9,7 @@ defmodule Wishlists.Accounts.User do
     field :confirmed_at, :naive_datetime
     field :reset_password_token, :string
     field :reset_password_sent_at, :naive_datetime
+    field :locale, :string, default: "en"
 
     has_one :account, Wishlists.Accounts.Account
 
@@ -19,6 +20,7 @@ defmodule Wishlists.Accounts.User do
     user
     |> cast(attrs, [:email, :password])
     |> validate_required([:email, :password], message: "is required")
+    |> validate_inclusion(:locale, ["en", "ru"])
     |> validate_email()
     |> validate_password()
     |> hash_password()
@@ -58,6 +60,13 @@ defmodule Wishlists.Accounts.User do
     |> hash_password()
     |> put_change(:reset_password_token, nil)
     |> put_change(:reset_password_sent_at, nil)
+  end
+
+  def update_locale_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:locale])
+    |> validate_required([:locale])
+    |> validate_inclusion(:locale, ["en", "ru"])
   end
 
   defp put_account_username(changeset) do

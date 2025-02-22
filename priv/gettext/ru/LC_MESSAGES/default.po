@@ -233,7 +233,7 @@ msgstr "вещей"
 
 #: lib/wishlists_web/components/live/page_live.ex:99
 #, elixir-autogen, elixir-format, fuzzy
-msgid "© 2024 Wishlists Manager. All rights reserved."
+msgid "© 2025 Wishlists Manager. All rights reserved."
 msgstr "© 2025 Менеджер Списков Желаний. Все права защищены."
 
 #: lib/wishlists_web/components/live/folder_live/show.html.heex:87
@@ -799,3 +799,6 @@ msgstr "Завтра событие %{icon}"
 
 msgid "%{days} days remaining"
 msgstr "%{days} дней осталось"
+
+msgid "Forgot your password?"
+msgstr "Забыли пароль?"

@@ -221,7 +221,7 @@ msgstr ""
 
 #: lib/wishlists_web/components/live/page_live.ex:99
 #, elixir-autogen, elixir-format
-msgid "© 2024 Wishlists Manager. All rights reserved."
+msgid "© 2025 Wishlists Manager. All rights reserved."
 msgstr ""
 
 #: lib/wishlists_web/components/live/folder_live/show.html.heex:87

@@ -107,6 +107,16 @@ defmodule Wishlists.Accounts do
     end
   end
 
+  def update_user_locale(user, locale) when locale in ["en", "ru"] do
+    user
+    |> User.update_locale_changeset(%{locale: locale})
+    |> Repo.update()
+  end
+
+  def get_user_locale(user) do
+    user.locale || "en"
+  end
+
   defp valid_password?(%User{hashed_password: hashed_password}, password)
        when is_binary(hashed_password) and byte_size(password) > 0 do
     Bcrypt.verify_pass(password, hashed_password)
