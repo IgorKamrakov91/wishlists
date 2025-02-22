@@ -1,10 +1,82 @@
 <!DOCTYPE html>
-<html lang="en" class="[scrollbar-gutter:stable] h-full">
+<html lang={@locale} class="[scrollbar-gutter:stable] h-full">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <%= if @locale == "en" do %>
+      <title>Wishlists - Create and Share Your Perfect Gift Lists</title>
+      <meta
+        name="description"
+        content="Create and manage your wishlists effortlessly. Keep track of all the things you dream about and share them with friends and family."
+      />
+      <meta
+        name="keywords"
+        content="wishlist, gift registry, wish list manager, gift ideas, present list"
+      />
+    <% else %>
+      <title>Списки Желаний - Создавайте и Делитесь Списками Подарков</title>
+      <meta
+        name="description"
+        content="Создавайте и управляйте списками желаний легко. Отслеживайте все, о чем вы мечтаете, и делитесь с друзьями и семьей."
+      />
+      <meta
+        name="keywords"
+        content="список желаний, регистр подарков, менеджер списков желаний, идеи подарков, список подарков"
+      />
+    <% end %>
+
+    <%= if @locale == "en" do %>
+      <meta property="og:title" content="Wishlists - Create and Share Your Perfect Gift Lists" />
+      <meta
+        property="og:description"
+        content="Create and manage your wishlists effortlessly. Share your dreams with friends and family."
+      />
+    <% else %>
+      <meta
+        property="og:title"
+        content="Списки Желаний - Создавайте и Делитесь Списками Подарков"
+      />
+      <meta
+        property="og:description"
+        content="Создавайте и управляйте списками желаний легко. Делитесь мечтами с друзьями и семьей."
+      />
+    <% end %>
+
+    <meta property="og:image" content="https://hochu-hochu.com/images/og-image.jpg" />
+    <meta property="og:url" content="https://hochu-hochu.com" />
+    <meta property="og:type" content="website" />
+
+    <link rel="alternate" hreflang="en" href="https://hochu-hochu.com/?locale=en" />
+    <link rel="alternate" hreflang="ru" href="https://hochu-hochu.com/?locale=ru" />
+    <link rel="alternate" hreflang="x-default" href="https://hochu-hochu.com" />
+
+    <%= if @locale == "en" do %>
+      <meta name="twitter:title" content="Wishlists - Create and Share Your Perfect Gift Lists" />
+      <meta
+        name="twitter:description"
+        content="Create and manage your wishlists effortlessly. Share your dreams with friends and family."
+      />
+    <% else %>
+      <meta
+        name="twitter:title"
+        content="Списки Желаний - Создавайте и Делитесь Списками Подарков"
+      />
+      <meta
+        name="twitter:description"
+        content="Создавайте и управляйте списками желаний легко. Делитесь мечтами с друзьями и семьей."
+      />
+    <% end %>
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://hochu-hochu.com/images/og-image.jpg" />
+
+    <link
+      rel="canonical"
+      href={"https://hochu-hochu.com#{if @locale == "en", do: "/?locale=en", else: "/?locale=ru"}"}
+    />
+
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="Wishlists">
+    <.live_title default={if @locale == "en", do: "Wishlists", else: "Списки Желаний"}>
       {assigns[:page_title]}
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
