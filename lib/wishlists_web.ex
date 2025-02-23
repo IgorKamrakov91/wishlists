@@ -17,7 +17,7 @@ defmodule WishlistsWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(assets fonts images videos favicon.ico robots.txt sitemap.xml)
+  def static_paths, do: ~w(assets fonts images videos favicon.ico robots.txt sitemap.xsl)
 
   def router do
     quote do

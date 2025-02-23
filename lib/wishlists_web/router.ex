@@ -33,6 +33,7 @@ defmodule WishlistsWeb.Router do
     live("/forgot-password", ResetPasswordLive)
     get("/set_viewer_session", ViewerSessionController, :set_session)
     get("/clear_viewer_session", ViewerSessionController, :clear)
+    get("/sitemap.xml", SitemapController, :index)
   end
 
   scope "/", WishlistsWeb do
