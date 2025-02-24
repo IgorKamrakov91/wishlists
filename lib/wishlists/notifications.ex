@@ -30,6 +30,13 @@ defmodule Wishlists.Notifications do
   end
 
   def notify_reservation(folder, folder_card, reserver_name) do
+    folder =
+      if Ecto.assoc_loaded?(folder.user) do
+        folder
+      else
+        Repo.preload(folder, :user)
+      end
+
     title = String.slice(folder_card.card.title, 0, 50)
     title = if String.length(folder_card.card.title) > 50, do: title <> "...", else: title
 

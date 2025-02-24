@@ -23,6 +23,7 @@ defmodule WishlistsWeb.FolderLive.Show do
 
           {:ok,
            socket
+           |> assign(:locale, locale)
            |> assign(current_user: user)
            |> assign(folder: folder)
            |> assign(cards: cards)
@@ -34,6 +35,7 @@ defmodule WishlistsWeb.FolderLive.Show do
         else
           {:ok,
            socket
+           |> assign(:locale, locale)
            |> put_flash(:error, gettext("You don't have access to this folder"))
            |> redirect(to: ~p"/dashboard")}
         end
@@ -41,6 +43,7 @@ defmodule WishlistsWeb.FolderLive.Show do
       _ ->
         {:ok,
          socket
+         |> assign(:locale, locale)
          |> put_flash(:error, gettext("You must log in to access this page"))
          |> redirect(to: ~p"/")}
     end

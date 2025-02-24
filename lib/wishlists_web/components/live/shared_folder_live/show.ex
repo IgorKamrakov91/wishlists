@@ -17,6 +17,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
         {:ok,
          socket
+         |> assign(:locale, locale)
          |> put_flash(:error, "Invalid or expired share link")
          |> redirect(to: "/")}
 
@@ -37,6 +38,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
         if current_user && current_user.id == folder.user_id do
           {:ok,
            socket
+           |> assign(:locale, locale)
            |> redirect(to: ~p"/folders/#{folder.id}")}
         else
           is_following = current_user && Folders.is_following?(current_user.id, folder.id)
@@ -47,6 +49,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
           socket =
             socket
+            |> assign(:locale, locale)
             |> assign(:shared_folder, shared_folder)
             |> assign(:folder, folder)
             |> assign(:cards, cards)
@@ -147,7 +150,8 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
     folder_card_id = String.to_integer(folder_card_id)
     folder_card = Cards.get_folder_card!(folder_card_id)
 
-    # Проверяем статус карточки перед резервированием
+    folder = Wishlists.Repo.preload(socket.assigns.folder, :user)
+
     if folder_card.card.status != "approved" do
       {:noreply,
        socket
@@ -181,12 +185,12 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
       case Cards.reserve_card(folder_card_id, attrs) do
         {:ok, _reservation} ->
           Wishlists.Notifications.notify_reservation(
-            socket.assigns.folder,
+            folder,
             folder_card,
             reserver_name
           )
 
-          cards = Cards.list_folder_cards(socket.assigns.folder.id)
+          cards = Cards.list_folder_cards(folder.id)
           {:noreply, assign(socket, :cards, cards)}
 
         {:error, _changeset} ->

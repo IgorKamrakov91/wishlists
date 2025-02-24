@@ -3,7 +3,13 @@ defmodule WishlistsWeb.NewPasswordLive do
   alias Wishlists.Accounts
 
   def mount(%{"token" => token}, _session, socket) do
-    {:ok, assign(socket, token: token, password: "", error_message: nil, success: false)}
+    {:ok,
+     socket
+     |> assign(:token, token)
+     |> assign(:password, "")
+     |> assign(:error_message, nil)
+     |> assign(:success, false)
+     |> assign(:locale, "en")}
   end
 
   def handle_event("reset_password", %{"password" => password}, socket) do
@@ -42,7 +48,7 @@ defmodule WishlistsWeb.NewPasswordLive do
 
         <%= if @error_message do %>
           <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
-            <%= @error_message %>
+            {@error_message}
           </div>
         <% end %>
 
@@ -59,7 +65,10 @@ defmodule WishlistsWeb.NewPasswordLive do
               minlength="8"
             />
           </div>
-          <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">
+          <button
+            type="submit"
+            class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
+          >
             Set New Password
           </button>
         </form>

@@ -11,6 +11,13 @@ defmodule Wishlists.Email.EmailTemplates do
   end
 
   def reservation_notification(folder, folder_card, reserver_name) do
+    folder =
+      if Ecto.assoc_loaded?(folder.user) do
+        folder
+      else
+        Wishlists.Repo.preload(folder, :user)
+      end
+
     new()
     |> to({folder.user.email, folder.user.email})
     |> from({"Wishlists", "notifications@hochu-hochu.com"})
