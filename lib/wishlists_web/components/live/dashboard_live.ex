@@ -250,6 +250,7 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(show_modal: false)
      |> assign(modal_type: nil)
      |> push_event("trigger_card_confetti", %{})
+     |> push_event("init_new_card", %{})
      |> put_flash(:info, gettext("Card created successfully"))}
   end
 

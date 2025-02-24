@@ -224,12 +224,12 @@ msgstr "Ваша Вселенная Желаний"
 #: lib/wishlists_web/components/live/dashboard_live.html.heex:190
 #, elixir-autogen, elixir-format
 msgid "item"
-msgstr "вещь"
+msgstr "шт."
 
 #: lib/wishlists_web/components/live/dashboard_live.html.heex:190
 #, elixir-autogen, elixir-format
 msgid "items"
-msgstr "вещей"
+msgstr "шт."
 
 #: lib/wishlists_web/components/live/page_live.ex:99
 #, elixir-autogen, elixir-format, fuzzy
@@ -780,10 +780,10 @@ msgid "Welcome Back!"
 msgstr "С возвращением!"
 
 msgid "Your wish list is empty"
-msgstr "Твой список желаний пока что пуст"
+msgstr "Твой список желаний пуст"
 
-msgid "Add your first wish by clicking 'Make a Wish' button. Then you can drag it to any collection above!"
-msgstr "Добавь свое первое желание, нажав кнопку 'Загадать Желание'. Затем ты сможешь перетащить его в любую коллекцию выше!"
+msgid "Add your wish by clicking 'Make a Wish' button. Then you can drag it to any collection above!"
+msgstr "Добавь свое желание, нажав кнопку 'Загадать Желание'. Затем ты сможешь перетащить его в любую коллекцию выше!"
 
 msgid "Make Your First Wish"
 msgstr "Загадай Первое Желание"

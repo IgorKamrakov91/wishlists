@@ -9,6 +9,7 @@ import DeleteBucket from "./hooks/delete_bucket"
 import DragCard from "./hooks/drag_card"
 import LocaleHook from "./hooks/locale"
 import CardConfettiEffect from "./hooks/card_confetti_effect"
+import ImageLoader from "./hooks/image_loader"
 import topbar from "../vendor/topbar"
 
 let Hooks = {
@@ -26,6 +27,7 @@ let Hooks = {
   CardConfettiEffect,
   DragCard,
   DeleteBucket,
+  ImageLoader,
   CopyToClipboard: {
     mounted() {
       window.addEventListener('clipboard-copied', () => {
@@ -92,6 +94,37 @@ window.addEventListener("phx:page-loading-stop", () => {
   if (locale) {
     localStorage.setItem('locale', locale);
   }
+});
+
+window.addEventListener("phx:init_new_card", () => {
+  setTimeout(() => {
+    document.querySelectorAll('[data-card-id]').forEach(cardElement => {
+      const hookContext = {
+        el: cardElement,
+        pushEvent: (event, payload) => {
+          liveSocket.pushEvent(event, payload, cardElement);
+        }
+      };
+
+      if (DragCard.mounted) {
+        DragCard.mounted.call(hookContext);
+      }
+    });
+
+    const foldersContainer = document.getElementById('folders-container');
+    if (foldersContainer) {
+      const hookContext = {
+        el: foldersContainer,
+        pushEvent: (event, payload) => {
+          liveSocket.pushEvent(event, payload, foldersContainer);
+        }
+      };
+
+      if (DragAndDrop.mounted) {
+        DragAndDrop.mounted.call(hookContext);
+      }
+    }
+  }, 100);
 });
 
 document.addEventListener("DOMContentLoaded", () => {

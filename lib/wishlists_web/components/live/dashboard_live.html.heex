@@ -43,7 +43,7 @@
     phx-hook="FloatingBar"
   >
     <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
-      <div class="flex space-x-4 overflow-x-auto hide-scrollbar pb-2">
+      <div class="flex space-x-4 overflow-x-auto hide-scrollbar pb-2" id="floating-folders-container" phx-hook="DragAndDrop">
         <div class="flex-none">
           <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl p-3">
             <span class="text-sm font-medium">{gettext("Drop to add to:")}</span>
@@ -54,6 +54,8 @@
             <div
               class="bg-white/80 backdrop-blur-sm rounded-xl p-3 shadow-md hover:shadow-lg transition-all duration-200 drag-target transform hover:-translate-y-0.5"
               data-folder-id={folder.id}
+              data-owner={if folder.user_id == @current_user.id, do: "true", else: "false"}
+              id={"floating-folder-#{folder.id}"}
             >
               <div class="flex items-center space-x-3">
                 <div class="h-6 w-6 bg-indigo-100 rounded-full flex items-center justify-center">
@@ -284,13 +286,14 @@
       <%= if Enum.empty?(@cards) do %>
         <!-- Empty state -->
         <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 sm:p-12 text-center">
-          <button
-            phx-click="new_card"
-            class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2 mx-auto"
-          >
-            <.icon name="hero-sparkles" class="h-5 w-5" />
-            <span>{gettext("Make Your First Wish")}</span>
-          </button>
+          <h3 class="text-2xl font-bold text-indigo-900 mb-4">
+            {gettext("Your wish list is empty")}
+          </h3>
+          <p class="text-indigo-600 mb-8">
+            {gettext(
+              "Add your wish by clicking 'Make a Wish' button. Then you can drag it to any collection above!"
+            )}
+          </p>
         </div>
       <% else %>
         <div
@@ -315,16 +318,13 @@
                   phx-value-id={card.id}
                 >
                   <img
-                    src={
-                      if card.image_url && card.image_url != "",
-                        do: card.image_url,
-                        else: "/images/gift.jpg"
-                    }
+                    src={if card.image_url && card.image_url != "", do: card.image_url, else: "/images/gift.jpg"}
                     alt={card.title}
                     class="w-full h-full object-cover rounded-xl"
                     loading="lazy"
                     phx-hook="ImageLoader"
                     id={"image-#{card.id}"}
+                    onerror="this.src='/images/gift.jpg'"
                   />
                   <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <div class="absolute top-2 right-2 bg-white/90 w-8 h-8 rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-50 hover:text-rose-700 flex items-center justify-center">
