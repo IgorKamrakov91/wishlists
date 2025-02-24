@@ -42,7 +42,7 @@ defmodule WishlistsWeb.ResetPasswordLive do
         {:noreply,
          socket
          |> put_flash(:info, "Password reset successfully!")
-         |> redirect(to: ~p"/sign-in")}
+         |> redirect(to: ~p"/")}
 
       {:error, :invalid_token} ->
         {:noreply, assign(socket, error_message: "Invalid or expired token")}

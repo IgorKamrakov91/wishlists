@@ -6,7 +6,6 @@ const CardConfettiEffect = {
   },
 
   createConfettiBurst() {
-    // Создаем множество конфетти из центра экрана
     for (let i = 0; i < 50; i++) {
       this.createConfetti();
     }
@@ -16,25 +15,21 @@ const CardConfettiEffect = {
     const confetti = document.createElement("div");
     confetti.className = "confetti";
 
-    // Позиционируем конфетти в центре экрана
     const startX = window.innerWidth / 2;
     const startY = window.innerHeight / 2;
 
-    // Random size
     const size = Math.random() * 10 + 5;
 
-    // Random colors - используем цвета в стиле приложения
     const colors = [
-      '#818cf8', // индиго
-      '#8b5cf6', // фиолетовый
-      '#d946ef', // розовый
-      '#6366f1', // индиго-600
-      '#a855f7', // фиолетовый-500
-      '#ec4899', // розовый-500
+      '#818cf8',
+      '#8b5cf6',
+      '#d946ef',
+      '#6366f1',
+      '#a855f7',
+      '#ec4899',
     ];
     const color = colors[Math.floor(Math.random() * colors.length)];
 
-    // Random shape
     const shapes = ['circle', 'square', 'rectangle'];
     const shape = shapes[Math.floor(Math.random() * shapes.length)];
 
@@ -54,10 +49,9 @@ const CardConfettiEffect = {
 
     document.body.appendChild(confetti);
 
-    // Animation properties
     const angle = Math.random() * Math.PI * 2;
-    const velocity = Math.random() * 300 + 100; // Увеличенная скорость
-    const rotationSpeed = Math.random() * 720; // Увеличенная скорость вращения
+    const velocity = Math.random() * 300 + 100;
+    const rotationSpeed = Math.random() * 720;
     const lifetime = Math.random() * 2000 + 1000;
 
     let opacity = 1;

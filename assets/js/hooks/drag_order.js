@@ -3,10 +3,18 @@ const DragOrder = {
     this.initDragAndDrop();
   },
 
+  updated() {
+    this.initDragAndDrop();
+  },
+
   initDragAndDrop() {
     const container = this.el;
 
-    new Sortable(container, {
+    if (this.sortable) {
+      this.sortable.destroy();
+    }
+
+    this.sortable = new Sortable(container, {
       animation: 150,
       ghostClass: 'bg-indigo-100',
       onEnd: (evt) => {
@@ -21,7 +29,13 @@ const DragOrder = {
         }
       }
     });
+  },
+
+  destroyed() {
+    if (this.sortable) {
+      this.sortable.destroy();
+    }
   }
-}
+};
 
 export default DragOrder;

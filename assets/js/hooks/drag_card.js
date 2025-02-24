@@ -1,8 +1,17 @@
 const DragCard = {
   mounted() {
+    this.initializeDrag();
+  },
+
+  updated() {
+    this.initializeDrag();
+  },
+
+  initializeDrag() {
     this.el.addEventListener('dragstart', (e) => {
       console.log('Drag started with card ID:', this.el.dataset.cardId);
       this.el.dataset.draggingToDelete = 'false';
+      this.el.classList.add("dragging");
 
       e.dataTransfer.setData('application/json', JSON.stringify({
         cardId: this.el.dataset.cardId,
@@ -14,11 +23,11 @@ const DragCard = {
     });
 
     this.el.addEventListener('dragend', () => {
+      this.el.classList.remove("dragging");
       this.hideFloatingBar();
       this.el.classList.remove("opacity-50");
     });
 
-    // Touch events handlers
     this.el.addEventListener("touchstart", (e) => this.handleTouchStart(e));
     this.el.addEventListener("touchmove", (e) => this.handleTouchMove(e));
     this.el.addEventListener("touchend", (e) => this.handleTouchEnd(e));
@@ -43,7 +52,6 @@ const DragCard = {
         this.el.classList.add("opacity-50");
         this.showFloatingBar();
 
-        // Создаем "призрак" карточки
         if (!this.ghost) {
           this.ghost = this.el.cloneNode(true);
           this.ghost.style.position = "fixed";
@@ -64,7 +72,6 @@ const DragCard = {
         this.ghost.style.top = `${touch.clientY - this.el.offsetHeight / 2}px`;
       }
 
-      // Проверяем попадание в папки
       const folders = document.querySelectorAll('.drag-target');
       let foundFolder = null;
 
@@ -118,6 +125,7 @@ const DragCard = {
     const bar = document.getElementById("floating-folders-bar");
     if (bar) {
       bar.style.transform = "translateY(0)";
+      bar.style.opacity = "1";
     }
   },
 
@@ -125,6 +133,7 @@ const DragCard = {
     const bar = document.getElementById("floating-folders-bar");
     if (bar) {
       bar.style.transform = "translateY(-100%)";
+      bar.style.opacity = "0";
     }
   }
 };

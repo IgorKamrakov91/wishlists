@@ -1,5 +1,13 @@
 const DragAndDrop = {
   mounted() {
+    this.initializeDropZones();
+  },
+
+  updated() {
+    this.initializeDropZones();
+  },
+
+  initializeDropZones() {
     const setupDropTarget = (folder) => {
       let dragCounter = 0;
 
@@ -40,8 +48,11 @@ const DragAndDrop = {
 
         if (cardId && folderId && !folder.dataset.processing) {
           folder.dataset.processing = "true";
-          this.pushEvent("assign_card", {
-            card_id: cardId,
+          this.pushEvent("card_dropped", {
+            card_data: {
+              cardId: cardId,
+              type: 'card'
+            },
             folder_id: folderId
           });
 
@@ -52,7 +63,6 @@ const DragAndDrop = {
       });
     };
 
-    // Make cards draggable
     const cards = document.querySelectorAll('[data-card-id]');
     cards.forEach(card => {
       card.addEventListener("dragstart", e => {
@@ -66,7 +76,6 @@ const DragAndDrop = {
       });
     });
 
-    // Handle all folder drop zones
     const folders = document.querySelectorAll('[data-folder-id]');
     folders.forEach(setupDropTarget);
   }

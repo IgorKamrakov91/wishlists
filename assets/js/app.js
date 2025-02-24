@@ -8,12 +8,12 @@ import SparkleEffect from "./hooks/sparkle_effect"
 import DeleteBucket from "./hooks/delete_bucket"
 import DragCard from "./hooks/drag_card"
 import LocaleHook from "./hooks/locale"
-import CardConfettiEffect from "./hooks/card_conferri_effect"
+import CardConfettiEffect from "./hooks/card_confetti_effect"
 import topbar from "../vendor/topbar"
 
 let Hooks = {
   DragAndDrop,
-  FloatingBar,  // Add FloatingBar to hooks
+  FloatingBar,
   UserToken: {
     mounted() {
       this.handleEvent("user-token", ({ token }) => {
@@ -21,15 +21,15 @@ let Hooks = {
       })
     }
   },
-  DragOrder: DragOrder,
-  SparkleEffect: SparkleEffect,
-  CardConfettiEffect: CardConfettiEffect,
-  DragCard: DragCard,
-  DeleteBucket: DeleteBucket,
+  DragOrder,
+  SparkleEffect,
+  CardConfettiEffect,
+  DragCard,
+  DeleteBucket,
   CopyToClipboard: {
     mounted() {
       window.addEventListener('clipboard-copied', () => {
-        this.pushEvent("share_folder", {});
+        this.pushEvent("copied_to_clipboard", {});
       });
     }
   },
@@ -49,6 +49,16 @@ let liveSocket = new LiveSocket("/live", Socket, {
   hooks: Hooks
 })
 
+window.addEventListener("phx:reinitialize_drag", () => {
+  requestAnimationFrame(() => {
+    document.querySelectorAll('[data-card-id]').forEach(card => {
+      if (card._dragCard) {
+        card._dragCard.initializeDrag();
+      }
+    });
+  });
+});
+
 window.copyToClipboard = async function (event, text) {
   event.preventDefault();
   try {
@@ -62,7 +72,6 @@ window.copyToClipboard = async function (event, text) {
   }
 };
 
-// Show progress bar on live navigation and form submits
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
 window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
@@ -85,7 +94,6 @@ window.addEventListener("phx:page-loading-stop", () => {
   }
 });
 
-// При загрузке страницы установить язык из localStorage
 document.addEventListener("DOMContentLoaded", () => {
   const savedLocale = localStorage.getItem('locale');
   if (savedLocale && !window.location.search.includes('locale=')) {
@@ -93,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// connect if there are any LiveViews on the page
 liveSocket.connect()
 
 window.liveSocket = liveSocket
