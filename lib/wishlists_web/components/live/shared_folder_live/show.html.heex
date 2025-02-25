@@ -146,18 +146,40 @@
                 <% end %>
 
                 <div class="relative h-48 mb-4">
-                  <img
-                    src={
-                      if folder_card.card.image_url && folder_card.card.image_url != "",
-                        do: folder_card.card.image_url,
-                        else: "/images/gift.jpg"
-                    }
-                    alt={folder_card.card.title}
-                    class="w-full h-full object-cover rounded-xl"
-                    loading="lazy"
-                    phx-hook="ImageLoader"
-                    id={"image-#{folder_card.card.id}"}
-                  />
+                <%= if folder_card.card.link_url do %>
+                    <a
+                      href={folder_card.card.link_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="block h-full"
+                    >
+                      <img
+                        src={
+                          if folder_card.card.image_url && folder_card.card.image_url != "",
+                            do: folder_card.card.image_url,
+                            else: "/images/gift.jpg"
+                        }
+                        alt={folder_card.card.title}
+                        class="w-full h-full object-cover rounded-xl cursor-pointer"
+                        loading="lazy"
+                        phx-hook="ImageLoader"
+                        id={"image-#{folder_card.card.id}"}
+                      />
+                    </a>
+                  <% else %>
+                    <img
+                      src={
+                        if folder_card.card.image_url && folder_card.card.image_url != "",
+                          do: folder_card.card.image_url,
+                          else: "/images/gift.jpg"
+                      }
+                      alt={folder_card.card.title}
+                      class="w-full h-full object-cover rounded-xl"
+                      loading="lazy"
+                      phx-hook="ImageLoader"
+                      id={"image-#{folder_card.card.id}"}
+                    />
+                  <% end %>
 
                   <%= if folder_card.reservation do %>
                     <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
