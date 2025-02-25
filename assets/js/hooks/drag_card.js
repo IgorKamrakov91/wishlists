@@ -10,6 +10,9 @@ const DragCard = {
   initializeDrag() {
     this.cleanup();
 
+    this.ghost = null; // Single ghost reference
+    this.dragging = false;
+
     this.dragStartHandler = (e) => {
       console.log('Drag started with card ID:', this.el.dataset.cardId);
       this.el.dataset.draggingToDelete = 'false';
@@ -50,57 +53,26 @@ const DragCard = {
           this.el.classList.add("opacity-50");
           this.showFloatingBar();
 
+          // Create ghost only once
           if (!this.ghost) {
-            this.ghost = this.el.cloneNode(true);
-            this.ghost.style.position = "fixed";
-            this.ghost.style.pointerEvents = "none";
-            this.ghost.style.opacity = "0.8";
-            this.ghost.style.width = `${this.el.offsetWidth}px`;
-            document.body.appendChild(this.ghost);
+            this.createGhost();
           }
         }
       }
 
-      if (this.dragging) {
+      if (this.dragging && this.ghost) {
         e.preventDefault();
         const touch = e.touches[0];
-
-        if (this.ghost) {
-          this.ghost.style.left = `${touch.clientX - this.el.offsetWidth / 2}px`;
-          this.ghost.style.top = `${touch.clientY - this.el.offsetHeight / 2}px`;
-        }
-
-        const folders = document.querySelectorAll('.drag-target');
-        let foundFolder = null;
-
-        folders.forEach(folder => {
-          const rect = folder.getBoundingClientRect();
-          if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
-            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-            foundFolder = folder;
-          }
-        });
-
-        if (foundFolder) {
-          folders.forEach(f => f.querySelector('.drag-area')?.classList.remove('opacity-50'));
-          foundFolder.querySelector('.drag-area')?.classList.add('opacity-50');
-          this.currentFolder = foundFolder;
-        } else {
-          folders.forEach(f => f.querySelector('.drag-area')?.classList.remove('opacity-50'));
-          this.currentFolder = null;
-        }
+        this.updateGhostPosition(touch);
+        this.checkFolderCollisions(touch);
       }
     };
 
-    this.touchEndHandler = (e) => {
+    this.touchEndHandler = () => {
       if (this.dragging) {
         this.el.classList.remove("opacity-50");
         this.hideFloatingBar();
-
-        if (this.ghost) {
-          this.ghost.remove();
-          this.ghost = null;
-        }
+        this.removeGhost();
 
         if (this.currentFolder) {
           this.pushEvent("card_dropped", {
@@ -126,6 +98,54 @@ const DragCard = {
     this.el.addEventListener('touchend', this.touchEndHandler);
   },
 
+  // New helper methods
+  createGhost() {
+    this.removeGhost(); // Ensure any existing ghost is removed
+    this.ghost = this.el.cloneNode(true);
+    this.ghost.style.position = "fixed";
+    this.ghost.style.pointerEvents = "none";
+    this.ghost.style.opacity = "0.8";
+    this.ghost.style.width = `${this.el.offsetWidth}px`;
+    this.ghost.classList.add('ghost-element'); // Add class for easy identification
+    document.body.appendChild(this.ghost);
+  },
+
+  updateGhostPosition(touch) {
+    if (this.ghost) {
+      this.ghost.style.left = `${touch.clientX - this.el.offsetWidth / 2}px`;
+      this.ghost.style.top = `${touch.clientY - this.el.offsetHeight / 2}px`;
+    }
+  },
+
+  removeGhost() {
+    if (this.ghost) {
+      this.ghost.remove();
+      this.ghost = null;
+    }
+  },
+
+  checkFolderCollisions(touch) {
+    const folders = document.querySelectorAll('.drag-target');
+    let foundFolder = null;
+
+    folders.forEach(folder => {
+      const rect = folder.getBoundingClientRect();
+      if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+          touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        foundFolder = folder;
+      }
+    });
+
+    folders.forEach(f => f.querySelector('.drag-area')?.classList.remove('opacity-50'));
+
+    if (foundFolder) {
+      foundFolder.querySelector('.drag-area')?.classList.add('opacity-50');
+      this.currentFolder = foundFolder;
+    } else {
+      this.currentFolder = null;
+    }
+  },
+
   cleanup() {
     if (this.dragStartHandler) {
       this.el.removeEventListener('dragstart', this.dragStartHandler);
@@ -143,10 +163,7 @@ const DragCard = {
       this.el.removeEventListener('touchend', this.touchEndHandler);
     }
 
-    if (this.ghost) {
-      this.ghost.remove();
-      this.ghost = null;
-    }
+    this.removeGhost();
   },
 
   destroyed() {
