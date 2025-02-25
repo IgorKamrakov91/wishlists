@@ -266,15 +266,17 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
 
   defp save_card(socket, :new, card_params) do
     is_suggestion = Map.get(socket.assigns, :is_suggestion, false)
+    folder = socket.assigns.folder
 
     card_params =
       if is_suggestion do
         card_params
         |> Map.put("status", "pending")
-        |> Map.put("user_id", socket.assigns.folder.user_id)
+        |> Map.put("user_id", folder.user_id)
         |> add_suggester_info(socket.assigns)
       else
-        Map.put(card_params, "user_id", socket.assigns.current_user.id)
+        card_params
+        |> Map.put("user_id", socket.assigns.current_user.id)
       end
 
     case Cards.create_card(card_params) do
@@ -282,7 +284,17 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
         if is_suggestion do
           send(self(), {:card_suggested, card})
         else
-          send(self(), {:card_created})
+          case Cards.assign_card_to_folder(card.id, folder.id) do
+            {:ok, _} ->
+              send(self(), {:card_created})
+              {:noreply, socket}
+
+            {:error, _} ->
+              {:noreply,
+               socket
+               |> put_flash(:error, gettext("Failed to assign card to folder"))
+               |> assign(form: to_form(Cards.change_card(card)))}
+          end
         end
 
         {:noreply, socket}

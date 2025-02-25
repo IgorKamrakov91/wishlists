@@ -106,7 +106,6 @@
                   {gettext("Pending Approval")}
                 </div>
 
-<!-- Approval Controls for Owner -->
                 <div class="absolute top-2 left-2 flex space-x-2 z-10">
                   <button
                     phx-click="approve_card"
@@ -127,7 +126,6 @@
                 </div>
               <% end %>
 
-<!-- Image section -->
               <div class="relative h-48 mb-4">
                 <img
                   src={
@@ -200,19 +198,42 @@
           </div>
         <% end %>
       </div>
+      <div class="flex justify-center mt-8">
+        <button
+          phx-click="new_card"
+          class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
+        >
+          <.icon name="hero-plus" class="h-5 w-5" />
+          <span>{gettext("Add Wishes")}</span>
+        </button>
+      </div>
     <% end %>
   </main>
 
   <%= if @show_modal do %>
-    <.live_component
-      module={WishlistsWeb.FolderLive.FolderFormComponent}
-      id="folder-form"
-      action={@action}
-      folder={@folder}
-      modal_title={@modal_title}
-      submit_button_text={@submit_button_text}
-      current_user={@current_user}
-    />
+    <%= case @modal_type do %>
+      <% :folder -> %>
+        <.live_component
+          module={WishlistsWeb.FolderLive.FolderFormComponent}
+          id="folder-form"
+          action={@action}
+          folder={@folder}
+          modal_title={@modal_title}
+          submit_button_text={@submit_button_text}
+          current_user={@current_user}
+        />
+      <% :card -> %>
+        <.live_component
+          module={WishlistsWeb.CardLive.CardFormComponent}
+          id="card-form"
+          action={@action}
+          card={@card}
+          modal_title={@modal_title}
+          submit_button_text={@submit_button_text}
+          current_user={@current_user}
+          folder={@folder}
+        />
+    <% end %>
   <% end %>
 
   <%= if @show_delete_modal do %>

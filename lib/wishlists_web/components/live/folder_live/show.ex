@@ -31,7 +31,8 @@ defmodule WishlistsWeb.FolderLive.Show do
            |> assign(show_modal: false)
            |> assign(show_share_modal: false)
            |> assign(share_url: share_url)
-           |> assign(show_delete_modal: false)}
+           |> assign(show_delete_modal: false)
+           |> assign(modal_type: nil)}
         else
           {:ok,
            socket
@@ -161,6 +162,17 @@ defmodule WishlistsWeb.FolderLive.Show do
     end
   end
 
+  def handle_event("new_card", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:card, %Wishlists.Cards.Card{})
+     |> assign(:modal_title, gettext("Create A Wish!"))
+     |> assign(:submit_button_text, gettext("Create"))
+     |> assign(:action, :new)
+     |> assign(:modal_type, :card)
+     |> assign(:show_modal, true)}
+  end
+
   @impl true
   def handle_event("show_delete_modal", _, socket) do
     {:noreply, assign(socket, show_delete_modal: true)}
@@ -247,6 +259,17 @@ defmodule WishlistsWeb.FolderLive.Show do
 
   def handle_info({:new_notification}, socket) do
     {:noreply, socket}
+  end
+
+  def handle_info({:card_created}, socket) do
+    cards = Cards.list_folder_cards(socket.assigns.folder.id)
+
+    {:noreply,
+     socket
+     |> assign(cards: cards)
+     |> assign(show_modal: false)
+     |> assign(modal_type: nil)
+     |> put_flash(:info, gettext("Card created successfully"))}
   end
 
   defp get_suggester_name(card) do
