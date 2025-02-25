@@ -32,7 +32,7 @@ defmodule WishlistsWeb.FolderLive.Show do
            |> assign(show_share_modal: false)
            |> assign(share_url: share_url)
            |> assign(show_delete_modal: false)
-           |> assign(modal_type: nil)}
+           |> assign(modal_type: :folder)}
         else
           {:ok,
            socket

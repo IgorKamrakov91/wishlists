@@ -3,24 +3,30 @@ defmodule Wishlists.Folders.CleanupWorker do
   alias Wishlists.{Repo, Folders, Cards}
   alias Wishlists.Folders.Folder
   import Ecto.Query
+  require Logger
 
   def start_link(_) do
+    Logger.info("Starting CleanupWorker")
     GenServer.start_link(__MODULE__, %{})
   end
 
   def init(state) do
-    schedule_cleanup()
+    Logger.info("Initializing CleanupWorker")
+    Process.send(self(), :cleanup, [:noconnect])
     {:ok, state}
   end
 
   def handle_info(:cleanup, state) do
+    Logger.info("Running cleanup task")
     cleanup_expired_folders()
     schedule_cleanup()
     {:noreply, state}
   end
 
   defp schedule_cleanup do
-    Process.send_after(self(), :cleanup, get_milliseconds_until_midnight())
+    milliseconds = get_milliseconds_until_midnight()
+    Logger.info("Scheduling next cleanup in #{milliseconds} milliseconds")
+    Process.send_after(self(), :cleanup, milliseconds)
   end
 
   defp get_milliseconds_until_midnight do
@@ -31,21 +37,27 @@ defmodule Wishlists.Folders.CleanupWorker do
   end
 
   defp cleanup_expired_folders do
-    yesterday = Date.add(Date.utc_today(), -1)
+    today = Date.utc_today()
+    Logger.info("Checking for folders with event_date before #{today}")
 
     query =
       from f in Folder,
         where: not is_nil(f.event_date),
-        where: f.event_date <= ^yesterday
+        where: f.event_date < ^today
 
-    Repo.all(query)
+    folders = Repo.all(query)
+    Logger.info("Found #{length(folders)} expired folders: #{inspect(folders, pretty: true)}")
+
+    folders
     |> Enum.each(fn folder ->
+      Logger.info("Attempting to cleanup folder #{folder.id}")
       cleanup_folder(folder)
     end)
   end
 
   defp cleanup_folder(folder) do
     folder_cards = Cards.list_folder_cards(folder.id)
+    Logger.info("Processing #{length(folder_cards)} cards in folder #{folder.id}")
 
     Repo.transaction(fn ->
       reserved_card_ids =
@@ -53,12 +65,23 @@ defmodule Wishlists.Folders.CleanupWorker do
         |> Enum.filter(& &1.reservation)
         |> Enum.map(& &1.card_id)
 
+      Logger.info("Found #{length(reserved_card_ids)} reserved cards in folder #{folder.id}")
+
       if length(reserved_card_ids) > 0 do
-        from(c in Cards.Card, where: c.id in ^reserved_card_ids)
-        |> Repo.delete_all()
+        {deleted_count, _} =
+          from(c in Cards.Card, where: c.id in ^reserved_card_ids)
+          |> Repo.delete_all()
+
+        Logger.info("Deleted #{deleted_count} reserved cards from folder #{folder.id}")
       end
 
-      Folders.delete_folder(folder)
+      case Folders.delete_folder(folder) do
+        {:ok, _} ->
+          Logger.info("Successfully deleted folder #{folder.id}")
+
+        {:error, reason} ->
+          Logger.error("Failed to delete folder #{folder.id}: #{inspect(reason)}")
+      end
     end)
   end
 end
