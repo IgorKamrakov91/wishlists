@@ -4,6 +4,8 @@ defmodule WishlistsWeb.FolderLive.FolderFormComponent do
 
   @impl true
   def render(assigns) do
+    assigns = assign(assigns, :event_types, get_event_types())
+
     ~H"""
     <div class="fixed inset-0 bg-gradient-to-b from-indigo-100/75 via-purple-50/75 to-pink-100/75 backdrop-blur-sm transition-opacity z-50">
       <div class="fixed inset-0 z-50 overflow-y-auto">
@@ -63,6 +65,41 @@ defmodule WishlistsWeb.FolderLive.FolderFormComponent do
                           "If you set an event date, this collection and all reserved items will be automatically deleted 24 hours after the event. Unreserved items will return to your general list."
                         )}
                       </div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-700">
+                      {gettext("Event Type")}
+                    </label>
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                      <%= for event_type <- @event_types do %>
+                        <div class="relative">
+                          <input
+                            type="radio"
+                            name="folder[event_type]"
+                            value={event_type.id}
+                            id={"event-type-#{event_type.id}"}
+                            checked={@form[:event_type].value == event_type.id}
+                            class="peer sr-only"
+                          />
+                          <label
+                            for={"event-type-#{event_type.id}"}
+                            class="flex flex-col items-center justify-between h-24 p-4 rounded-xl border-2 cursor-pointer transition-all
+                                   peer-checked:border-indigo-600 peer-checked:bg-indigo-50
+                                   hover:border-indigo-300 hover:bg-indigo-50/50
+                                   border-gray-200"
+                          >
+                            <span class="text-2xl">{event_type.icon}</span>
+                            <span class="text-xs font-medium text-gray-700 text-center leading-tight">
+                              {event_type.label}
+                            </span>
+                          </label>
+                          <div class="absolute top-2 right-2 opacity-0 peer-checked:opacity-100 transition-opacity">
+                            <.icon name="hero-check-circle" class="h-5 w-5 text-indigo-600" />
+                          </div>
+                        </div>
+                      <% end %>
                     </div>
                   </div>
 
@@ -159,5 +196,46 @@ defmodule WishlistsWeb.FolderLive.FolderFormComponent do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
     end
+  end
+
+  defp get_event_types do
+    [
+      %{
+        id: "birthday",
+        icon: "🎂",
+        label: gettext("Birthday"),
+        description: gettext("Birthday celebration")
+      },
+      %{
+        id: "wedding",
+        icon: "💒",
+        label: gettext("Wedding"),
+        description: gettext("Wedding celebration")
+      },
+      %{
+        id: "christmas",
+        icon: "🎄",
+        label: gettext("Christmas"),
+        description: gettext("Christmas celebration")
+      },
+      %{
+        id: "new_year",
+        icon: "🎊",
+        label: gettext("New Year"),
+        description: gettext("New Year celebration")
+      },
+      %{
+        id: "valentines_day",
+        icon: "❤️",
+        label: gettext("Valentine's"),
+        description: gettext("Valentine's Day celebration")
+      },
+      %{
+        id: "other",
+        icon: "🎉",
+        label: gettext("Other"),
+        description: gettext("Other celebration")
+      }
+    ]
   end
 end

@@ -7,6 +7,7 @@ defmodule Wishlists.Folders.Folder do
     field :description, :string
     field :show_reserver_names, :boolean, default: false
     field :event_date, :date
+    field :event_type, :string
     belongs_to :user, Wishlists.Accounts.User
 
     many_to_many :cards, Wishlists.Cards.Card,
@@ -18,10 +19,14 @@ defmodule Wishlists.Folders.Folder do
 
   def changeset(folder, attrs) do
     folder
-    |> cast(attrs, [:name, :description, :user_id, :show_reserver_names, :event_date])
+    |> cast(attrs, [:name, :description, :user_id, :show_reserver_names, :event_date, :event_type])
     |> validate_required([:name, :user_id])
     |> validate_length(:name, min: 1, max: 50)
     |> validate_length(:description, max: 40)
+    |> validate_inclusion(
+      :event_type,
+      ~w(birthday wedding christmas new_year valentines_day other)
+    )
     |> validate_event_date()
   end
 

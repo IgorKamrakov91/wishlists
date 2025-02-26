@@ -21,6 +21,19 @@ defmodule Wishlists.Email.EmailService do
     |> deliver()
   end
 
+  def send_folder_cleanup_notification(folder, folder_cards) do
+    folder =
+      if Ecto.assoc_loaded?(folder.user) do
+        folder
+      else
+        Wishlists.Repo.preload(folder, :user)
+      end
+
+    folder.user
+    |> EmailTemplates.folder_cleanup_notification(folder, folder_cards)
+    |> deliver()
+  end
+
   def handle_delivery({:ok, _result} = ok), do: ok
 
   def handle_delivery({:error, reason} = error) do

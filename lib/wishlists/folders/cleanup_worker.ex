@@ -38,19 +38,29 @@ defmodule Wishlists.Folders.CleanupWorker do
 
   defp cleanup_expired_folders do
     today = Date.utc_today()
-    Logger.info("Checking for folders with event_date before #{today}")
 
-    query =
+    notify_query =
+      from f in Folder,
+        where: not is_nil(f.event_date),
+        where: f.event_date == ^today
+
+    notify_folders = Repo.all(notify_query)
+
+    notify_folders
+    |> Enum.each(fn folder ->
+      folder_cards = Cards.list_folder_cards(folder.id)
+      Wishlists.Email.EmailService.send_folder_cleanup_notification(folder, folder_cards)
+    end)
+
+    cleanup_query =
       from f in Folder,
         where: not is_nil(f.event_date),
         where: f.event_date < ^today
 
-    folders = Repo.all(query)
-    Logger.info("Found #{length(folders)} expired folders: #{inspect(folders, pretty: true)}")
+    cleanup_folders = Repo.all(cleanup_query)
 
-    folders
+    cleanup_folders
     |> Enum.each(fn folder ->
-      Logger.info("Attempting to cleanup folder #{folder.id}")
       cleanup_folder(folder)
     end)
   end
