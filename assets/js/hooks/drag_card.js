@@ -31,24 +31,45 @@ const DragCard = {
       let isDragging = false;
       let currentFolder = null;
       let startX, startY;
+      let initialTouchY;
+      let lastTouchY;
+      let isScrolling = false;
+      const DRAG_THRESHOLD = 10;
+      const SCROLL_TIMEOUT = 150;
+      let scrollTimeout;
 
       this.el.addEventListener('touchstart', (e) => {
         const touch = e.touches[0];
         startX = touch.clientX;
         startY = touch.clientY;
+        initialTouchY = touch.clientY;
+        lastTouchY = touch.clientY;
+        isScrolling = false;
       });
 
       this.el.addEventListener('touchmove', (e) => {
         const touch = e.touches[0];
         const deltaX = Math.abs(touch.clientX - startX);
         const deltaY = Math.abs(touch.clientY - startY);
+        const currentTouchY = touch.clientY;
+        const isVerticalMovement = deltaY > deltaX;
 
-        // Начинаем перетаскивание, если пользователь передвинул палец более чем на 10px
-        if (!isDragging && (deltaX > 10 || deltaY > 10)) {
+        if (!isDragging && isVerticalMovement) {
+          const verticalDelta = currentTouchY - lastTouchY;
+          if (Math.abs(verticalDelta) > 5) {
+            isScrolling = true;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+              isScrolling = false;
+            }, SCROLL_TIMEOUT);
+          }
+        }
+
+        lastTouchY = currentTouchY;
+        if (!isDragging && !isScrolling && deltaX > DRAG_THRESHOLD) {
           isDragging = true;
           this.el.classList.add('dragging', 'opacity-50');
           this.showFloatingBar();
-          // Опционально: добавляем тактильный отклик
           navigator.vibrate && navigator.vibrate(50);
         }
 
@@ -76,6 +97,8 @@ const DragCard = {
 
         isDragging = false;
         currentFolder = null;
+        isScrolling = false;
+        clearTimeout(scrollTimeout);
       });
 
       this.el.addEventListener('touchcancel', () => {
@@ -83,6 +106,8 @@ const DragCard = {
         this.hideFloatingBar();
         isDragging = false;
         currentFolder = null;
+        isScrolling = false;
+        clearTimeout(scrollTimeout);
       });
     }
   },
