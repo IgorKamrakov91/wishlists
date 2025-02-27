@@ -281,7 +281,16 @@ defmodule WishlistsWeb.AuthComponent do
           {:noreply, assign(socket, error_message: gettext("Invalid email or password"))}
       end
     else
-      case Accounts.register_user(socket.assigns.form_data) do
+
+      user_params = %{
+        "email" => socket.assigns.form_data["email"],
+        "password" => socket.assigns.form_data["password"],
+        "account" => %{
+          "username" => socket.assigns.form_data["username"]
+        }
+      }
+
+      case Accounts.register_user(user_params) do
         {:ok, user} ->
           case Wishlists.Accounts.Guardian.encode_and_sign(user) do
             {:ok, token, _claims} ->
@@ -293,7 +302,15 @@ defmodule WishlistsWeb.AuthComponent do
           end
 
         {:error, changeset} ->
-          error_message = format_registration_errors(changeset)
+          error_message = case get_changeset_error(changeset) do
+            {:username, "has already been taken"} ->
+              gettext("This username is already taken")
+            {:email, "has already been taken"} ->
+              gettext("This email is already registered")
+            _ ->
+              format_registration_errors(changeset)
+          end
+
           {:noreply, assign(socket, error_message: error_message)}
       end
     end
@@ -363,19 +380,39 @@ defmodule WishlistsWeb.AuthComponent do
   end
 
   defp format_registration_errors(changeset) do
-    Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
+    errors = Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
       Enum.reduce(opts, msg, fn
         {key, value}, acc when is_list(value) ->
           String.replace(acc, "%{#{key}}", Enum.join(value, ", "))
-
         {key, value}, acc ->
           String.replace(acc, "%{#{key}}", to_string(value))
       end)
     end)
-    |> Enum.map(fn {field, errors} ->
-      field_name = Phoenix.Naming.humanize(field)
-      "#{field_name} #{Enum.join(errors, ", ")}"
+
+    errors = case errors[:account] do
+      nil -> errors
+      account_errors when is_map(account_errors) ->
+        Map.merge(errors, account_errors)
+      _ -> errors
+    end
+
+    errors
+    |> Enum.map(fn {field, messages} ->
+      field_name = field |> to_string() |> Phoenix.Naming.humanize()
+      messages = List.wrap(messages)
+      "#{field_name} #{Enum.join(messages, ", ")}"
     end)
     |> Enum.join(". ")
+  end
+
+  defp get_changeset_error(changeset) do
+    changeset.errors
+    |> Enum.find(fn {field, {message, _}} ->
+      field in [:username, :email] && message == "has already been taken"
+    end)
+    |> case do
+      {field, {message, _}} -> {field, message}
+      _ -> nil
+    end
   end
 end

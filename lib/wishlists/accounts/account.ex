@@ -11,9 +11,9 @@ defmodule Wishlists.Accounts.Account do
 
   def changeset(account, attrs) do
     account
-    |> cast(attrs, [:username])
+    |> cast(attrs, [:username, :user_id])
     |> validate_required([:username])
     |> validate_length(:username, min: 3, max: 20)
-    |> unique_constraint(:username)
+    |> unique_constraint(:username, name: "accounts_username_index", message: "Username already taken")
   end
 end
