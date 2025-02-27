@@ -285,7 +285,7 @@ defmodule WishlistsWeb.DashboardLive do
 
       true ->
         case Folders.get_shared_folder_by_folder_id(folder.id) do
-          %{share_token: token} -> ~p"/shared/#{token}"
+          %{share_slug: slug} -> ~p"/shared/#{slug}"
           nil -> ~p"/folders/#{folder.id}"
         end
     end
