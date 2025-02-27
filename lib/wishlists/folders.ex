@@ -68,19 +68,21 @@ defmodule Wishlists.Folders do
     |> Repo.insert()
   end
 
-  def get_shared_folder_by_token(nil), do: nil
-
-  def get_shared_folder_by_token(token) do
+  def get_shared_folder_by_token(token) when is_binary(token) do
     Repo.get_by(SharedFolder, share_token: token)
   end
+
+  def get_shared_folder_by_token(_), do: nil
 
   def get_shared_folder_by_folder_id(folder_id) do
     Repo.get_by(SharedFolder, folder_id: folder_id)
   end
 
-  def get_shared_folder_by_slug(slug) do
+  def get_shared_folder_by_slug(slug) when is_binary(slug) do
     Repo.get_by(SharedFolder, share_slug: slug)
   end
+
+  def get_shared_folder_by_slug(_), do: nil
 
   def delete_shared_folder(%SharedFolder{} = shared_folder) do
     Repo.delete(shared_folder)

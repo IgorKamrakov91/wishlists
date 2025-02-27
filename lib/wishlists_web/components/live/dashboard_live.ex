@@ -280,13 +280,22 @@ defmodule WishlistsWeb.DashboardLive do
 
   defp get_folder_path(folder, current_user) do
     cond do
+      is_nil(folder) || is_nil(folder.id) ->
+        ~p"/dashboard"
+
       folder.user_id == current_user.id ->
         ~p"/folders/#{folder.id}"
 
       true ->
         case Folders.get_shared_folder_by_folder_id(folder.id) do
-          %{share_slug: slug} -> ~p"/shared/#{slug}"
-          nil -> ~p"/folders/#{folder.id}"
+          %{share_slug: slug} when not is_nil(slug) ->
+            ~p"/shared/#{slug}"
+
+          %{share_token: token} when not is_nil(token) ->
+            ~p"/shared/t/#{token}"
+
+          _ ->
+            ~p"/folders/#{folder.id}"
         end
     end
   end

@@ -6,68 +6,95 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   alias Wishlists.Accounts.Guardian
   require Logger
 
+  def mount(%{"token" => token}, session, socket) do
+    case Folders.get_shared_folder_by_token(token) do
+      nil ->
+        {:ok,
+         socket
+         |> assign(:locale, session["locale"] || "en")
+         |> put_flash(:error, "Invalid share link")
+         |> redirect(to: "/")}
+
+      shared_folder ->
+        if shared_folder.share_slug do
+          {:ok,
+           socket
+           |> redirect(to: ~p"/shared/#{shared_folder.share_slug}")}
+        else
+          handle_shared_folder_mount(shared_folder, session, socket)
+        end
+    end
+  end
+
   def mount(%{"slug" => slug}, session, socket) do
     Logger.debug("Mounting SharedFolderLive.Show with slug: #{slug}")
     locale = session["locale"] || "en"
     Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
-    case Folders.get_shared_folder_by_slug(slug) do
+    case Folders.get_shared_folder_by_slug(slug) || Folders.get_shared_folder_by_token(slug) do
       nil ->
         Logger.debug("No shared folder found for slug: #{slug}")
 
         {:ok,
          socket
          |> assign(:locale, locale)
-         |> put_flash(:error, "Invalid or expired share link")
+         |> put_flash(:error, "Invalid share link")
          |> redirect(to: "/")}
 
       shared_folder ->
-        Logger.debug("Found shared folder: #{inspect(shared_folder)}")
-        folder = Folders.get_folder!(shared_folder.folder_id)
+        handle_shared_folder_mount(shared_folder, session, socket)
+    end
+  end
 
-        current_user =
-          case Guardian.decode_and_verify(session["guardian_default_token"]) do
-            {:ok, claims} ->
-              {:ok, user} = Guardian.resource_from_claims(claims)
-              user
+  defp handle_shared_folder_mount(shared_folder, session, socket) do
+    Logger.debug("Found shared folder: #{inspect(shared_folder)}")
+    locale = session["locale"] || "en"
+    Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
-            _ ->
-              nil
-          end
+    folder = Folders.get_folder!(shared_folder.folder_id)
 
-        if current_user && current_user.id == folder.user_id do
-          {:ok,
-           socket
-           |> assign(:locale, locale)
-           |> redirect(to: ~p"/folders/#{folder.id}")}
-        else
-          is_following = current_user && Folders.is_following?(current_user.id, folder.id)
-          viewer_token = session["viewer_token"]
-          guest_viewer = viewer_token && Accounts.get_guest_viewer_by_token(viewer_token)
+    current_user =
+      case Guardian.decode_and_verify(session["guardian_default_token"]) do
+        {:ok, claims} ->
+          {:ok, user} = Guardian.resource_from_claims(claims)
+          user
 
-          cards = Cards.list_folder_cards(folder.id)
+        _ ->
+          nil
+      end
 
-          socket =
-            socket
-            |> assign(:locale, locale)
-            |> assign(:shared_folder, shared_folder)
-            |> assign(:folder, folder)
-            |> assign(:cards, cards)
-            |> assign(:guest_viewer, guest_viewer)
-            |> assign(:current_user, current_user)
-            |> assign(:is_following, is_following)
-            |> assign(:show_name_modal, is_nil(current_user) && is_nil(guest_viewer))
-            |> assign(:show_auth_modal, false)
-            |> assign(:show_suggest_modal, false)
-            |> assign(:suggested_card, %Cards.Card{})
-            |> assign(:is_suggestion, false)
+    if current_user && current_user.id == folder.user_id do
+      {:ok,
+       socket
+       |> assign(:locale, locale)
+       |> redirect(to: ~p"/folders/#{folder.id}")}
+    else
+      is_following = current_user && Folders.is_following?(current_user.id, folder.id)
+      viewer_token = session["viewer_token"]
+      guest_viewer = viewer_token && Accounts.get_guest_viewer_by_token(viewer_token)
 
-          if current_user && !is_following do
-            Folders.follow_folder(current_user.id, folder.id)
-          end
+      cards = Cards.list_folder_cards(folder.id)
 
-          {:ok, socket}
-        end
+      socket =
+        socket
+        |> assign(:locale, locale)
+        |> assign(:shared_folder, shared_folder)
+        |> assign(:folder, folder)
+        |> assign(:cards, cards)
+        |> assign(:guest_viewer, guest_viewer)
+        |> assign(:current_user, current_user)
+        |> assign(:is_following, is_following)
+        |> assign(:show_name_modal, is_nil(current_user) && is_nil(guest_viewer))
+        |> assign(:show_auth_modal, false)
+        |> assign(:show_suggest_modal, false)
+        |> assign(:suggested_card, %Cards.Card{})
+        |> assign(:is_suggestion, false)
+
+      if current_user && !is_following do
+        Folders.follow_folder(current_user.id, folder.id)
+      end
+
+      {:ok, socket}
     end
   end
 

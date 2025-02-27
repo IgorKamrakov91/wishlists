@@ -29,6 +29,7 @@ defmodule WishlistsWeb.Router do
     pipe_through(:browser)
 
     live "/shared/:slug", SharedFolderLive.Show
+    live "/shared/t/:token", SharedFolderLive.Show, :legacy
     live("/reset-password/:token", NewPasswordLive)
     live("/forgot-password", ResetPasswordLive)
     get "/set_viewer_session", ViewerSessionController, :set_session
