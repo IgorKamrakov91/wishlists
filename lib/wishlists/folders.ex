@@ -78,6 +78,10 @@ defmodule Wishlists.Folders do
     Repo.get_by(SharedFolder, folder_id: folder_id)
   end
 
+  def get_shared_folder_by_slug(slug) do
+    Repo.get_by(SharedFolder, share_slug: slug)
+  end
+
   def delete_shared_folder(%SharedFolder{} = shared_folder) do
     Repo.delete(shared_folder)
   end

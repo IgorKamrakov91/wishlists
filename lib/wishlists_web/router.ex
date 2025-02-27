@@ -28,11 +28,11 @@ defmodule WishlistsWeb.Router do
   scope "/", WishlistsWeb do
     pipe_through(:browser)
 
-    live("/shared/:token", SharedFolderLive.Show)
+    live "/shared/:slug", SharedFolderLive.Show
     live("/reset-password/:token", NewPasswordLive)
     live("/forgot-password", ResetPasswordLive)
-    get("/set_viewer_session", ViewerSessionController, :set_session)
-    get("/clear_viewer_session", ViewerSessionController, :clear)
+    get "/set_viewer_session", ViewerSessionController, :set_session
+    get "/clear_viewer_session", ViewerSessionController, :clear_session
     get("/sitemap.xml", SitemapController, :index)
   end
 

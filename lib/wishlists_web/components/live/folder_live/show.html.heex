@@ -77,15 +77,17 @@
           {gettext("This collection is empty")}
         </h3>
         <p class="text-indigo-600 mb-8">
-          {gettext("Start by dragging wishes from your dashboard to this collection")}
+          {gettext("Start by adding new wishes or dragging them from your dashboard")}
         </p>
-        <.link
-          navigate={~p"/dashboard"}
-          class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 inline-flex items-center space-x-2"
-        >
-          <.icon name="hero-plus" class="h-5 w-5" />
-          <span>{gettext("Add Wishes")}</span>
-        </.link>
+        <div class="flex justify-center space-x-4">
+          <button
+            phx-click="new_card"
+            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 inline-flex items-center space-x-2"
+          >
+            <.icon name="hero-plus" class="h-5 w-5" />
+            <span>{gettext("Add Wishes")}</span>
+          </button>
+        </div>
       </div>
     <% else %>
       <div
@@ -127,7 +129,7 @@
               <% end %>
 
               <div class="relative h-48 mb-4">
-              <%= if folder_card.card.link_url do %>
+                <%= if folder_card.card.link_url do %>
                   <a
                     href={folder_card.card.link_url}
                     target="_blank"

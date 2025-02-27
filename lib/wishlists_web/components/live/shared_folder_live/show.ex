@@ -6,14 +6,14 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   alias Wishlists.Accounts.Guardian
   require Logger
 
-  def mount(%{"token" => token}, session, socket) do
-    Logger.debug("Mounting SharedFolderLive.Show with token: #{token}")
+  def mount(%{"slug" => slug}, session, socket) do
+    Logger.debug("Mounting SharedFolderLive.Show with slug: #{slug}")
     locale = session["locale"] || "en"
     Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
-    case Folders.get_shared_folder_by_token(token) do
+    case Folders.get_shared_folder_by_slug(slug) do
       nil ->
-        Logger.debug("No shared folder found for token: #{token}")
+        Logger.debug("No shared folder found for slug: #{slug}")
 
         {:ok,
          socket
@@ -87,7 +87,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
          })
          |> redirect(
            to:
-             ~p"/set_viewer_session?token=#{guest_viewer.viewer_token}&return_to=#{socket.assigns.shared_folder.share_token}"
+             ~p"/set_viewer_session?token=#{guest_viewer.viewer_token}&return_to=#{socket.assigns.shared_folder.share_slug}"
          )}
 
       {:error, _changeset} ->
@@ -99,10 +99,12 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   end
 
   def handle_event("logout_guest", _, socket) do
+    return_to = ~p"/shared/#{socket.assigns.shared_folder.share_slug}"
+
     {:noreply,
      socket
      |> push_event("clear-cookie", %{key: "_visitor_name"})
-     |> redirect(to: ~p"/clear_viewer_session?return_to=/")}
+     |> redirect(to: ~p"/clear_viewer_session?return_to=#{return_to}")}
   end
 
   def handle_event("switch_tab", %{"tab" => tab}, socket) do

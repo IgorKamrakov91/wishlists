@@ -10,7 +10,7 @@
             class="flex items-center justify-center w-8 h-8 sm:w-auto sm:h-auto sm:px-4 sm:py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-all duration-300"
           >
             <.icon name="hero-arrow-left" class="h-4 w-4" />
-            <span class="hidden sm:ml-2 sm:block">{gettext("Back")}</span>
+            <span class="hidden sm:ml-2 sm:block">{gettext("Main Page")}</span>
           </.link>
         <% else %>
           <.link
@@ -18,7 +18,7 @@
             class="flex items-center justify-center w-8 h-8 sm:w-auto sm:h-auto sm:px-4 sm:py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-all duration-300"
           >
             <.icon name="hero-arrow-left" class="h-4 w-4" />
-            <span class="hidden sm:ml-2 sm:block">{gettext("Back")}</span>
+            <span class="hidden sm:ml-2 sm:block">{gettext("Main Page")}</span>
           </.link>
         <% end %>
 
@@ -63,7 +63,6 @@
         </div>
       </div>
 
-<!-- Event date for mobile -->
       <%= if @folder.event_date do %>
         <div class="flex justify-center mt-3 sm:hidden">
           <span class="inline-flex items-center bg-indigo-100 text-indigo-800 text-sm px-3 py-1 rounded-full">

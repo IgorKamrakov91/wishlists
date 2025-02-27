@@ -19,7 +19,7 @@ defmodule WishlistsWeb.FolderLive.Show do
           cards = Cards.list_folder_cards(folder_id)
 
           shared_folder = get_or_create_shared_folder(folder_id)
-          share_url = generate_share_url(shared_folder.share_token)
+          share_url = generate_share_url(shared_folder)
 
           {:ok,
            socket
@@ -57,11 +57,24 @@ defmodule WishlistsWeb.FolderLive.Show do
         shared_folder
 
       shared_folder ->
-        shared_folder
+        if is_nil(shared_folder.share_slug) do
+          {:ok, updated_folder} =
+            shared_folder
+            |> Folders.SharedFolder.changeset(%{})
+            |> Wishlists.Repo.update()
+
+          updated_folder
+        else
+          shared_folder
+        end
     end
   end
 
-  defp generate_share_url(token) do
+  defp generate_share_url(%{share_slug: slug}) when not is_nil(slug) do
+    WishlistsWeb.Endpoint.url() <> "/shared/" <> slug
+  end
+
+  defp generate_share_url(%{share_token: token}) do
     WishlistsWeb.Endpoint.url() <> "/shared/" <> token
   end
 

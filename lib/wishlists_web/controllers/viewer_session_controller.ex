@@ -1,15 +1,15 @@
 defmodule WishlistsWeb.ViewerSessionController do
   use WishlistsWeb, :controller
 
-  def set_session(conn, %{"token" => viewer_token, "return_to" => share_token}) do
+  def set_session(conn, %{"token" => token, "return_to" => return_to}) do
     conn
-    |> put_session(:viewer_token, viewer_token)
-    |> redirect(to: ~p"/shared/#{share_token}")
+    |> put_session(:viewer_token, token)
+    |> redirect(to: ~p"/shared/#{return_to}")
   end
 
-  def clear(conn, %{"return_to" => return_to}) do
+  def clear_session(conn, %{"return_to" => return_to}) do
     conn
-    |> delete_session(:viewer_token)
+    |> clear_session()
     |> redirect(to: return_to)
   end
 end
