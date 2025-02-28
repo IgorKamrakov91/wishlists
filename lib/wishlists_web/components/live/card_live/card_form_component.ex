@@ -266,7 +266,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
 
   defp save_card(socket, :new, card_params) do
     is_suggestion = Map.get(socket.assigns, :is_suggestion, false)
-    folder = socket.assigns.folder
+    folder = Map.get(socket.assigns, :folder)
 
     card_params =
       if is_suggestion do
@@ -281,23 +281,28 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
 
     case Cards.create_card(card_params) do
       {:ok, card} ->
-        if is_suggestion do
-          send(self(), {:card_suggested, card})
-        else
-          case Cards.assign_card_to_folder(card.id, folder.id) do
-            {:ok, _} ->
-              send(self(), {:card_created})
-              {:noreply, socket}
+        cond do
+          is_suggestion ->
+            send(self(), {:card_suggested, card})
+            {:noreply, socket}
 
-            {:error, _} ->
-              {:noreply,
-               socket
-               |> put_flash(:error, gettext("Failed to assign card to folder"))
-               |> assign(form: to_form(Cards.change_card(card)))}
-          end
+          folder ->
+            case Cards.assign_card_to_folder(card.id, folder.id) do
+              {:ok, _} ->
+                send(self(), {:card_created})
+                {:noreply, socket}
+
+              {:error, _} ->
+                {:noreply,
+                 socket
+                 |> put_flash(:error, gettext("Failed to assign card to folder"))
+                 |> assign(form: to_form(Cards.change_card(card)))}
+            end
+
+          true ->
+            send(self(), {:card_created})
+            {:noreply, socket}
         end
-
-        {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
