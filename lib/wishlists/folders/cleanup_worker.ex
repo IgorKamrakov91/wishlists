@@ -5,9 +5,12 @@ defmodule Wishlists.Folders.CleanupWorker do
   import Ecto.Query
   require Logger
 
-  def start_link(_) do
-    Logger.info("Starting CleanupWorker")
-    GenServer.start_link(__MODULE__, %{})
+  def start_link(opts) do
+    if Application.get_env(:wishlists, :cleanup_worker_enabled, true) do
+      GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+    else
+      :ignore
+    end
   end
 
   def init(state) do

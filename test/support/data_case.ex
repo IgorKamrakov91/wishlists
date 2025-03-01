@@ -36,8 +36,14 @@ defmodule Wishlists.DataCase do
   Sets up the sandbox based on the test tags.
   """
   def setup_sandbox(tags) do
+    Application.ensure_all_started(:wishlists)
+
     pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Wishlists.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+
+    on_exit(fn ->
+      Ecto.Adapters.SQL.Sandbox.stop_owner(pid)
+      Application.stop(:wishlists)
+    end)
   end
 
   @doc """
@@ -54,5 +60,48 @@ defmodule Wishlists.DataCase do
         opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
       end)
     end)
+  end
+
+  def user_fixture(attrs \\ %{}) do
+    {:ok, user} =
+      attrs
+      |> Enum.into(%{
+        email: "test#{System.unique_integer()}@example.com",
+        password: "password123"
+      })
+      |> Wishlists.Accounts.register_user()
+
+    user
+  end
+
+  @doc """
+  Создает гостевого пользователя с базовыми атрибутами для тестов.
+  """
+  def guest_viewer_fixture(attrs \\ %{}) do
+    {:ok, guest_viewer} =
+      attrs
+      |> Enum.into(%{
+        name: "Guest #{System.unique_integer()}"
+      })
+      |> Wishlists.Accounts.create_guest_viewer()
+
+    guest_viewer
+  end
+
+  @doc """
+  Создает аккаунт с базовыми атрибутами для тестов.
+  """
+  def account_fixture(attrs \\ %{}) do
+    user = attrs[:user] || user_fixture()
+
+    {:ok, account} =
+      attrs
+      |> Enum.into(%{
+        username: "user#{System.unique_integer()}",
+        user_id: user.id
+      })
+      |> Wishlists.Accounts.register_user()
+
+    account
   end
 end
