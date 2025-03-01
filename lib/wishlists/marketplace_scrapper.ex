@@ -19,17 +19,28 @@ defmodule MarketplaceScrapper do
   #    }}
   # end
 
-  def fetch_and_extract(url, opts \\ []) do
-    retry_opts = [
-      max_attempts: Keyword.get(opts, :max_attempts, 3),
-      base_delay: Keyword.get(opts, :base_delay, 1000),
-      max_delay: Keyword.get(opts, :max_delay, 5000)
-    ]
+  def fetch_and_extract(url) do
+    case Req.get(url, finch: Wishlists.Finch) do
+      {:ok, %Req.Response{body: html}} ->
+        data = extract_relevant_data(html)
 
-    Req.new(url: url)
-    |> Req.Request.put_options(retry: retry_opts, receive_timeout: 15_000)
-    |> Req.get(finch: Wishlists.Finch)
-    |> handle_response()
+        IO.inspect(data, label: "DATA")
+
+        case extract_data_from_html(data) do
+          %{"title" => _, "description" => _, "image" => _} = extracted_data ->
+            IO.inspect(extracted_data)
+            {:ok, extracted_data}
+
+          :error ->
+            {:error, :api_failed}
+
+          _ ->
+            {:error, :parse_failed}
+        end
+
+      {:error, _reason} ->
+        {:error, :fetch_failed}
+    end
   end
 
   defp handle_response({:ok, %Req.Response{body: html}}) do
