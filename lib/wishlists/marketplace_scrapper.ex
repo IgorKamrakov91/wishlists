@@ -19,29 +19,27 @@ defmodule MarketplaceScrapper do
   #    }}
   # end
 
-  def fetch_and_extract(url) do
-    case Req.get(url, finch: Wishlists.Finch) do
-      {:ok, %Req.Response{body: html}} ->
-        data = extract_relevant_data(html)
+  def fetch_and_extract(url, opts \\ []) do
+    retry_opts = [
+      max_attempts: Keyword.get(opts, :max_attempts, 3),
+      base_delay: Keyword.get(opts, :base_delay, 1000),
+      max_delay: Keyword.get(opts, :max_delay, 5000)
+    ]
 
-        IO.inspect(data, label: "DATA")
+    Req.new(url: url)
+    |> Req.Request.put_options(retry: retry_opts, receive_timeout: 15_000)
+    |> Req.get(finch: Wishlists.Finch)
+    |> handle_response()
+  end
 
-        case extract_data_from_html(data) do
-          %{"title" => _, "description" => _, "image" => _} = extracted_data ->
-            IO.inspect(extracted_data)
-            {:ok, extracted_data}
-
-          :error ->
-            {:error, :api_failed}
-
-          _ ->
-            {:error, :parse_failed}
-        end
-
-      {:error, _reason} ->
-        {:error, :fetch_failed}
+  defp handle_response({:ok, %Req.Response{body: html}}) do
+    with {:ok, data} <- extract_relevant_data(html),
+         {:ok, extracted} <- extract_data_from_html(data) do
+      {:ok, extracted}
     end
   end
+
+  defp handle_response({:error, reason}), do: {:error, {:fetch_failed, reason}}
 
   defp extract_relevant_data(html) do
     {:ok, document} = Floki.parse_document(html)

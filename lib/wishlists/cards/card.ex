@@ -7,7 +7,7 @@ defmodule Wishlists.Cards.Card do
     field :description, :string
     field :image_url, :string
     field :link_url, :string
-    field :price, :float
+    field :price, :decimal
     field :position, :integer
     field :status, :string, default: "approved"
 
@@ -42,6 +42,7 @@ defmodule Wishlists.Cards.Card do
     |> validate_length(:description, max: 500)
     |> validate_url(:image_url)
     |> validate_url(:link_url)
+    |> validate_number(:price, greater_than_or_equal_to: Decimal.new("0"))
   end
 
   defp validate_url(changeset, field) do
