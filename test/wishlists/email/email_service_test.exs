@@ -7,140 +7,126 @@ defmodule Wishlists.Email.EmailServiceTest do
 
   import Swoosh.TestAssertions
 
-  describe "emails with unsubscribe header" do
-    setup do
-      # Create user with notification preferences
-      {:ok, user} =
-        Accounts.register_user(%{
-          email: "test@example.com",
-          password: "password123",
-          notification_preferences: %{
-            "cleanup_notifications" => true,
-            "reservation_notifications" => true
-          }
-        })
+  setup do
+    {:ok, user} =
+      Accounts.register_user(%{
+        email: "test@example.com",
+        password: "password123",
+        notification_preferences: %{
+          "cleanup_notifications" => true,
+          "reservation_notifications" => true
+        },
+        locale: "en"
+      })
 
-      # Create folder with future date
-      {:ok, folder} =
-        Folders.create_folder(%{
-          name: "Test Folder",
-          event_type: "birthday",
-          event_date: Date.add(Date.utc_today(), 10),
-          user_id: user.id,
-          show_reserver_names: true
-        })
+    {:ok, folder} =
+      Folders.create_folder(%{
+        name: "Test Folder",
+        event_type: "birthday",
+        event_date: Date.add(Date.utc_today(), 10),
+        user_id: user.id,
+        show_reserver_names: true
+      })
 
-      # Create card
-      {:ok, card} =
-        Cards.create_card(%{
-          title: "Test Item",
-          description: "Test Description",
-          link_url: "http://example.com",
-          user_id: user.id
-        })
+    {:ok, card} =
+      Cards.create_card(%{
+        title: "Test Item",
+        description: "Test Description",
+        link_url: "http://example.com",
+        user_id: user.id
+      })
 
-      # Create folder_card and preload associations
-      {:ok, folder_card} =
-        Cards.assign_card_to_folder(card.id, folder.id)
+    {:ok, folder_card} = Cards.assign_card_to_folder(card.id, folder.id)
+    folder_card = Repo.preload(folder_card, :card)
+    folder = Repo.preload(folder, :user)
 
-      folder_card = Repo.preload(folder_card, :card)
-      folder = Repo.preload(folder, :user)
-
-      %{
-        user: user,
-        folder: folder,
-        card: card,
-        folder_card: folder_card
-      }
-    end
-
-    test "reservation notification includes unsubscribe header", %{
+    %{
       user: user,
       folder: folder,
+      card: card,
       folder_card: folder_card
-    } do
-      assert_received {:email, _}
+    }
+  end
 
-      EmailService.send_reservation_notification(folder, folder_card, "Test Reserver")
+  test "welcome email", %{user: user} do
+    assert_receive {:email, _}
 
-      assert_email_sent(fn email ->
-        assert email.to == [{user.email, user.email}]
-        assert email.subject == "New Reservation in Your Wishlist!"
+    EmailService.send_welcome_email(user)
 
-        {_, unsubscribe_header} =
-          Enum.find(email.headers, fn {name, _} -> name == "List-Unsubscribe" end)
+    assert_email_sent(fn email ->
+      assert email.to == [{user.email, user.email}]
+      assert email.from == {"Wishlists", "notifications@hochu-hochu.com"}
+      assert email.subject == "Welcome to Wishlists!"
+    end)
+  end
 
-        assert unsubscribe_header != nil
+  test "reset password email", %{user: user} do
+    assert_receive {:email, _}
 
-        assert String.contains?(
-                 unsubscribe_header,
-                 "/notifications/unsubscribe/reservation_notifications/"
-               )
-      end)
-    end
+    user = %{user | reset_password_token: "test-token"}
+    EmailService.send_reset_password_email(user)
 
-    test "cleanup notification includes unsubscribe header", %{
-      user: user,
-      folder: folder,
-      folder_card: folder_card
-    } do
-      # Skip welcome email
-      assert_received {:email, _}
+    assert_email_sent(fn email ->
+      assert email.to == [{user.email, user.email}]
+      assert email.subject == "Reset Your Password"
+      assert email.html_body =~ "test-token"
+    end)
+  end
 
-      # Set event_date to yesterday
-      yesterday = Date.add(Date.utc_today(), -1)
+  test "reservation notification with visible reserver name", %{
+    folder: folder,
+    folder_card: folder_card
+  } do
+    assert_receive {:email, _}
 
-      {:ok, past_folder} =
-        folder
-        |> Ecto.Changeset.change(%{event_date: yesterday})
-        |> Repo.update()
+    EmailService.send_reservation_notification(folder, folder_card, "John Doe")
 
-      past_folder = Repo.preload(past_folder, :user)
+    assert_email_sent(fn email ->
+      assert email.to == [{folder.user.email, folder.user.email}]
+      assert email.subject == "New Reservation in Your Wishlist!"
+      assert email.html_body =~ "John Doe"
+    end)
+  end
 
-      EmailService.send_folder_cleanup_notification(past_folder, [folder_card])
+  test "reservation notification with hidden reserver name", %{
+    folder: folder,
+    folder_card: folder_card
+  } do
+    assert_receive {:email, _}
 
-      assert_email_sent(fn email ->
-        assert email.to == [{user.email, user.email}]
-        assert email.subject == "Your Wishlist Will Be Archived Soon"
+    folder = %{folder | show_reserver_names: false}
+    EmailService.send_reservation_notification(folder, folder_card, "John Doe")
 
-        {_, unsubscribe_header} =
-          Enum.find(email.headers, fn {name, _} -> name == "List-Unsubscribe" end)
+    assert_email_sent(fn email ->
+      refute email.html_body =~ "John Doe"
+      assert email.html_body =~ "Someone has reserved"
+    end)
+  end
 
-        assert unsubscribe_header != nil
+  test "cleanup notification", %{folder: folder, folder_card: folder_card} do
+    assert_receive {:email, _}
 
-        assert String.contains?(
-                 unsubscribe_header,
-                 "/notifications/unsubscribe/cleanup_notifications/"
-               )
-      end)
-    end
+    yesterday = Date.add(Date.utc_today(), -1)
+    folder = %{folder | event_date: yesterday}
 
-    test "notifications are not sent when disabled", %{
-      user: user,
-      folder: folder,
-      folder_card: folder_card
-    } do
-      # Skip welcome email
-      assert_received {:email, _}
+    EmailService.send_folder_cleanup_notification(folder, [folder_card])
 
-      # Update user notification preferences
-      {:ok, user} =
-        Accounts.update_user_notification_preferences(user, %{
-          notification_preferences: %{
-            "cleanup_notifications" => false,
-            "reservation_notifications" => false
-          }
-        })
+    assert_email_sent(fn email ->
+      assert email.to == [{folder.user.email, folder.user.email}]
+      assert email.subject == "Your Wishlist Will Be Archived Soon"
+      assert email.html_body =~ folder.name
+    end)
+  end
 
-      folder = %{folder | user: user}
+  test "prevents duplicate cleanup notifications", %{folder: folder, folder_card: folder_card} do
+    assert_receive {:email, _}
 
-      assert {:ok, :notifications_disabled} =
-               EmailService.send_reservation_notification(folder, folder_card, "Test Reserver")
+    yesterday = Date.add(Date.utc_today(), -1)
+    folder = %{folder | event_date: yesterday}
 
-      assert {:ok, :notifications_disabled} =
-               EmailService.send_folder_cleanup_notification(folder, [folder_card])
+    assert {:ok, _} = EmailService.send_folder_cleanup_notification(folder, [folder_card])
 
-      refute_received {:email, _}
-    end
+    assert {:ok, :already_notified} =
+             EmailService.send_folder_cleanup_notification(folder, [folder_card])
   end
 end

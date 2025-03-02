@@ -66,6 +66,10 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :wishlists, WishlistsWeb.Gettext,
+  default_locale: "en",
+  locales: ~w(en ru)
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

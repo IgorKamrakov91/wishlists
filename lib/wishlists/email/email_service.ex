@@ -5,25 +5,31 @@ defmodule Wishlists.Email.EmailService do
   require Logger
 
   def send_welcome_email(user) do
-    user
-    |> EmailTemplates.welcome_email()
-    |> deliver()
+    Gettext.with_locale(user.locale || "en", fn ->
+      user
+      |> EmailTemplates.welcome_email()
+      |> deliver()
+    end)
   end
 
   def send_reset_password_email(user) do
-    user
-    |> EmailTemplates.reset_password_email()
-    |> deliver()
+    Gettext.with_locale(user.locale || "en", fn ->
+      user
+      |> EmailTemplates.reset_password_email()
+      |> deliver()
+    end)
   end
 
   def send_reservation_notification(folder, folder_card, reserver_name) do
     folder = Wishlists.Repo.preload(folder, :user)
 
     if get_in(folder.user.notification_preferences, ["reservation_notifications"]) do
-      folder
-      |> EmailTemplates.reservation_notification(folder_card, reserver_name)
-      |> add_unsubscribe_header("reservation_notifications")
-      |> deliver()
+      Gettext.with_locale(folder.user.locale || "en", fn ->
+        folder
+        |> EmailTemplates.reservation_notification(folder_card, reserver_name)
+        |> add_unsubscribe_header("reservation_notifications")
+        |> deliver()
+      end)
     else
       {:ok, :notifications_disabled}
     end
@@ -34,11 +40,13 @@ defmodule Wishlists.Email.EmailService do
 
     with true <- get_in(folder.user.notification_preferences, ["cleanup_notifications"]),
          false <- already_notified?(folder) do
-      folder.user
-      |> EmailTemplates.folder_cleanup_notification(folder, folder_cards)
-      |> add_unsubscribe_header("cleanup_notifications")
-      |> deliver()
-      |> mark_as_notified(folder)
+      Gettext.with_locale(folder.user.locale || "en", fn ->
+        folder.user
+        |> EmailTemplates.folder_cleanup_notification(folder, folder_cards)
+        |> add_unsubscribe_header("cleanup_notifications")
+        |> deliver()
+        |> mark_as_notified(folder)
+      end)
     else
       false -> {:ok, :notifications_disabled}
       true -> {:ok, :already_notified}
