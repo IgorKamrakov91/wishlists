@@ -230,7 +230,7 @@
                   <div class="flex items-center space-x-1">
                     <span class="text-indigo-600 font-medium">
                       <%= if folder_card.card.price && folder_card.card.price > 0 do %>
-                        {"#{:erlang.float_to_binary(folder_card.card.price, decimals: 0)} ₽"}
+                        {format_price(folder_card.card.price)}
                       <% else %>
                         <span class="text-indigo-400 text-sm">{gettext("No Price")}</span>
                       <% end %>

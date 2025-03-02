@@ -299,4 +299,10 @@ defmodule WishlistsWeb.FolderLive.Show do
         gettext("Unknown")
     end
   end
+
+  defp format_price(price) when is_nil(price) or price <= 0, do: nil
+
+  defp format_price(price) do
+    "#{Decimal.to_float(price) |> :erlang.float_to_binary(decimals: 0)} ₽"
+  end
 end
