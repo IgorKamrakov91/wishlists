@@ -35,6 +35,10 @@ defmodule WishlistsWeb.Router do
     get "/set_viewer_session", ViewerSessionController, :set_session
     get "/clear_viewer_session", ViewerSessionController, :clear_session
     get("/sitemap.xml", SitemapController, :index)
+
+    get "/notifications/unsubscribe/:type/:token",
+        NotificationSettingsController,
+        :unsubscribe_with_token
   end
 
   scope "/", WishlistsWeb do

@@ -43,15 +43,6 @@ defmodule MarketplaceScrapper do
     end
   end
 
-  defp handle_response({:ok, %Req.Response{body: html}}) do
-    with {:ok, data} <- extract_relevant_data(html),
-         {:ok, extracted} <- extract_data_from_html(data) do
-      {:ok, extracted}
-    end
-  end
-
-  defp handle_response({:error, reason}), do: {:error, {:fetch_failed, reason}}
-
   defp extract_relevant_data(html) do
     {:ok, document} = Floki.parse_document(html)
 

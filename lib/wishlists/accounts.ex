@@ -32,17 +32,14 @@ defmodule Wishlists.Accounts do
 
     cond do
       user && valid_password?(user, password) ->
-        # Add debug log
         IO.puts("Authentication successful for user: #{user.email}")
         {:ok, user}
 
       user ->
-        # Add debug log
         IO.puts("Invalid password for user: #{user.email}")
         {:error, :invalid_password}
 
       true ->
-        # Add debug log
         IO.puts("No user found with email: #{email}")
         Bcrypt.no_user_verify()
         {:error, :invalid_credentials}
@@ -115,6 +112,49 @@ defmodule Wishlists.Accounts do
 
   def get_user_locale(user) do
     user.locale || "en"
+  end
+
+  @doc """
+  Updates notification preferences for a user.
+  """
+  def update_user_notification_preferences(user, attrs) do
+    user
+    |> User.notification_preferences_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Generates an unsubscribe token for a user.
+  The token includes the user ID and a timestamp, encrypted and signed.
+  """
+  def generate_unsubscribe_token(user) do
+    Phoenix.Token.sign(
+      WishlistsWeb.Endpoint,
+      "user_unsubscribe",
+      user.id,
+      max_age: 86400 * 365
+    )
+  end
+
+  @doc """
+  Verifies an unsubscribe token and returns the associated user.
+  """
+  def verify_unsubscribe_token(token) do
+    case Phoenix.Token.verify(
+           WishlistsWeb.Endpoint,
+           "user_unsubscribe",
+           token,
+           max_age: 86400 * 365
+         ) do
+      {:ok, user_id} ->
+        case get_user(user_id) do
+          nil -> {:error, :user_not_found}
+          user -> {:ok, user}
+        end
+
+      {:error, reason} ->
+        {:error, reason}
+    end
   end
 
   defp valid_password?(%User{hashed_password: hashed_password}, password)

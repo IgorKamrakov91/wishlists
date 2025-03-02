@@ -7,6 +7,8 @@ defmodule Wishlists.Application do
 
   @impl true
   def start(_type, _args) do
+    Wishlists.Cache.start()
+
     children = [
       WishlistsWeb.Telemetry,
       Wishlists.Repo,

@@ -11,6 +11,12 @@ defmodule Wishlists.Accounts.User do
     field :reset_password_sent_at, :naive_datetime
     field :locale, :string, default: "en"
 
+    field :notification_preferences, :map,
+      default: %{
+        "cleanup_notifications" => true,
+        "reservation_notifications" => true
+      }
+
     has_one :account, Wishlists.Accounts.Account
 
     timestamps()
@@ -67,6 +73,32 @@ defmodule Wishlists.Accounts.User do
     |> cast(attrs, [:locale])
     |> validate_required([:locale])
     |> validate_inclusion(:locale, ["en", "ru"])
+  end
+
+  @doc """
+  Changeset for updating notification preferences.
+  """
+  def notification_preferences_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:notification_preferences])
+    |> validate_required([:notification_preferences])
+    |> validate_notification_preferences()
+  end
+
+  defp validate_notification_preferences(changeset) do
+    validate_change(
+      changeset,
+      :notification_preferences,
+      fn :notification_preferences, preferences ->
+        valid_keys = ["cleanup_notifications", "reservation_notifications"]
+
+        if Enum.all?(Map.keys(preferences), &(&1 in valid_keys)) do
+          []
+        else
+          [notification_preferences: "contains invalid notification types"]
+        end
+      end
+    )
   end
 
   defp put_account_username(changeset) do
