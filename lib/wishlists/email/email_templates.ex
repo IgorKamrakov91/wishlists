@@ -87,6 +87,13 @@ defmodule Wishlists.Email.EmailTemplates do
   end
 
   defp reservation_html_body(folder, folder_card, reserver_name) do
+    reserver_info =
+      if folder.show_reserver_names do
+        "<p style=\"margin: 10px 0;\"><strong>Reserved by:</strong> #{reserver_name}</p>"
+      else
+        "<p style=\"margin: 10px 0;\">Someone has reserved this item</p>"
+      end
+
     """
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h1 style="color: #4f46e5;">New Reservation!</h1>
@@ -94,7 +101,7 @@ defmodule Wishlists.Email.EmailTemplates do
       <p>Great news! Someone has reserved an item from your wishlist "#{folder.name}".</p>
       <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <p style="margin: 0;"><strong>Item:</strong> #{folder_card.card.title}</p>
-        <p style="margin: 10px 0;"><strong>Reserved by:</strong> #{reserver_name}</p>
+        #{reserver_info}
       </div>
       <div style="margin: 30px 0;">
         <a href="#{WishlistsWeb.Endpoint.url()}/folders/#{folder.id}"
@@ -109,6 +116,13 @@ defmodule Wishlists.Email.EmailTemplates do
   end
 
   defp reservation_text_body(folder, folder_card, reserver_name) do
+    reserver_info =
+      if folder.show_reserver_names do
+        "Reserved by: #{reserver_name}"
+      else
+        "Someone has reserved this item."
+      end
+
     """
     New Reservation!
 
@@ -117,7 +131,7 @@ defmodule Wishlists.Email.EmailTemplates do
     Great news! Someone has reserved an item from your wishlist "#{folder.name}".
 
     Item: #{folder_card.card.title}
-    Reserved by: #{reserver_name}
+    #{reserver_info}
 
     View your wishlist: #{WishlistsWeb.Endpoint.url()}/folders/#{folder.id}
 
