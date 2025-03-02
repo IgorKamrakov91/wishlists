@@ -25,8 +25,11 @@ defmodule Wishlists.Email.EmailService do
 
     if get_in(folder.user.notification_preferences, ["reservation_notifications"]) do
       Gettext.with_locale(folder.user.locale || "en", fn ->
+        token = Wishlists.Accounts.generate_unsubscribe_token(folder.user)
+
         folder
         |> EmailTemplates.reservation_notification(folder_card, reserver_name)
+        |> replace_unsubscribe_token(token)
         |> add_unsubscribe_header("reservation_notifications")
         |> deliver()
       end)
@@ -41,8 +44,11 @@ defmodule Wishlists.Email.EmailService do
     with true <- get_in(folder.user.notification_preferences, ["cleanup_notifications"]),
          false <- already_notified?(folder) do
       Gettext.with_locale(folder.user.locale || "en", fn ->
+        token = Wishlists.Accounts.generate_unsubscribe_token(folder.user)
+
         folder.user
         |> EmailTemplates.folder_cleanup_notification(folder, folder_cards)
+        |> replace_unsubscribe_token(token)
         |> add_unsubscribe_header("cleanup_notifications")
         |> deliver()
         |> mark_as_notified(folder)
@@ -100,5 +106,23 @@ defmodule Wishlists.Email.EmailService do
         Logger.error("Failed to deliver email: #{inspect(error)}")
         {:error, error}
     end
+  end
+
+  defp replace_unsubscribe_token(email, token) do
+    new_html =
+      case email.html_body do
+        nil -> nil
+        html -> String.replace(html, "{{unsubscribe_token}}", token)
+      end
+
+    new_text =
+      case email.text_body do
+        nil -> nil
+        text -> String.replace(text, "{{unsubscribe_token}}", token)
+      end
+
+    email
+    |> html_body(new_html)
+    |> text_body(new_text)
   end
 end

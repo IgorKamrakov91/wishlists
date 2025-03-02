@@ -113,7 +113,13 @@ defmodule Wishlists.Email.EmailTemplates do
       <p>#{gettext("Best wishes")},</p>
       <p>#{gettext("The Wishlists Team")}</p>
       <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">
-        <p>#{gettext("To unsubscribe from reservation notifications, click the \"Unsubscribe\" link.")}</p>
+        <p>
+          #{gettext("Don't want to receive reservation notifications?")}
+          <a href="#{WishlistsWeb.Endpoint.url()}/notifications/unsubscribe/reservation_notifications/{{unsubscribe_token}}"
+             style="color: #4f46e5; text-decoration: underline;">
+            #{gettext("Unsubscribe")}
+          </a>
+        </p>
       </div>
     </div>
     """
@@ -143,7 +149,8 @@ defmodule Wishlists.Email.EmailTemplates do
     #{gettext("The Wishlists Team")}
 
     ---
-    #{gettext("To unsubscribe from reservation notifications, use the \"Unsubscribe\" link.")}
+    #{gettext("To unsubscribe from reservation notifications:")}
+    #{WishlistsWeb.Endpoint.url()}/notifications/unsubscribe/reservation_notifications/{{unsubscribe_token}}
     """
   end
 
@@ -261,7 +268,11 @@ defmodule Wishlists.Email.EmailTemplates do
       <div style="text-align: center; border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 32px;">
         <p style="color: #6b7280; font-size: 14px;">#{gettext("The Wishlists Team")}</p>
         <p style="color: #6b7280; font-size: 12px; margin-top: 16px;">
-          #{gettext("To unsubscribe from cleanup notifications, click the \"Unsubscribe\" link in your email client or visit your notification preferences in your account settings.")}
+          #{gettext("Don't want to receive cleanup notifications?")}
+          <a href="#{WishlistsWeb.Endpoint.url()}/notifications/unsubscribe/cleanup_notifications/{{unsubscribe_token}}"
+             style="color: #4f46e5; text-decoration: underline;">
+            #{gettext("Unsubscribe")}
+          </a>
         </p>
       </div>
     </div>
@@ -295,7 +306,8 @@ defmodule Wishlists.Email.EmailTemplates do
     #{gettext("The Wishlists Team")}
 
     ---
-    #{gettext("To unsubscribe from cleanup notifications, use the \"Unsubscribe\" link in your email client or visit your notification preferences in your account settings.")}
+    #{gettext("To unsubscribe from cleanup notifications:")}
+    #{WishlistsWeb.Endpoint.url()}/notifications/unsubscribe/cleanup_notifications/{{unsubscribe_token}}
     """
   end
 
