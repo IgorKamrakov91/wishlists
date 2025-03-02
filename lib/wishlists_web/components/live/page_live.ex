@@ -76,11 +76,15 @@ defmodule WishlistsWeb.PageLive do
     {:noreply, assign(socket, show_auth_modal: true)}
   end
 
-  def handle_info({:login_success, _user, token}, socket) do
+  def handle_info({:login_success, user, token}, socket) do
+    current_locale = socket.assigns.locale || "en"
+
+    {:ok, _updated_user} = Wishlists.Accounts.update_user_locale(user, current_locale)
+
     {:noreply,
      socket
      |> clear_flash()
-     |> redirect(to: ~p"/auth/set_session?token=#{token}")}
+     |> redirect(to: ~p"/auth/set_session?token=#{token}&locale=#{current_locale}")}
   end
 
   def handle_info({:login_error, message}, socket) do

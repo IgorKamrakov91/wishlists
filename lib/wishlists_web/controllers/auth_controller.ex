@@ -1,11 +1,15 @@
 defmodule WishlistsWeb.AuthController do
   use WishlistsWeb, :controller
 
-  def set_session(conn, %{"token" => token}) do
+  def set_session(conn, %{"token" => token, "locale" => locale}) do
     conn
-    |> put_session("guardian_default_token", token)
-    |> configure_session(renew: true)
+    |> put_session(:guardian_default_token, token)
+    |> put_session(:locale, locale)
     |> redirect(to: ~p"/dashboard")
+  end
+
+  def set_session(conn, %{"token" => token}) do
+    set_session(conn, %{"token" => token, "locale" => "en"})
   end
 
   def sign_out(conn, _params) do
