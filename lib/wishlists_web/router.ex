@@ -54,6 +54,12 @@ defmodule WishlistsWeb.Router do
 
     live("/dashboard", DashboardLive, :home)
     live("/folders/:id", FolderLive.Show, :show)
+
+    get(
+      "/notifications/settings/:type/unsubscribe",
+      NotificationSettingsController,
+      :unsubscribe
+    )
   end
 
   live_session :notifications,

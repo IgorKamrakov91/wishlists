@@ -111,6 +111,9 @@ defmodule Wishlists.Email.EmailTemplates do
       </div>
       <p>Best wishes,</p>
       <p>The Wishlists Team</p>
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280;">
+        <p>To unsubscribe from reservation notifications, click the "Unsubscribe" link.</p>
+      </div>
     </div>
     """
   end
@@ -137,6 +140,9 @@ defmodule Wishlists.Email.EmailTemplates do
 
     Best wishes,
     The Wishlists Team
+
+    ---
+    To unsubscribe from reservation notifications, use the "Unsubscribe" link.
     """
   end
 
@@ -253,6 +259,9 @@ defmodule Wishlists.Email.EmailTemplates do
 
       <div style="text-align: center; border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 32px;">
         <p style="color: #6b7280; font-size: 14px;">The Wishlists Team</p>
+        <p style="color: #6b7280; font-size: 12px; margin-top: 16px;">
+          To unsubscribe from cleanup notifications, click the "Unsubscribe" link in your email client or visit your notification preferences in your account settings.
+        </p>
       </div>
     </div>
     """
@@ -283,6 +292,9 @@ defmodule Wishlists.Email.EmailTemplates do
 
     Best wishes,
     The Wishlists Team
+
+    ---
+    To unsubscribe from cleanup notifications, use the "Unsubscribe" link in your email client or visit your notification preferences in your account settings.
     """
   end
 
