@@ -994,7 +994,7 @@ msgstr "С Рождеством!"
 #: lib/wishlists/email/email_templates.ex:25
 #, elixir-autogen, elixir-format
 msgid "New Reservation in Your Wishlist!"
-msgstr "Новая Резервация в Вашем Списке Желаний!"
+msgstr "Новое бронирование в вашем списке желаний!"
 
 #: lib/wishlists/email/email_templates.ex:100
 #: lib/wishlists/email/email_templates.ex:137
