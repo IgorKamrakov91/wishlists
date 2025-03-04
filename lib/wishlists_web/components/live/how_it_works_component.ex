@@ -17,7 +17,7 @@ defmodule WishlistsWeb.HowItWorksComponent do
             data-scroll-element="title"
           >
             <h2 class="text-4xl md:text-6xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              {gettext("How It Works")}
+              {@translations["how_it_works"]}
             </h2>
           </div>
 
@@ -44,12 +44,10 @@ defmodule WishlistsWeb.HowItWorksComponent do
                   </svg>
                 </div>
                 <h3 class="text-xl md:text-2xl font-semibold text-center mb-3 md:mb-4 text-white">
-                  {gettext("Create Your Wishlist")}
+                  {@translations["create_wishlist"]}
                 </h3>
                 <p class="text-gray-300 text-center text-base md:text-lg leading-relaxed">
-                  {gettext(
-                    "Sign up and create your first wishlist. Add items you'd love to receive as gifts."
-                  )}
+                  {@translations["create_wishlist_description"]}
                 </p>
               </div>
             </div>
@@ -76,12 +74,10 @@ defmodule WishlistsWeb.HowItWorksComponent do
                   </svg>
                 </div>
                 <h3 class="text-xl md:text-2xl font-semibold text-center mb-3 md:mb-4 text-white">
-                  {gettext("Share With Friends")}
+                  {@translations["share_with_friends"]}
                 </h3>
                 <p class="text-gray-300 text-center text-base md:text-lg leading-relaxed">
-                  {gettext(
-                    "Share your wishlist with friends and family using a unique link or invite them directly."
-                  )}
+                  {@translations["share_with_friends_description"]}
                 </p>
               </div>
             </div>
@@ -108,12 +104,10 @@ defmodule WishlistsWeb.HowItWorksComponent do
                   </svg>
                 </div>
                 <h3 class="text-xl md:text-2xl font-semibold text-center mb-3 md:mb-4 text-white">
-                  {gettext("Receive Perfect Gifts")}
+                  {@translations["receive_gifts"]}
                 </h3>
                 <p class="text-gray-300 text-center text-base md:text-lg leading-relaxed">
-                  {gettext(
-                    "Your friends can mark items as reserved, ensuring you get exactly what you want without duplicates."
-                  )}
+                  {@translations["receive_gifts_description"]}
                 </p>
               </div>
             </div>
@@ -132,7 +126,7 @@ defmodule WishlistsWeb.HowItWorksComponent do
               </div>
               <div class="absolute -inset-1 rounded-md bg-gradient-to-r from-indigo-400 to-purple-400 opacity-20 blur-lg group-hover:opacity-30 transition-opacity duration-300">
               </div>
-              {gettext("Try It Now")}
+              {@translations["try_it_now"]}
               <svg
                 class="ml-2 -mr-1 h-5 w-5 md:h-6 md:w-6"
                 fill="none"

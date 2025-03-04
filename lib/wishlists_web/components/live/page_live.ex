@@ -129,7 +129,26 @@ defmodule WishlistsWeb.PageLive do
         "privacy" => gettext("Privacy Policy"),
         "follow_us" => gettext("Follow Us"),
         "copyright" => gettext("© 2025 Wishlists Manager."),
-        "email" => gettext("Email: i.kamrakov@yahoo.com")
+        "email" => gettext("Email: i.kamrakov@yahoo.com"),
+
+        # Translations for HowItWorksComponent
+        "how_it_works" => gettext("How It Works"),
+        "create_wishlist" => gettext("Create Your Wishlist"),
+        "create_wishlist_description" =>
+          gettext(
+            "Sign up and create your first wishlist. Add items you'd love to receive as gifts."
+          ),
+        "share_with_friends" => gettext("Share With Friends"),
+        "share_with_friends_description" =>
+          gettext(
+            "Share your wishlist with friends and family using a unique link or invite them directly."
+          ),
+        "receive_gifts" => gettext("Receive Perfect Gifts"),
+        "receive_gifts_description" =>
+          gettext(
+            "Your friends can mark items as reserved, ensuring you get exactly what you want without duplicates."
+          ),
+        "try_it_now" => gettext("Try It Now")
       }
     end)
   end
