@@ -6,9 +6,12 @@ defmodule WishlistsWeb.PageLive do
 
   on_mount {WishlistsWeb.UserAuth, :mount_current_user}
 
-  def mount(_params, session, socket) do
+  def mount(params, session, socket) do
     locale =
       cond do
+        params["locale"] in ["en", "ru"] ->
+          params["locale"]
+
         socket.assigns[:current_user] ->
           Accounts.get_user_locale(socket.assigns.current_user)
 

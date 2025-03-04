@@ -110,6 +110,8 @@ defmodule Wishlists.Accounts do
     |> Repo.update()
   end
 
+  def update_user_locale(_user, _locale), do: {:error, "Invalid locale"}
+
   def get_user_locale(user) do
     user.locale || "en"
   end

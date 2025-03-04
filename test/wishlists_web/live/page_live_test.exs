@@ -16,11 +16,16 @@ defmodule WishlistsWeb.PageLiveTest do
     test "updates user locale on successful login with URL locale", %{conn: conn, user: user} do
       {:ok, view, _html} = live(conn, "/?locale=ru")
 
+      # Wait for the view to be fully mounted and initialized
+      :timer.sleep(100)
+
       send(view.pid, {:login_success, user, "test_token"})
+
+      # Wait for the update to complete
+      :timer.sleep(100)
 
       updated_user = Wishlists.Accounts.get_user!(user.id)
       assert updated_user.locale == "ru"
-
       assert_redirect(view, "/auth/set_session?token=test_token&locale=ru")
     end
 

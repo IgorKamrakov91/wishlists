@@ -59,9 +59,8 @@ defmodule Wishlists.Accounts.AccountTest do
     end
 
     test "update_user_locale/2 fails with invalid locale", %{user: user} do
-      assert_raise FunctionClauseError, fn ->
-        Accounts.update_user_locale(user, "invalid")
-      end
+      result = Accounts.update_user_locale(user, "invalid_locale")
+      assert result == {:error, "Invalid locale"}
     end
 
     test "get_user_locale/1 returns user locale or default", %{user: user} do
