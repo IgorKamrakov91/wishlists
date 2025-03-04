@@ -9,51 +9,56 @@
     id="hideable-header"
   >
     <div class="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-full">
-        <!-- Логотип -->
-        <.link navigate={~p"/dashboard"} class="block">
-          <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-            <.icon name="hero-gift" class="h-5 w-5 text-white" />
-          </div>
-        </.link>
+      <div class="relative h-full">
+        <div class="absolute left-0 top-1/2 -translate-y-1/2">
+          <.link navigate={~p"/dashboard"} class="block">
+            <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+              <.icon name="hero-gift" class="h-5 w-5 text-white" />
+            </div>
+          </.link>
+        </div>
 
-        <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-          {gettext("Wishlists Manager")}
-        </h1>
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
+            {gettext("Wishlists Manager")}
+          </h1>
+        </div>
 
-        <div class="relative group">
-          <button class="w-auto px-3 h-12 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
-            <div class="flex items-center space-x-2">
-              <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+        <div class="absolute right-0 top-1/2 -translate-y-1/2">
+          <div class="relative group">
+            <button class="w-auto px-3 h-12 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
+              <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                  <span class="text-sm font-medium text-gray-600">
+                    {String.first(@current_user.account.username)}
+                  </span>
+                </div>
                 <span class="text-sm font-medium text-gray-600">
-                  {String.first(@current_user.account.username)}
+                  {@current_user.account.username}
                 </span>
               </div>
-              <span class="text-sm font-medium text-gray-600">
-                {@current_user.account.username}
-              </span>
+            </button>
+
+            <div class="absolute h-3 w-full bottom-0 translate-y-full"></div>
+
+            <div class="hidden group-hover:block absolute right-0 top-[calc(100%+0.75rem)] w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+              <div class="px-4 py-2 border-b border-gray-100">
+                <p class="text-sm font-medium text-gray-900">
+                  {@current_user.account.username}
+                </p>
+                <p class="text-xs text-gray-500">
+                  {@current_user.email}
+                </p>
+              </div>
+
+              <.link
+                href={~p"/auth/sign_out"}
+                method="delete"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                {gettext("Sign out")}
+              </.link>
             </div>
-          </button>
-
-          <div class="absolute h-3 w-full bottom-0 translate-y-full"></div>
-
-          <div class="hidden group-hover:block absolute right-0 top-[calc(100%+0.75rem)] w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
-            <div class="px-4 py-2 border-b border-gray-100">
-              <p class="text-sm font-medium text-gray-900">
-                {@current_user.account.username}
-              </p>
-              <p class="text-xs text-gray-500">
-                {@current_user.email}
-              </p>
-            </div>
-
-            <.link
-              href={~p"/auth/sign_out"}
-              method="delete"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
-              {gettext("Sign out")}
-            </.link>
           </div>
         </div>
       </div>

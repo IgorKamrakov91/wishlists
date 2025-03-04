@@ -1,33 +1,35 @@
 <div class="min-h-screen bg-gradient-to-b from-indigo-100 via-purple-50 to-pink-100">
   <header class="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm h-16">
     <div class="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-full">
-        <%= if @current_user do %>
-          <.link navigate={~p"/dashboard"} class="block">
-            <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-              <.icon name="hero-gift" class="h-5 w-5 text-white" />
-            </div>
-          </.link>
-        <% else %>
-          <.link navigate={~p"/"} class="block">
-            <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-              <.icon name="hero-gift" class="h-5 w-5 text-white" />
-            </div>
-          </.link>
-        <% end %>
+      <div class="relative h-full">
+        <div class="absolute left-0 top-1/2 -translate-y-1/2">
+          <%= if @current_user do %>
+            <.link navigate={~p"/dashboard"} class="block">
+              <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                <.icon name="hero-gift" class="h-5 w-5 text-white" />
+              </div>
+            </.link>
+          <% else %>
+            <.link navigate={~p"/"} class="block">
+              <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                <.icon name="hero-gift" class="h-5 w-5 text-white" />
+              </div>
+            </.link>
+          <% end %>
+        </div>
 
-        <div class="flex flex-col items-center">
-          <h1 class="text-lg font-semibold text-gray-900">
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-3">
+          <h1 class="text-lg font-semibold text-gray-900 whitespace-nowrap">
             {@folder.name}
           </h1>
           <%= if @folder.event_date do %>
-            <span class="text-sm text-gray-500">
+            <span class="text-sm text-gray-500 whitespace-nowrap">
               {Calendar.strftime(@folder.event_date, "%B %d, %Y")}
             </span>
           <% end %>
         </div>
 
-        <div class="flex items-center space-x-2">
+        <div class="absolute right-0 top-1/2 -translate-y-1/2">
           <%= cond do %>
             <% @current_user -> %>
               <div class="relative group">
