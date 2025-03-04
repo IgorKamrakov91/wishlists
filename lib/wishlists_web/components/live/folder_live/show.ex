@@ -285,7 +285,7 @@ defmodule WishlistsWeb.FolderLive.Show do
      |> put_flash(:info, gettext("Card created successfully"))}
   end
 
-  defp get_suggester_name(card) do
+  def get_suggester_name(card) do
     cond do
       card.suggested_by_user_id ->
         user = Wishlists.Accounts.get_user!(card.suggested_by_user_id)

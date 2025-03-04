@@ -1207,7 +1207,7 @@ msgstr "Пожалуйста, войдите, чтобы получить дос
 #: lib/wishlists_web/components/live/dashboard_live.html.heex:54
 #, elixir-autogen, elixir-format
 msgid "Sign out"
-msgstr ""
+msgstr "Выйти"
 
 #: lib/wishlists_web/components/live/dashboard_live.ex:115
 #, elixir-autogen, elixir-format

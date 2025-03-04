@@ -59,7 +59,7 @@
   <div class="h-16"></div>
 
   <div
-    class="fixed top-0 left-0 right-0 bg-white/98 backdrop-blur-sm shadow-lg transform transition-all duration-300 z-30 px-4 sm:px-0 border-b border-gray-200"
+    class="fixed top-0 left-0 right-0 bg-white backdrop-blur-sm shadow-lg transform transition-all duration-300 z-30 px-4 sm:px-0 border-b border-gray-200"
     id="floating-folders-bar"
     style="transform: translateY(-100%)"
     phx-hook="FloatingBar"
@@ -78,7 +78,7 @@
         <%= for folder <- @folders do %>
           <div class="flex-none">
             <div
-              class="bg-white/80 backdrop-blur-sm rounded-xl p-3 shadow-md hover:shadow-lg transition-all duration-200 drag-target transform hover:-translate-y-0.5"
+              class="bg-white backdrop-blur-sm rounded-xl p-3 shadow-md hover:shadow-lg transition-all duration-200 drag-target transform hover:-translate-y-0.5"
               data-folder-id={folder.id}
               data-owner={if folder.user_id == @current_user.id, do: "true", else: "false"}
               id={"floating-folder-#{folder.id}"}

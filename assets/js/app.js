@@ -24,7 +24,7 @@ let Hooks = {
     }
   },
   DragOrder,
-  SparkleEffect,
+  // SparkleEffect,
   DragCard,
   DeleteBucket,
   ImageLoader,
