@@ -24,18 +24,11 @@ defmodule MarketplaceScrapper do
       {:ok, %Req.Response{body: html}} ->
         data = extract_relevant_data(html)
 
-        case extract_data_from_html(data) do
-          %{"title" => title, "description" => description, "image" => image, "price" => price} =
-              extracted_data ->
-            IO.inspect(extracted_data, label: "extracted data")
+        IO.inspect(data, label: "DATA")
 
-            {:ok,
-             %{
-               "title" => title,
-               "description" => description,
-               "image" => image,
-               "price" => price
-             }}
+        case extract_data_from_html(data) do
+          %{"title" => _, "description" => _, "image" => _} = extracted_data ->
+            {:ok, extracted_data}
 
           :error ->
             {:error, :api_failed}
@@ -103,7 +96,9 @@ defmodule MarketplaceScrapper do
     }
   end
 
-  defp extract_data_from_html(data) do
+  def extract_data_from_html(data) do
+    IO.inspect(data, label: "Input Data")
+
     body = %{
       model: "gpt-3.5-turbo",
       messages: [
@@ -116,33 +111,44 @@ defmodule MarketplaceScrapper do
       ]
     }
 
+    IO.inspect(body, label: "Request Body")
+
     headers = [
       {"Authorization", "Bearer #{@api_key}"},
       {"Content-Type", "application/json"}
     ]
 
+    IO.inspect(headers, label: "Request Headers")
+
     case Req.post(@api_url, json: body, headers: headers, finch: Wishlists.Finch) do
-      {:ok, %Req.Response{body: %{"choices" => [%{"message" => %{"content" => content}}]}}} ->
-        case Jason.decode(content) do
-          {:ok, decoded} when is_map(decoded) ->
-            # Убедимся, что все необходимые поля присутствуют
-            case decoded do
-              %{"title" => _, "description" => _, "image" => _, "price" => _} = data ->
-                price = String.replace(data["price"], ~r/[^\d.]/, "")
-                %{data | "price" => price}
+      {:ok, %Req.Response{status: status, body: body} = _response} ->
+        IO.inspect(status, label: "Response Status")
+        IO.inspect(body, label: "Response Body")
 
-              _ ->
-                :error
-            end
+        case body do
+          %{"choices" => [%{"message" => %{"content" => content}}]} ->
+            IO.inspect(content, label: "GPT Content")
+            parsed = Jason.decode!(content)
+            IO.inspect(parsed, label: "Parsed Content")
+            parsed
 
-          _ ->
+          other ->
+            IO.inspect(other, label: "Unexpected Response Format")
             :error
         end
 
-      _ ->
+      {:error, %Req.Response{status: status} = response} ->
+        IO.inspect(status, label: "Error Status")
+        IO.inspect(response, label: "Error Response")
+        :error
+
+      {:error, reason} ->
+        IO.inspect(reason, label: "Request Error")
         :error
     end
   rescue
-    _ -> :error
+    error ->
+      IO.inspect(error, label: "Rescue Error")
+      :error
   end
 end
