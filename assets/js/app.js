@@ -8,10 +8,10 @@ import SparkleEffect from "./hooks/sparkle_effect"
 import DeleteBucket from "./hooks/delete_bucket"
 import DragCard from "./hooks/drag_card"
 import LocaleHook from "./hooks/locale"
-import CardConfettiEffect from "./hooks/card_confetti_effect"
 import ImageLoader from "./hooks/image_loader"
 import ScrollAnimation from "./hooks/scroll_animation"
 import topbar from "../vendor/topbar"
+import HideableHeader from "./hooks/header"
 
 let Hooks = {
   DragAndDrop,
@@ -25,7 +25,6 @@ let Hooks = {
   },
   DragOrder,
   SparkleEffect,
-  CardConfettiEffect,
   DragCard,
   DeleteBucket,
   ImageLoader,
@@ -37,7 +36,8 @@ let Hooks = {
     }
   },
   Locale: LocaleHook,
-  ScrollAnimation
+  ScrollAnimation,
+  HideableHeader
 }
 
 function getCookie(name) {

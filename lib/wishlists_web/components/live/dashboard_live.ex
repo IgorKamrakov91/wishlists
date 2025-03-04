@@ -13,6 +13,10 @@ defmodule WishlistsWeb.DashboardLive do
       locale = session["locale"] || "en"
       Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
+      current_user =
+        socket.assigns.current_user
+        |> Wishlists.Repo.preload(:account)
+
       folders = Folders.list_user_folders(socket.assigns.current_user.id)
       followed_folders = Folders.list_followed_folders(socket.assigns.current_user.id)
 
@@ -36,6 +40,7 @@ defmodule WishlistsWeb.DashboardLive do
 
       {:ok,
        socket
+       |> assign(current_user: current_user)
        |> assign(folders: folders_with_counts)
        |> assign(followed_folders: followed_folders_with_counts)
        |> assign(cards: cards)
@@ -48,7 +53,7 @@ defmodule WishlistsWeb.DashboardLive do
     else
       {:ok,
        socket
-       |> put_flash(:error, "Please log in to access this page")
+       |> put_flash(:error, gettext("Please log in to access this page"))
        |> redirect(to: ~p"/")}
     end
   end
@@ -107,18 +112,18 @@ defmodule WishlistsWeb.DashboardLive do
              |> assign(cards: cards)
              |> assign(folders: folders_with_counts)
              |> push_event("trigger_card_confetti", %{})
-             |> put_flash(:info, "Card assigned to folder successfully")}
+             |> put_flash(:info, gettext("Wish added to wishlist successfully"))}
 
           {:error, _changeset} ->
             {:noreply,
              socket
-             |> put_flash(:error, "Failed to assign card to folder")}
+             |> put_flash(:error, gettext("Failed to add wish to wishlist"))}
         end
 
       true ->
         {:noreply,
          socket
-         |> put_flash(:error, "You don't have permission to add cards to this folder")}
+         |> put_flash(:error, gettext("You don't have permission to add cards to this folder"))}
     end
   end
 
@@ -145,12 +150,12 @@ defmodule WishlistsWeb.DashboardLive do
         {:noreply,
          socket
          |> assign(:cards, cards)
-         |> put_flash(:info, "Card deleted successfully")}
+         |> put_flash(:info, gettext("Wish deleted successfully"))}
 
       {:error, _changeset} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Failed to delete card")}
+         |> put_flash(:error, gettext("Failed to delete wish"))}
     end
   end
 
@@ -175,7 +180,7 @@ defmodule WishlistsWeb.DashboardLive do
          |> assign(:show_modal, false)
          |> assign(:modal_type, nil)
          |> assign(:card_to_delete, nil)
-         |> put_flash(:info, "Wish deleted successfully")}
+         |> put_flash(:info, gettext("Wish deleted successfully"))}
 
       {:error, _changeset} ->
         {:noreply,
@@ -183,7 +188,7 @@ defmodule WishlistsWeb.DashboardLive do
          |> assign(:show_modal, false)
          |> assign(:modal_type, nil)
          |> assign(:card_to_delete, nil)
-         |> put_flash(:error, "Failed to delete wish")}
+         |> put_flash(:error, gettext("Failed to delete wish"))}
     end
   end
 
@@ -197,7 +202,7 @@ defmodule WishlistsWeb.DashboardLive do
     else
       {:error, reason} ->
         Logger.error("Failed to reorder card: #{inspect(reason)}")
-        {:noreply, put_flash(socket, :error, "Failed to reorder card")}
+        {:noreply, put_flash(socket, :error, gettext("Failed to reorder card"))}
     end
   end
 
@@ -237,7 +242,7 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(folders: folders_with_counts)
      |> assign(show_modal: false)
      |> assign(modal_type: nil)
-     |> put_flash(:info, "Folder created successfully")}
+     |> put_flash(:info, gettext("Wish created successfully"))}
   end
 
   @impl true
@@ -251,7 +256,7 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(modal_type: nil)
      |> push_event("trigger_card_confetti", %{})
      |> push_event("init_new_card", %{})
-     |> put_flash(:info, gettext("Card created successfully"))}
+     |> put_flash(:info, gettext("Wish created successfully"))}
   end
 
   @impl true
@@ -263,7 +268,7 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(cards: cards)
      |> assign(show_modal: false)
      |> assign(modal_type: nil)
-     |> put_flash(:info, "Card updated successfully")}
+     |> put_flash(:info, gettext("Wish updated successfully"))}
   end
 
   def handle_info({:new_notification}, socket) do

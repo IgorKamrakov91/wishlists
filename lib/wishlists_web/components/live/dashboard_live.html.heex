@@ -3,41 +3,63 @@
   phx-hook="CardConfettiEffect"
   id="card-confetti-container"
 >
-  <header class="bg-white/90 backdrop-blur-sm shadow-md">
-    <div class="max-w-7xl mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:px-8">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div class="flex items-center space-x-3">
-          <div class="h-10 w-10 sm:h-12 sm:w-12 bg-indigo-600 rounded-full flex items-center justify-center">
-            <.icon name="hero-sparkles" class="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+  <header
+    class="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm h-16 transition-transform duration-300"
+    phx-hook="HideableHeader"
+    id="hideable-header"
+  >
+    <div class="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-full">
+        <!-- Логотип -->
+        <.link navigate={~p"/dashboard"} class="block">
+          <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+            <.icon name="hero-gift" class="h-5 w-5 text-white" />
           </div>
-          <div>
-            <h1
-              class="text-2xl sm:text-3xl font-bold text-indigo-600"
-              id="wishverse-header"
-              phx-hook="SparkleEffect"
+        </.link>
+
+        <div class="relative group">
+          <button class="w-auto px-3 h-12 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
+            <div class="flex items-center space-x-2">
+              <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                <span class="text-sm font-medium text-gray-600">
+                  {String.first(@current_user.account.username)}
+                </span>
+              </div>
+              <span class="text-sm font-medium text-gray-600">
+                {@current_user.account.username}
+              </span>
+            </div>
+          </button>
+
+          <div class="absolute h-3 w-full bottom-0 translate-y-full"></div>
+
+          <div class="hidden group-hover:block absolute right-0 top-[calc(100%+0.75rem)] w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+            <div class="px-4 py-2 border-b border-gray-100">
+              <p class="text-sm font-medium text-gray-900">
+                {@current_user.account.username}
+              </p>
+              <p class="text-xs text-gray-500">
+                {@current_user.email}
+              </p>
+            </div>
+
+            <.link
+              href={~p"/auth/sign_out"}
+              method="delete"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
             >
-              {gettext("Your Wishverse")}
-            </h1>
-            <p class="text-sm text-gray-600 hidden sm:block">
-              {gettext("Where dreams come true")}
-            </p>
+              {gettext("Sign out")}
+            </.link>
           </div>
         </div>
-
-        <.link
-          href={~p"/auth/sign_out"}
-          method="delete"
-          class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-full transition-all duration-300 flex items-center justify-center space-x-2 text-sm"
-        >
-          <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" />
-          <span>{gettext("Logout")}</span>
-        </.link>
       </div>
     </div>
   </header>
 
+  <div class="h-16"></div>
+
   <div
-    class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-lg transform transition-all duration-300 z-30 px-4 sm:px-0"
+    class="fixed top-0 left-0 right-0 bg-white/98 backdrop-blur-sm shadow-lg transform transition-all duration-300 z-30 px-4 sm:px-0 border-b border-gray-200"
     id="floating-folders-bar"
     style="transform: translateY(-100%)"
     phx-hook="FloatingBar"
@@ -181,10 +203,10 @@
                   <div class="flex-none w-64">
                     <div
                       class={[
-                        "bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 relative group transform hover:-translate-y-1 drag-target",
+                        "bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 relative group transform hover:-translate-y-1 drag-target border border-gray-100",
                         is_map(folder) && Map.has_key?(folder, :user_id) &&
                           folder.user_id != @current_user.id &&
-                          "bg-gradient-to-r from-purple-200 to-pink-200"
+                          "bg-gradient-to-r from-purple-200/95 to-pink-200/95"
                       ]}
                       data-folder-id={folder.id}
                       data-owner={
@@ -317,7 +339,11 @@
               phx-hook="DragCard"
             >
               <div class="bg-white/80 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full relative">
-                <div class="relative h-48 mb-4" phx-click="edit_card" phx-value-id={card.id}>
+                <div
+                  class="relative h-48 mb-4 overflow-hidden rounded-xl"
+                  phx-click="edit_card"
+                  phx-value-id={card.id}
+                >
                   <img
                     src={
                       if card.image_url && card.image_url != "",
@@ -325,12 +351,16 @@
                         else: "/images/gift.jpg"
                     }
                     alt={card.title}
-                    class="w-full h-full object-cover rounded-xl"
+                    class="w-full h-full object-cover rounded-xl transition-transform duration-300 hover:scale-105"
                     loading="lazy"
                     phx-hook="ImageLoader"
                     id={"image-#{card.id}"}
                     onerror="this.src='/images/gift.jpg'"
                   />
+
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  </div>
+
                   <button
                     class="absolute top-2 right-2 bg-white/90 w-8 h-8 rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-50 flex items-center justify-center"
                     phx-click="edit_card"
