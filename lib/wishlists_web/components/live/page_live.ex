@@ -128,7 +128,7 @@ defmodule WishlistsWeb.PageLive do
         "terms" => gettext("Terms of Service"),
         "privacy" => gettext("Privacy Policy"),
         "follow_us" => gettext("Follow Us"),
-        "copyright" => gettext("© 2025 Wishlists Manager. All rights reserved."),
+        "copyright" => gettext("© 2025 Wishlists Manager."),
         "email" => gettext("Email: i.kamrakov@yahoo.com")
       }
     end)

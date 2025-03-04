@@ -51,7 +51,7 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: lib/wishlists_web/components/live/page_live.ex:124
+#: lib/wishlists_web/components/live/page_live.ex:127
 #, elixir-autogen, elixir-format
 msgid "About Us"
 msgstr "О нас"
@@ -72,12 +72,12 @@ msgstr "Вы уверены, что хотите удалить это жела�
 msgid "Cancel"
 msgstr "Отмена"
 
-#: lib/wishlists_web/components/live/page_live.ex:122
+#: lib/wishlists_web/components/live/page_live.ex:125
 #, elixir-autogen, elixir-format
 msgid "Contact"
 msgstr "Контакты"
 
-#: lib/wishlists_web/components/live/page_live.ex:118
+#: lib/wishlists_web/components/live/page_live.ex:121
 #, elixir-autogen, elixir-format
 msgid "Create and manage your wishlists effortlessly. Keep track of all the things you dream about!"
 msgstr "Создавайте и управляйте списками желаний без усилий. Отслеживайте все, о чем мечтаете!"
@@ -104,17 +104,17 @@ msgstr "Мечты, ждущие исполнения"
 msgid "Drop to add to:"
 msgstr ""
 
-#: lib/wishlists_web/components/live/page_live.ex:129
+#: lib/wishlists_web/components/live/page_live.ex:132
 #, elixir-autogen, elixir-format
 msgid "Email: i.kamrakov@yahoo.com"
 msgstr "Email: igor@kamrakov.ru"
 
-#: lib/wishlists_web/components/live/page_live.ex:127
+#: lib/wishlists_web/components/live/page_live.ex:130
 #, elixir-autogen, elixir-format
 msgid "Follow Us"
 msgstr "Подписывайтесь"
 
-#: lib/wishlists_web/components/live/page_live.ex:121
+#: lib/wishlists_web/components/live/page_live.ex:124
 #, elixir-autogen, elixir-format
 msgid "Get Started"
 msgstr "Начать"
@@ -160,12 +160,12 @@ msgstr "Открыть Коллекцию"
 msgid "Organize your wishes into magical collections"
 msgstr "Организуйте свои желания в магические коллекции"
 
-#: lib/wishlists_web/components/live/page_live.ex:126
+#: lib/wishlists_web/components/live/page_live.ex:129
 #, elixir-autogen, elixir-format
 msgid "Privacy Policy"
 msgstr "Политика конфиденциальности"
 
-#: lib/wishlists_web/components/live/page_live.ex:123
+#: lib/wishlists_web/components/live/page_live.ex:126
 #, elixir-autogen, elixir-format
 msgid "Quick Links"
 msgstr "Быстрые ссылки"
@@ -180,7 +180,7 @@ msgstr "Общие"
 msgid "Shared by"
 msgstr "Поделился"
 
-#: lib/wishlists_web/components/live/page_live.ex:125
+#: lib/wishlists_web/components/live/page_live.ex:128
 #, elixir-autogen, elixir-format
 msgid "Terms of Service"
 msgstr "Условия использования"
@@ -202,7 +202,7 @@ msgstr "Ссылка"
 msgid "Where dreams come true"
 msgstr "Где мечты сбываются"
 
-#: lib/wishlists_web/components/live/page_live.ex:116
+#: lib/wishlists_web/components/live/page_live.ex:119
 #, elixir-autogen, elixir-format
 msgid "Wishlists Manager"
 msgstr "Список Ваших Желаний"
@@ -227,10 +227,10 @@ msgstr "шт."
 msgid "items"
 msgstr "шт."
 
-#: lib/wishlists_web/components/live/page_live.ex:128
+#: lib/wishlists_web/components/live/page_live.ex:131
 #, elixir-autogen, elixir-format, fuzzy
-msgid "© 2025 Wishlists Manager. All rights reserved."
-msgstr "© 2025 Менеджер Списков Желаний. Все права защищены."
+msgid "© 2025 Wishlists Manager."
+msgstr "© 2025 Менеджер Списков Желаний."
 
 #: lib/wishlists_web/components/live/folder_live/show.html.heex:88
 #: lib/wishlists_web/components/live/folder_live/show.html.heex:231
@@ -707,6 +707,7 @@ msgid "Close"
 msgstr "Закрыть"
 
 #: lib/wishlists_web/components/auth_component.ex:86
+#: lib/wishlists_web/components/live/how_it_works_component.ex:50
 #, elixir-autogen, elixir-format
 msgid "Create Your Wishlist"
 msgstr "Создайте Свой Список Желаний"
@@ -756,12 +757,6 @@ msgstr "Войти"
 #, elixir-autogen, elixir-format
 msgid "Sign in to manage your wishlists and discover new items"
 msgstr "Войдите, чтобы управлять списками желаний и открывать новые товары"
-
-# Auth Component translations
-#: lib/wishlists_web/components/auth_component.ex:86
-#, elixir-autogen, elixir-format
-msgid "Welcome Back!"
-msgstr "С возвращением!"
 
 #: lib/wishlists_web/components/live/dashboard_live.ex:321
 #, elixir-autogen, elixir-format
@@ -1166,3 +1161,44 @@ msgstr "Чтобы отписаться от уведомлений о брон�
 #, elixir-autogen, elixir-format
 msgid "Unsubscribe"
 msgstr "Отписаться"
+
+#: lib/wishlists_web/components/live/how_it_works_component.ex:22
+#, elixir-autogen, elixir-format
+msgid "How It Works"
+msgstr "Как это работает"
+
+#: lib/wishlists_web/components/live/how_it_works_component.ex:116
+#, elixir-autogen, elixir-format
+msgid "Receive Perfect Gifts"
+msgstr "Получaйте то, о чем мечтали"
+
+#: lib/wishlists_web/components/live/how_it_works_component.ex:83
+#, elixir-autogen, elixir-format
+msgid "Share With Friends"
+msgstr "Поделитесь с друзьями"
+
+#: lib/wishlists_web/components/live/how_it_works_component.ex:86
+#, elixir-autogen, elixir-format
+msgid "Share your wishlist with friends and family using a unique link or invite them directly."
+msgstr "Поделитесь с друзьями и семьей, используя уникальную ссылку или пригласите их напрямую."
+
+#: lib/wishlists_web/components/live/how_it_works_component.ex:53
+#, elixir-autogen, elixir-format
+msgid "Sign up and create your first wishlist. Add items you'd love to receive as gifts."
+msgstr "Зарегистрируйтесь и создайте свой первый вишлист. Добавьте товары, которые вы хотели бы получить в качестве подарка и перетащите их в вишлист."
+
+#: lib/wishlists_web/components/live/how_it_works_component.ex:141
+#, elixir-autogen, elixir-format
+msgid "Try It Now"
+msgstr "Начните сейчас"
+
+# Auth Component translations
+#: lib/wishlists_web/components/auth_component.ex:86
+#, elixir-autogen, elixir-format
+msgid "Welcome!"
+msgstr "Добро пожаловать!"
+
+#: lib/wishlists_web/components/live/how_it_works_component.ex:119
+#, elixir-autogen, elixir-format
+msgid "Your friends can mark items as reserved, ensuring you get exactly what you want without duplicates."
+msgstr "Ваш друзья могут отметить товары как выбранные, чтобы вы получили именно то, что хотите, без повторов."

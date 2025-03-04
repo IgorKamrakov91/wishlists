@@ -83,7 +83,7 @@ defmodule WishlistsWeb.AuthComponent do
         </div>
       </div>
       <h2 class="text-2xl font-bold text-gray-900 mb-2">
-        {if @view == :sign_in, do: gettext("Welcome Back!"), else: gettext("Create Your Wishlist")}
+        {if @view == :sign_in, do: gettext("Welcome!"), else: gettext("Create Your Wishlist")}
       </h2>
       <p class="text-sm text-gray-500">
         {if @view == :sign_in,

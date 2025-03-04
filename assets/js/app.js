@@ -10,6 +10,7 @@ import DragCard from "./hooks/drag_card"
 import LocaleHook from "./hooks/locale"
 import CardConfettiEffect from "./hooks/card_confetti_effect"
 import ImageLoader from "./hooks/image_loader"
+import ScrollAnimation from "./hooks/scroll_animation"
 import topbar from "../vendor/topbar"
 
 let Hooks = {
@@ -35,7 +36,8 @@ let Hooks = {
       });
     }
   },
-  Locale: LocaleHook
+  Locale: LocaleHook,
+  ScrollAnimation
 }
 
 function getCookie(name) {
