@@ -315,7 +315,6 @@ defmodule WishlistsWeb.DashboardLive do
 
       days_until == 1 ->
         gettext("Event is tomorrow %{icon}", icon: "🎉")
-        "Event is tomorrow! 🎉"
 
       true ->
         gettext("%{days} days remaining", days: days_until)

@@ -710,7 +710,7 @@ msgstr "Закрыть"
 #: lib/wishlists_web/components/live/how_it_works_component.ex:50
 #, elixir-autogen, elixir-format
 msgid "Create Your Wishlist"
-msgstr "Создайте Свой Список Желаний"
+msgstr "Создайте свой список желаний"
 
 #: lib/wishlists_web/components/auth_component.ex:220
 #, elixir-autogen, elixir-format
@@ -806,12 +806,12 @@ msgstr "Событие прошло %{icon}"
 #: lib/wishlists_web/components/live/dashboard_live.ex:314
 #, elixir-autogen, elixir-format
 msgid "Event is today %{icon}"
-msgstr "Сегодня событие %{icon}"
+msgstr "Событие сегодня %{icon}"
 
 #: lib/wishlists_web/components/live/dashboard_live.ex:317
 #, elixir-autogen, elixir-format
 msgid "Event is tomorrow %{icon}"
-msgstr "Завтра событие %{icon}"
+msgstr "Событие завтра %{icon}"
 
 #: lib/wishlists_web/components/live/card_live/card_form_component.ex:298
 #, elixir-autogen, elixir-format
@@ -1170,7 +1170,7 @@ msgstr "Как это работает"
 #: lib/wishlists_web/components/live/how_it_works_component.ex:116
 #, elixir-autogen, elixir-format
 msgid "Receive Perfect Gifts"
-msgstr "Получaйте то, о чем мечтали"
+msgstr "Получайте то, о чем мечтали"
 
 #: lib/wishlists_web/components/live/how_it_works_component.ex:83
 #, elixir-autogen, elixir-format
@@ -1180,7 +1180,7 @@ msgstr "Поделитесь с друзьями"
 #: lib/wishlists_web/components/live/how_it_works_component.ex:86
 #, elixir-autogen, elixir-format
 msgid "Share your wishlist with friends and family using a unique link or invite them directly."
-msgstr "Поделитесь с друзьями и семьей, используя уникальную ссылку или пригласите их напрямую."
+msgstr "Поделитесь вишлистом с друзьями и семьей, используя уникальную ссылку или пригласите их напрямую."
 
 #: lib/wishlists_web/components/live/how_it_works_component.ex:53
 #, elixir-autogen, elixir-format

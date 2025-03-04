@@ -43,7 +43,11 @@
     phx-hook="FloatingBar"
   >
     <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
-      <div class="flex space-x-4 overflow-x-auto hide-scrollbar pb-2" id="floating-folders-container" phx-hook="DragAndDrop">
+      <div
+        class="flex space-x-4 overflow-x-auto hide-scrollbar pb-2"
+        id="floating-folders-container"
+        phx-hook="DragAndDrop"
+      >
         <div class="flex-none">
           <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl p-3">
             <span class="text-sm font-medium">{gettext("Drop to add to:")}</span>
@@ -180,7 +184,7 @@
                         "bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 relative group transform hover:-translate-y-1 drag-target",
                         is_map(folder) && Map.has_key?(folder, :user_id) &&
                           folder.user_id != @current_user.id &&
-                          "bg-gradient-to-r from-purple-100 to-pink-100"
+                          "bg-gradient-to-r from-purple-200 to-pink-200"
                       ]}
                       data-folder-id={folder.id}
                       data-owner={
@@ -199,7 +203,9 @@
                       </div>
 
                       <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-xl font-bold text-indigo-900 truncate max-w-[11ch]">{folder.name}</h3>
+                        <h3 class="text-xl font-bold text-indigo-900 truncate max-w-[11ch]">
+                          {folder.name}
+                        </h3>
                         <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                           {folder.card_count} {if folder.card_count == 1,
                             do: gettext("item"),
@@ -311,13 +317,13 @@
               phx-hook="DragCard"
             >
               <div class="bg-white/80 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full relative">
-                <div
-                  class="relative h-48 mb-4"
-                  phx-click="edit_card"
-                  phx-value-id={card.id}
-                >
+                <div class="relative h-48 mb-4" phx-click="edit_card" phx-value-id={card.id}>
                   <img
-                    src={if card.image_url && card.image_url != "", do: card.image_url, else: "/images/gift.jpg"}
+                    src={
+                      if card.image_url && card.image_url != "",
+                        do: card.image_url,
+                        else: "/images/gift.jpg"
+                    }
                     alt={card.title}
                     class="w-full h-full object-cover rounded-xl"
                     loading="lazy"

@@ -104,8 +104,13 @@
               folder_card.reservation && "bg-purple-50/80"
             ]}>
               <%= if folder_card.card.status == "pending" do %>
-                <div class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium z-10">
-                  {gettext("Pending Approval")}
+                <div class="absolute top-2 right-2 flex flex-col items-end gap-1 z-10">
+                  <div class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                    {gettext("Pending Approval")}
+                  </div>
+                  <div class="bg-yellow-50 text-yellow-700 px-3 py-1 rounded-full text-xs">
+                    {gettext("Suggested by: %{name}", name: get_suggester_name(folder_card.card))}
+                  </div>
                 </div>
 
                 <div class="absolute top-2 left-2 flex space-x-2 z-10">
@@ -172,12 +177,6 @@
                   <% else %>
                     {gettext("Reserved")}
                   <% end %>
-                </div>
-              <% end %>
-
-              <%= if folder_card.card.status == "pending" do %>
-                <div class="mb-3 text-sm text-gray-500">
-                  {gettext("Suggested by: %{name}", name: get_suggester_name(folder_card.card))}
                 </div>
               <% end %>
 
