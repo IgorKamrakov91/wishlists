@@ -24,12 +24,18 @@ defmodule MarketplaceScrapper do
       {:ok, %Req.Response{body: html}} ->
         data = extract_relevant_data(html)
 
-        IO.inspect(data, label: "DATA")
-
         case extract_data_from_html(data) do
-          %{"title" => _, "description" => _, "image" => _} = extracted_data ->
-            IO.inspect(extracted_data)
-            {:ok, extracted_data}
+          %{"title" => title, "description" => description, "image" => image, "price" => price} =
+              extracted_data ->
+            IO.inspect(extracted_data, label: "extracted data")
+
+            {:ok,
+             %{
+               "title" => title,
+               "description" => description,
+               "image" => image,
+               "price" => price
+             }}
 
           :error ->
             {:error, :api_failed}
@@ -117,9 +123,23 @@ defmodule MarketplaceScrapper do
 
     case Req.post(@api_url, json: body, headers: headers, finch: Wishlists.Finch) do
       {:ok, %Req.Response{body: %{"choices" => [%{"message" => %{"content" => content}}]}}} ->
-        Jason.decode!(content)
+        case Jason.decode(content) do
+          {:ok, decoded} when is_map(decoded) ->
+            # Убедимся, что все необходимые поля присутствуют
+            case decoded do
+              %{"title" => _, "description" => _, "image" => _, "price" => _} = data ->
+                price = String.replace(data["price"], ~r/[^\d.]/, "")
+                %{data | "price" => price}
 
-      {:error, _reason} ->
+              _ ->
+                :error
+            end
+
+          _ ->
+            :error
+        end
+
+      _ ->
         :error
     end
   rescue
