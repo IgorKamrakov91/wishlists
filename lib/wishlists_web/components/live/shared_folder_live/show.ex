@@ -352,7 +352,31 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
   def handle_info({:card_suggested, card}, socket) do
     case Cards.assign_card_to_folder(card.id, socket.assigns.folder.id) do
-      {:ok, _} ->
+      {:ok, _folder_card} ->
+        folder = socket.assigns.folder |> Wishlists.Repo.preload(:user)
+
+        suggester_name =
+          cond do
+            card.suggested_by_user_id ->
+              user = Wishlists.Accounts.get_user!(card.suggested_by_user_id)
+              user.email
+
+            card.suggested_by_guest_id ->
+              guest = Wishlists.Accounts.get_guest_viewer!(card.suggested_by_guest_id)
+              guest.name
+
+            true ->
+              gettext("Anonymous")
+          end
+
+        Logger.info("Sending suggestion notification for card: #{inspect(card)}")
+
+        Wishlists.Email.EmailService.send_suggestion_notification(
+          folder,
+          %{card: Wishlists.Repo.preload(card, :folder_cards)},
+          suggester_name
+        )
+
         cards = Cards.list_folder_cards(socket.assigns.folder.id)
 
         {:noreply,

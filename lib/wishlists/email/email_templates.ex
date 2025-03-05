@@ -311,6 +311,93 @@ defmodule Wishlists.Email.EmailTemplates do
     """
   end
 
+  def suggestion_notification(folder, folder_card, suggester_name) do
+    folder =
+      if Ecto.assoc_loaded?(folder.user) do
+        folder
+      else
+        Wishlists.Repo.preload(folder, :user)
+      end
+
+    new()
+    |> to({folder.user.email, folder.user.email})
+    |> from({"Wishlists", "notifications@hochu-hochu.com"})
+    |> subject(gettext("New Gift Suggestion in Your Wishlist!"))
+    |> html_body(suggestion_html_body(folder, folder_card, suggester_name))
+    |> text_body(suggestion_text_body(folder, folder_card, suggester_name))
+  end
+
+  defp suggestion_html_body(folder, folder_card, suggester_name) do
+    """
+    <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 32px;">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 32px; font-weight: 800; letter-spacing: -0.5px;">
+          #{gettext("New Gift Suggestion!")}
+        </div>
+      </div>
+
+      <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); padding: 2px; border-radius: 12px; margin-bottom: 32px;">
+        <div style="background: white; border-radius: 10px; padding: 24px;">
+          <p style="color: #1f2937; font-size: 18px; margin-bottom: 16px;">#{gettext("Hi")} #{folder.user.email},</p>
+          <p style="color: #4b5563; line-height: 1.6; margin-bottom: 16px;">
+            #{suggester_name} #{gettext("has suggested a gift for your wishlist")} "#{folder.name}".
+          </p>
+          <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0;"><strong>#{gettext("Suggested Item")}:</strong> #{folder_card.card.title}</p>
+            #{if folder_card.card.price do
+      "<p style=\"margin: 10px 0;\"><strong>#{gettext("Price")}:</strong> #{folder_card.card.price} ₽</p>"
+    end}
+            #{if folder_card.card.link_url do
+      "<p style=\"margin: 10px 0;\"><strong>#{gettext("Link")}:</strong> <a href=\"#{folder_card.card.link_url}\">#{gettext("View Item")}</a></p>"
+    end}
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="#{WishlistsWeb.Endpoint.url()}/folders/#{folder.id}"
+           style="display: inline-block; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);">
+          #{gettext("Review Suggestion")} ✨
+        </a>
+      </div>
+
+      <div style="text-align: center; border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 32px;">
+        <p style="color: #6b7280; font-size: 14px;">#{gettext("The Wishlists Team")}</p>
+        <p style="color: #6b7280; font-size: 12px; margin-top: 16px;">
+          #{gettext("Don't want to receive suggestion notifications?")}
+          <a href="#{WishlistsWeb.Endpoint.url()}/notifications/unsubscribe/suggestion_notifications/{{unsubscribe_token}}"
+             style="color: #4f46e5; text-decoration: underline;">
+            #{gettext("Unsubscribe")}
+          </a>
+        </p>
+      </div>
+    </div>
+    """
+  end
+
+  defp suggestion_text_body(folder, folder_card, suggester_name) do
+    """
+    #{gettext("New Gift Suggestion!")}
+
+    #{gettext("Hi")} #{folder.user.email},
+
+    #{suggester_name} #{gettext("has suggested a gift for your wishlist")} "#{folder.name}".
+
+    #{gettext("Suggested Item")}: #{folder_card.card.title}
+    #{if folder_card.card.price, do: "\n#{gettext("Price")}: #{folder_card.card.price} ₽"}
+    #{if folder_card.card.link_url, do: "\n#{gettext("Link")}: #{folder_card.card.link_url}"}
+
+    #{gettext("Review the suggestion here")}: #{WishlistsWeb.Endpoint.url()}/folders/#{folder.id}
+
+    #{gettext("Best wishes")},
+    #{gettext("The Wishlists Team")}
+
+    ---
+    #{gettext("To unsubscribe from suggestion notifications:")}
+    #{WishlistsWeb.Endpoint.url()}/notifications/unsubscribe/suggestion_notifications/{{unsubscribe_token}}
+    """
+  end
+
   defp get_celebration_message(event_type) do
     case event_type do
       "birthday" ->

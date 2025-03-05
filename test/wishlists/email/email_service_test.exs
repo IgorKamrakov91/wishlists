@@ -1,5 +1,7 @@
 defmodule Wishlists.Email.EmailServiceTest do
   use Wishlists.DataCase
+  use WishlistsWeb, :verified_routes
+
   alias Wishlists.Email.EmailService
   alias Wishlists.Accounts
   alias Wishlists.Folders
@@ -128,5 +130,77 @@ defmodule Wishlists.Email.EmailServiceTest do
 
     assert {:ok, :already_notified} =
              EmailService.send_folder_cleanup_notification(folder, [folder_card])
+  end
+
+  test "suggestion notification", %{folder: folder, folder_card: folder_card} do
+    assert_receive {:email, _}
+
+    EmailService.send_suggestion_notification(folder, folder_card, "Jane Doe")
+
+    assert_email_sent(fn email ->
+      assert email.to == [{folder.user.email, folder.user.email}]
+      assert email.subject == "New Gift Suggestion in Your Wishlist!"
+      assert email.html_body =~ "Jane Doe"
+      assert email.html_body =~ folder_card.card.title
+      assert email.html_body =~ ~p"/folders/#{folder.id}"
+    end)
+  end
+
+  test "suggestion notification includes price when available", %{
+    folder: folder,
+    folder_card: folder_card
+  } do
+    assert_receive {:email, _}
+
+    folder_card = put_in(folder_card.card.price, Decimal.new("99.99"))
+
+    EmailService.send_suggestion_notification(folder, folder_card, "Jane Doe")
+
+    assert_email_sent(fn email ->
+      assert email.html_body =~ "99.99"
+    end)
+  end
+
+  test "suggestion notification includes link when available", %{
+    folder: folder,
+    folder_card: folder_card
+  } do
+    assert_receive {:email, _}
+
+    folder_card = put_in(folder_card.card.link_url, "https://example.com")
+
+    EmailService.send_suggestion_notification(folder, folder_card, "Jane Doe")
+
+    assert_email_sent(fn email ->
+      assert email.html_body =~ "https://example.com"
+    end)
+  end
+
+  test "suggestion notification respects user locale", %{folder: folder, folder_card: folder_card} do
+    assert_receive {:email, _}
+
+    folder = put_in(folder.user.locale, "ru")
+
+    EmailService.send_suggestion_notification(folder, folder_card, "Jane Doe")
+
+    assert_email_sent(fn email ->
+      assert email.subject == "Новое предложение подарка в вашем списке желаний!"
+    end)
+  end
+
+  test "suggestion notification includes unsubscribe link", %{
+    folder: folder,
+    folder_card: folder_card
+  } do
+    assert_receive {:email, _}
+
+    token = Wishlists.Accounts.generate_unsubscribe_token(folder.user)
+    EmailService.send_suggestion_notification(folder, folder_card, "Jane Doe")
+
+    assert_email_sent(fn email ->
+      assert email.headers["List-Unsubscribe"]
+      assert email.html_body =~ "unsubscribe"
+      assert email.html_body =~ ~p"/notifications/unsubscribe/suggestion_notifications/#{token}"
+    end)
   end
 end

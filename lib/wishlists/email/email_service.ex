@@ -59,6 +59,20 @@ defmodule Wishlists.Email.EmailService do
     end
   end
 
+  def send_suggestion_notification(folder, folder_card, suggester_name) do
+    folder = Wishlists.Repo.preload(folder, :user)
+
+    Gettext.with_locale(folder.user.locale || "en", fn ->
+      token = Wishlists.Accounts.generate_unsubscribe_token(folder.user)
+
+      folder
+      |> EmailTemplates.suggestion_notification(folder_card, suggester_name)
+      |> replace_unsubscribe_token(token)
+      |> add_unsubscribe_header("suggestion_notifications")
+      |> deliver()
+    end)
+  end
+
   def handle_delivery({:ok, _result} = ok), do: ok
 
   def handle_delivery({:error, reason} = error) do
