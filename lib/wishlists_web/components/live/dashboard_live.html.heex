@@ -334,8 +334,7 @@
         </div>
       <% else %>
         <div
-          class="grid auto-rows-[minmax(min-content,max-content)] grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4 sm:gap-6"
-          style="grid-auto-flow: dense;"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
           id="cards-container"
           phx-hook="DragOrder"
         >
@@ -348,10 +347,9 @@
               id={"card-#{card.id}"}
               phx-hook="DragCard"
             >
-              <div class="bg-white/80 rounded-2xl shadow-lg p-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full relative">
+              <div class="bg-white/80 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full relative">
                 <div
-                  class="relative mb-4 overflow-hidden rounded-xl"
-                  style="aspect-ratio: var(--card-aspect-ratio, 16/9);"
+                  class="relative h-48 mb-4 overflow-hidden rounded-xl"
                   phx-click="edit_card"
                   phx-value-id={card.id}
                 >
@@ -364,7 +362,7 @@
                     alt={card.title}
                     class="w-full h-full object-cover rounded-xl transition-transform duration-300 hover:scale-105"
                     loading="lazy"
-                    phx-hook="AspectRatioHook"
+                    phx-hook="ImageLoader"
                     id={"image-#{card.id}"}
                     onerror="this.src='/images/gift.jpg'"
                   />

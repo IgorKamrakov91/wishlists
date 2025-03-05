@@ -347,18 +347,3 @@ body {
 .pinterest-dropdown-item {
   @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50;
 }
-
-.sortable-fallback {
-  opacity: 0.8;
-  transform: scale(1.05);
-  pointer-events: none;
-}
-
-.sortable-drag {
-  opacity: 0;
-}
-
-[data-card-id] {
-  transition: transform 0.2s ease;
-  will-change: transform;
-}

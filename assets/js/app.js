@@ -12,7 +12,6 @@ import ImageLoader from "./hooks/image_loader"
 import ScrollAnimation from "./hooks/scroll_animation"
 import topbar from "../vendor/topbar"
 import HideableHeader from "./hooks/header"
-import AspectRatioHook from "./hooks/aspect_ratio"
 
 let Hooks = {
   DragAndDrop,
@@ -38,8 +37,7 @@ let Hooks = {
   },
   Locale: LocaleHook,
   ScrollAnimation,
-  HideableHeader,
-  AspectRatioHook
+  HideableHeader
 }
 
 function getCookie(name) {
