@@ -371,11 +371,13 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
         Logger.info("Sending suggestion notification for card: #{inspect(card)}")
 
-        Wishlists.Email.EmailService.send_suggestion_notification(
-          folder,
-          %{card: Wishlists.Repo.preload(card, :folder_cards)},
-          suggester_name
-        )
+        Task.start(fn ->
+          Wishlists.Email.EmailService.send_suggestion_notification(
+            folder,
+            %{card: Wishlists.Repo.preload(card, :folder_cards)},
+            suggester_name
+          )
+        end)
 
         cards = Cards.list_folder_cards(socket.assigns.folder.id)
 

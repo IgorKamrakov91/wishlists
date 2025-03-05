@@ -6,7 +6,9 @@ defmodule WishlistsWeb.AuthComponent do
     {:ok,
      socket
      |> assign(view: :sign_in)
-     |> assign(form_data: %{"email" => "", "password" => "", "username" => ""})
+     |> assign(
+       form_data: %{"email" => "", "password" => "", "username" => "", "show_password" => false}
+     )
      |> assign(form: to_form(%{}, as: :user))
      |> assign(error_message: nil)
      |> assign(password_focus: false)
@@ -144,17 +146,28 @@ defmodule WishlistsWeb.AuthComponent do
           <.icon name="hero-lock-closed" class="h-5 w-5 text-gray-400" />
         </div>
         <input
-          type="password"
+          type={if @form_data["show_password"], do: "text", else: "password"}
           name="password"
           value={@form_data["password"]}
           required
           phx-keyup="validate_password"
           phx-target={@myself}
-          class="pl-10 w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+          class="pl-10 pr-10 w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
           placeholder={gettext("Password")}
           phx-focus="password_focus"
           phx-blur="password_blur"
         />
+        <button
+          type="button"
+          phx-click="toggle_password_visibility"
+          phx-target={@myself}
+          class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500"
+        >
+          <.icon
+            name={if @form_data["show_password"], do: "hero-eye-slash", else: "hero-eye"}
+            class="h-5 w-5"
+          />
+        </button>
       </div>
       <div class={[
         "transition-all duration-300 ease-in-out overflow-hidden",
@@ -281,7 +294,6 @@ defmodule WishlistsWeb.AuthComponent do
           {:noreply, assign(socket, error_message: gettext("Invalid email or password"))}
       end
     else
-
       user_params = %{
         "email" => socket.assigns.form_data["email"],
         "password" => socket.assigns.form_data["password"],
@@ -302,14 +314,17 @@ defmodule WishlistsWeb.AuthComponent do
           end
 
         {:error, changeset} ->
-          error_message = case get_changeset_error(changeset) do
-            {:username, "has already been taken"} ->
-              gettext("This username is already taken")
-            {:email, "has already been taken"} ->
-              gettext("This email is already registered")
-            _ ->
-              format_registration_errors(changeset)
-          end
+          error_message =
+            case get_changeset_error(changeset) do
+              {:username, "has already been taken"} ->
+                gettext("This username is already taken")
+
+              {:email, "has already been taken"} ->
+                gettext("This email is already registered")
+
+              _ ->
+                format_registration_errors(changeset)
+            end
 
           {:noreply, assign(socket, error_message: error_message)}
       end
@@ -364,6 +379,18 @@ defmodule WishlistsWeb.AuthComponent do
     {:noreply, push_navigate(socket, to: ~p"/forgot-password")}
   end
 
+  def handle_event("toggle_password_visibility", _, socket) do
+    form_data =
+      Map.update(
+        socket.assigns.form_data,
+        "show_password",
+        true,
+        &(!&1)
+      )
+
+    {:noreply, assign(socket, form_data: form_data)}
+  end
+
   defp error_message(assigns) do
     ~H"""
     <%= if @error_message do %>
@@ -380,21 +407,28 @@ defmodule WishlistsWeb.AuthComponent do
   end
 
   defp format_registration_errors(changeset) do
-    errors = Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
-      Enum.reduce(opts, msg, fn
-        {key, value}, acc when is_list(value) ->
-          String.replace(acc, "%{#{key}}", Enum.join(value, ", "))
-        {key, value}, acc ->
-          String.replace(acc, "%{#{key}}", to_string(value))
-      end)
-    end)
+    errors =
+      Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
+        Enum.reduce(opts, msg, fn
+          {key, value}, acc when is_list(value) ->
+            String.replace(acc, "%{#{key}}", Enum.join(value, ", "))
 
-    errors = case errors[:account] do
-      nil -> errors
-      account_errors when is_map(account_errors) ->
-        Map.merge(errors, account_errors)
-      _ -> errors
-    end
+          {key, value}, acc ->
+            String.replace(acc, "%{#{key}}", to_string(value))
+        end)
+      end)
+
+    errors =
+      case errors[:account] do
+        nil ->
+          errors
+
+        account_errors when is_map(account_errors) ->
+          Map.merge(errors, account_errors)
+
+        _ ->
+          errors
+      end
 
     errors
     |> Enum.map(fn {field, messages} ->

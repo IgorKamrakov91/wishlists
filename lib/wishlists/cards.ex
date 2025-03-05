@@ -202,8 +202,7 @@ defmodule Wishlists.Cards do
 
   def reject_card(card_id) do
     get_card!(card_id)
-    |> Card.changeset(%{status: "rejected"})
-    |> Repo.update()
+    |> Repo.delete()
   end
 
   def list_pending_cards(folder_id) do

@@ -103,12 +103,9 @@
               folder_card.card.status == "pending" && "bg-gray-50/90",
               folder_card.reservation && "bg-purple-50/90"
             ]}>
-              <!-- Статус карточки (если pending) -->
               <%= if folder_card.card.status == "pending" do %>
-                <div class="absolute top-2 right-2 z-10">
-                  <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                    {gettext("Pending Approval")}
-                  </span>
+                <div class="absolute top-2 left-2 bg-yellow-600 text-white px-3 py-1 rounded-full text-sm z-10">
+                  {gettext("Pending Approval")}
                 </div>
               <% end %>
 
@@ -129,19 +126,6 @@
                       id={"image-#{folder_card.card.id}"}
                       onerror="this.src='/images/gift.jpg'"
                     />
-
-                    <%= if folder_card.reservation do %>
-                      <div class="absolute inset-0 bg-black/5 backdrop-blur-[2px]"></div>
-                      <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
-                        <%= if @folder.show_reserver_names do %>
-                          {gettext("Reserved by %{name}",
-                            name: folder_card.reservation.reserver_name
-                          )}
-                        <% else %>
-                          {gettext("Reserved")}
-                        <% end %>
-                      </div>
-                    <% end %>
                   </a>
                 <% else %>
                   <img
@@ -153,19 +137,41 @@
                     id={"image-#{folder_card.card.id}"}
                     onerror="this.src='/images/gift.jpg'"
                   />
+                <% end %>
 
-                  <%= if folder_card.reservation do %>
-                    <div class="absolute inset-0 bg-black/5 backdrop-blur-[2px]"></div>
-                    <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
-                      <%= if @folder.show_reserver_names do %>
-                        {gettext("Reserved by %{name}",
-                          name: folder_card.reservation.reserver_name
-                        )}
-                      <% else %>
-                        {gettext("Reserved")}
-                      <% end %>
-                    </div>
-                  <% end %>
+                <%= if folder_card.reservation do %>
+                  <div class="absolute inset-0 bg-black/5 backdrop-blur-[2px]"></div>
+                  <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
+                    <%= if @folder.show_reserver_names do %>
+                      {gettext("Reserved by %{name}",
+                        name: folder_card.reservation.reserver_name
+                      )}
+                    <% else %>
+                      {gettext("Reserved")}
+                    <% end %>
+                  </div>
+                <% end %>
+
+                <%= if folder_card.card.status == "pending" do %>
+                  <div class="absolute inset-0 flex opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      phx-click="reject_card"
+                      phx-value-id={folder_card.card.id}
+                      class="w-1/2 h-full bg-rose-500/75 hover:bg-rose-500/90 flex items-center justify-center transition-colors duration-200"
+                      title={gettext("Reject suggestion")}
+                    >
+                      <.icon name="hero-x-mark" class="h-12 w-12 text-white" />
+                    </button>
+
+                    <button
+                      phx-click="approve_card"
+                      phx-value-id={folder_card.card.id}
+                      class="w-1/2 h-full bg-emerald-500/75 hover:bg-emerald-500/90 flex items-center justify-center transition-colors duration-200"
+                      title={gettext("Approve suggestion")}
+                    >
+                      <.icon name="hero-check" class="h-12 w-12 text-white" />
+                    </button>
+                  </div>
                 <% end %>
               </div>
 
