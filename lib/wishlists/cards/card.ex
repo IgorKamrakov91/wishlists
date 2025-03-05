@@ -58,8 +58,6 @@ defmodule Wishlists.Cards.Card do
     end)
   end
 
-  defp valid_url?(nil), do: true
-
   defp valid_url?(url) do
     case URI.parse(url) do
       %URI{scheme: scheme, host: host}

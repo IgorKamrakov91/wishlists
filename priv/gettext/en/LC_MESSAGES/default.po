@@ -109,7 +109,7 @@ msgstr ""
 
 #: lib/wishlists_web/components/live/dashboard_live.html.heex:122
 #, elixir-autogen, elixir-format
-msgid "Magic Collections"
+msgid "My Wishlists"
 msgstr ""
 
 #: lib/wishlists_web/components/live/dashboard_live.html.heex:319
@@ -188,7 +188,7 @@ msgstr ""
 
 #: lib/wishlists_web/components/live/dashboard_live.html.heex:309
 #, elixir-autogen, elixir-format
-msgid "Your Wishes"
+msgid "My Wishes"
 msgstr ""
 
 #: lib/wishlists_web/components/live/dashboard_live.html.heex:242

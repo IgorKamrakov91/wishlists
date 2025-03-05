@@ -12,6 +12,7 @@ import ImageLoader from "./hooks/image_loader"
 import ScrollAnimation from "./hooks/scroll_animation"
 import topbar from "../vendor/topbar"
 import HideableHeader from "./hooks/header"
+import ScrollButtons from "./hooks/scroll_buttons"
 
 let Hooks = {
   DragAndDrop,
@@ -37,7 +38,8 @@ let Hooks = {
   },
   Locale: LocaleHook,
   ScrollAnimation,
-  HideableHeader
+  HideableHeader,
+  ScrollButtons,
 }
 
 function getCookie(name) {

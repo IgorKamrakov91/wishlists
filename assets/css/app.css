@@ -347,3 +347,156 @@ body {
 .pinterest-dropdown-item {
   @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50;
 }
+
+.fire-effect {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+}
+
+.flames-up,
+.flames-down {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scale(1.4);
+}
+
+.flames-up .flame {
+  bottom: -50%;
+}
+
+.flames-down .flame {
+  top: -50%;
+}
+
+.flame {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: linear-gradient(to top, transparent, #ff6b6b, #ffb84d);
+  border-radius: 50%;
+  filter: blur(1px);
+  opacity: 0;
+  animation: flame 1s ease-out infinite;
+}
+
+/* Позиционируем каждое пламя */
+.flame:nth-child(1) {
+  left: 20%;
+  animation-delay: 0.1s;
+}
+
+.flame:nth-child(2) {
+  left: 35%;
+  animation-delay: 0.2s;
+}
+
+.flame:nth-child(3) {
+  left: 50%;
+  animation-delay: 0.3s;
+}
+
+.flame:nth-child(4) {
+  left: 65%;
+  animation-delay: 0.4s;
+}
+
+.flame:nth-child(5) {
+  left: 80%;
+  animation-delay: 0.5s;
+}
+
+.flame:nth-child(6) {
+  left: 30%;
+  animation-delay: 0.6s;
+}
+
+.flame:nth-child(7) {
+  left: 45%;
+  animation-delay: 0.7s;
+}
+
+.flame:nth-child(8) {
+  left: 60%;
+  animation-delay: 0.8s;
+}
+
+@keyframes flame {
+  0% {
+    transform: scale(0) translateY(0);
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(1) translateY(-20px);
+    opacity: 0;
+  }
+}
+
+.flames-down .flame {
+  animation: flame-down 1s ease-out infinite;
+}
+
+@keyframes flame-down {
+  0% {
+    transform: scale(0) translateY(0);
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(1) translateY(20px);
+    opacity: 0;
+  }
+}
+
+.scroll-button.active {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.scroll-button.active .fire-effect {
+  display: block;
+}
+
+.scroll-button.active .icon {
+  filter: drop-shadow(0 0 3px rgba(255, 107, 107, 0.5));
+}
+
+.scroll-button.active::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #ff6b6b, #ffb84d);
+  opacity: 0.3;
+  animation: pulse 1.5s ease-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+}
