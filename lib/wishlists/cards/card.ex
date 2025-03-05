@@ -40,6 +40,8 @@ defmodule Wishlists.Cards.Card do
     |> validate_inclusion(:status, ["pending", "approved", "rejected"])
     |> validate_length(:title, min: 1, max: 50)
     |> validate_length(:description, max: 500)
+    |> validate_length(:image_url, max: 2000)
+    |> validate_length(:link_url, max: 2000)
     |> validate_url(:image_url)
     |> validate_url(:link_url)
     |> validate_number(:price, greater_than_or_equal_to: Decimal.new("0"))
@@ -47,10 +49,11 @@ defmodule Wishlists.Cards.Card do
 
   defp validate_url(changeset, field) do
     validate_change(changeset, field, fn _, url ->
-      if is_nil(url) or valid_url?(url) do
-        []
-      else
-        [{field, "must be a valid URL"}]
+      cond do
+        is_nil(url) -> []
+        String.length(url) > 2000 -> [{field, "URL is too long (maximum is 2000 characters)"}]
+        !valid_url?(url) -> [{field, "must be a valid URL starting with http:// or https://"}]
+        true -> []
       end
     end)
   end
@@ -58,7 +61,13 @@ defmodule Wishlists.Cards.Card do
   defp valid_url?(nil), do: true
 
   defp valid_url?(url) do
-    uri = URI.parse(url)
-    uri.scheme != nil && uri.host != nil
+    case URI.parse(url) do
+      %URI{scheme: scheme, host: host}
+      when scheme in ["http", "https"] and not is_nil(host) ->
+        true
+
+      _ ->
+        false
+    end
   end
 end

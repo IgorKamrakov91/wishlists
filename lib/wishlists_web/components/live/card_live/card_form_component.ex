@@ -25,7 +25,6 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                 {@modal_title}
               </h3>
 
-    <!-- URL Input Form -->
               <.form
                 :if={@action == :new && !@show_manual_form}
                 for={@form}
@@ -118,6 +117,7 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                     label={gettext("Product URL")}
                     required
                     placeholder="https://example.com"
+                    maxlength="2000"
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
