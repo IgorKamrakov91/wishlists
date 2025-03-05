@@ -136,47 +136,62 @@
       <% else %>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <%= for folder_card <- @cards do %>
-            <%= if folder_card.card do %>
-              <div class={[
-                "relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1",
-                folder_card.card.status == "pending" && "opacity-75 bg-gray-100/80",
-                folder_card.reservation && "bg-purple-50/80"
-              ]}>
-                <%= if folder_card.card.status == "pending" do %>
-                  <div class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium z-10">
-                    {gettext("Pending Approval")}
-                  </div>
-
-                  <%= if @current_user && @current_user.id == @folder.user_id do %>
-                    <div class="absolute top-2 left-2 flex space-x-2 z-10">
-                      <button
-                        phx-click="approve_card"
-                        phx-value-id={folder_card.card.id}
-                        class="bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600 transition-colors duration-200 flex items-center space-x-1"
-                        title={gettext("Approve suggestion")}
-                      >
-                        <.icon name="hero-check" class="h-4 w-4" />
-                      </button>
-                      <button
-                        phx-click="reject_card"
-                        phx-value-id={folder_card.card.id}
-                        class="bg-rose-500 text-white p-2 rounded-full hover:bg-rose-600 transition-colors duration-200 flex items-center space-x-1"
-                        title={gettext("Reject suggestion")}
-                      >
-                        <.icon name="hero-x-mark" class="h-4 w-4" />
-                      </button>
+            <div class="w-[90%] mx-auto sm:w-full sm:mx-0">
+              <%= if folder_card.card do %>
+                <div class={[
+                  "relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1",
+                  folder_card.card.status == "pending" && "opacity-75 bg-gray-100/80",
+                  folder_card.reservation && "bg-purple-50/80"
+                ]}>
+                  <%= if folder_card.card.status == "pending" do %>
+                    <div class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium z-10">
+                      {gettext("Pending Approval")}
                     </div>
-                  <% end %>
-                <% end %>
 
-                <div class="relative h-48 mb-4">
-                  <%= if folder_card.card.link_url do %>
-                    <a
-                      href={folder_card.card.link_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="block h-full"
-                    >
+                    <%= if @current_user && @current_user.id == @folder.user_id do %>
+                      <div class="absolute top-2 left-2 flex space-x-2 z-10">
+                        <button
+                          phx-click="approve_card"
+                          phx-value-id={folder_card.card.id}
+                          class="bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600 transition-colors duration-200 flex items-center space-x-1"
+                          title={gettext("Approve suggestion")}
+                        >
+                          <.icon name="hero-check" class="h-4 w-4" />
+                        </button>
+                        <button
+                          phx-click="reject_card"
+                          phx-value-id={folder_card.card.id}
+                          class="bg-rose-500 text-white p-2 rounded-full hover:bg-rose-600 transition-colors duration-200 flex items-center space-x-1"
+                          title={gettext("Reject suggestion")}
+                        >
+                          <.icon name="hero-x-mark" class="h-4 w-4" />
+                        </button>
+                      </div>
+                    <% end %>
+                  <% end %>
+
+                  <div class="relative h-48 mb-4">
+                    <%= if folder_card.card.link_url do %>
+                      <a
+                        href={folder_card.card.link_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="block h-full"
+                      >
+                        <img
+                          src={
+                            if folder_card.card.image_url && folder_card.card.image_url != "",
+                              do: folder_card.card.image_url,
+                              else: "/images/gift.jpg"
+                          }
+                          alt={folder_card.card.title}
+                          class="w-full h-full object-cover rounded-xl cursor-pointer"
+                          loading="lazy"
+                          phx-hook="ImageLoader"
+                          id={"image-#{folder_card.card.id}"}
+                        />
+                      </a>
+                    <% else %>
                       <img
                         src={
                           if folder_card.card.image_url && folder_card.card.image_url != "",
@@ -184,110 +199,99 @@
                             else: "/images/gift.jpg"
                         }
                         alt={folder_card.card.title}
-                        class="w-full h-full object-cover rounded-xl cursor-pointer"
+                        class="w-full h-full object-cover rounded-xl"
                         loading="lazy"
                         phx-hook="ImageLoader"
                         id={"image-#{folder_card.card.id}"}
                       />
-                    </a>
-                  <% else %>
-                    <img
-                      src={
-                        if folder_card.card.image_url && folder_card.card.image_url != "",
-                          do: folder_card.card.image_url,
-                          else: "/images/gift.jpg"
-                      }
-                      alt={folder_card.card.title}
-                      class="w-full h-full object-cover rounded-xl"
-                      loading="lazy"
-                      phx-hook="ImageLoader"
-                      id={"image-#{folder_card.card.id}"}
-                    />
-                  <% end %>
+                    <% end %>
 
-                  <%= if folder_card.reservation do %>
-                    <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
-                      <%= if @current_user && @current_user.id == @folder.user_id do %>
-                        <%= if @folder.show_reserver_names do %>
-                          {gettext("Reserved by %{name}",
-                            name: folder_card.reservation.reserver_name
-                          )}
+                    <%= if folder_card.reservation do %>
+                      <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
+                        <%= if @current_user && @current_user.id == @folder.user_id do %>
+                          <%= if @folder.show_reserver_names do %>
+                            {gettext("Reserved by %{name}",
+                              name: folder_card.reservation.reserver_name
+                            )}
+                          <% else %>
+                            {gettext("Reserved")}
+                          <% end %>
                         <% else %>
-                          {gettext("Reserved")}
-                        <% end %>
-                      <% else %>
-                        <%= if (@current_user && folder_card.reservation.reserved_by_user_id == @current_user.id) ||
+                          <%= if (@current_user && folder_card.reservation.reserved_by_user_id == @current_user.id) ||
                             (@guest_viewer && folder_card.reservation.reserved_by_guest_id == @guest_viewer.id) do %>
-                          {gettext("Reserved by you")}
-                        <% else %>
-                          {gettext("Reserved by %{name}",
-                            name: folder_card.reservation.reserver_name
-                          )}
+                            {gettext("Reserved by you")}
+                          <% else %>
+                            {gettext("Reserved by %{name}",
+                              name: folder_card.reservation.reserver_name
+                            )}
+                          <% end %>
                         <% end %>
-                      <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+
+                  <%= if folder_card.card.status == "pending" do %>
+                    <div class="mb-3 text-sm text-gray-500">
+                      {gettext("Suggested by: %{name}",
+                        name: get_suggester_name(folder_card.card)
+                      )}
                     </div>
                   <% end %>
-                </div>
 
-                <%= if folder_card.card.status == "pending" do %>
-                  <div class="mb-3 text-sm text-gray-500">
-                    {gettext("Suggested by: %{name}", name: get_suggester_name(folder_card.card))}
-                  </div>
-                <% end %>
+                  <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">
+                    {folder_card.card.title}
+                  </h3>
 
-                <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">
-                  {folder_card.card.title}
-                </h3>
-
-                <div class="flex items-center justify-between">
-                  <%= if folder_card.card.link_url do %>
-                    <a
-                      href={folder_card.card.link_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
-                    >
-                      <span>{gettext("Visit Link")}</span>
-                      <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
-                    </a>
-                  <% end %>
-
-                  <div class="flex items-center space-x-1">
-                    <span class="text-indigo-600 font-medium">
-                      <%= if folder_card.card.price && folder_card.card.price > 0 do %>
-                        {format_price(folder_card.card.price)}
-                      <% else %>
-                        <span class="text-indigo-400 text-sm">{gettext("No Price")}</span>
-                      <% end %>
-                    </span>
-                  </div>
-
-                  <%= if folder_card.card.status == "approved" do %>
-                    <%= if !folder_card.reservation do %>
-                      <button
-                        phx-click="reserve_card"
-                        phx-value-card_id={folder_card.id}
+                  <div class="flex items-center justify-between">
+                    <%= if folder_card.card.link_url do %>
+                      <a
+                        href={folder_card.card.link_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
                       >
-                        <.icon name="hero-gift" class="h-4 w-4" />
-                        <span>{gettext("Reserve")}</span>
-                      </button>
-                    <% else %>
-                      <%= if can_unreserve?(folder_card.reservation, @current_user, @guest_viewer) do %>
+                        <span>{gettext("Visit Link")}</span>
+                        <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
+                      </a>
+                    <% end %>
+
+                    <div class="flex items-center space-x-1">
+                      <span class="text-indigo-600 font-medium">
+                        <%= if folder_card.card.price && folder_card.card.price > 0 do %>
+                          {format_price(folder_card.card.price)}
+                        <% else %>
+                          <span class="text-indigo-400 text-sm">{gettext("No Price")}</span>
+                        <% end %>
+                      </span>
+                    </div>
+
+                    <%= if folder_card.card.status == "approved" do %>
+                      <%= if !folder_card.reservation do %>
                         <button
-                          phx-click="unreserve_card"
+                          phx-click="reserve_card"
                           phx-value-card_id={folder_card.id}
-                          class="text-rose-600 hover:text-rose-800 text-sm flex items-center space-x-1"
+                          class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
                         >
-                          <.icon name="hero-x-mark" class="h-4 w-4" />
-                          <span>{gettext("Cancel Reservation")}</span>
+                          <.icon name="hero-gift" class="h-4 w-4" />
+                          <span>{gettext("Reserve")}</span>
                         </button>
+                      <% else %>
+                        <%= if can_unreserve?(folder_card.reservation, @current_user, @guest_viewer) do %>
+                          <button
+                            phx-click="unreserve_card"
+                            phx-value-card_id={folder_card.id}
+                            class="text-rose-600 hover:text-rose-800 text-sm flex items-center space-x-1"
+                          >
+                            <.icon name="hero-x-mark" class="h-4 w-4" />
+                            <span>{gettext("Cancel Reservation")}</span>
+                          </button>
+                        <% end %>
                       <% end %>
                     <% end %>
-                  <% end %>
+                  </div>
                 </div>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
           <% end %>
         </div>
       <% end %>
