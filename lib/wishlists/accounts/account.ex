@@ -1,5 +1,6 @@
 defmodule Wishlists.Accounts.Account do
   use Ecto.Schema
+  use Gettext, backend: WishlistsWeb.Gettext
   import Ecto.Changeset
 
   schema "accounts" do
@@ -14,6 +15,9 @@ defmodule Wishlists.Accounts.Account do
     |> cast(attrs, [:username, :user_id])
     |> validate_required([:username])
     |> validate_length(:username, min: 3, max: 20)
-    |> unique_constraint(:username, name: "accounts_username_index", message: "Username already taken")
+    |> unique_constraint(:username,
+      name: "accounts_username_index",
+      message: gettext("Username already taken")
+    )
   end
 end

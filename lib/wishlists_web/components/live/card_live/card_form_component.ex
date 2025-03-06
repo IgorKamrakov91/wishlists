@@ -193,7 +193,8 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
      |> assign(assigns)
      |> assign(form: to_form(changeset))
      |> assign(card_loading: false)
-     |> assign(show_manual_form: false)}
+     |> assign(show_manual_form: false)
+     |> assign(:parent_pid, assigns[:parent_pid] || self())}
   end
 
   def update(%{card: _card} = assigns, socket) do
@@ -204,7 +205,8 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
      |> assign(assigns)
      |> assign(form: to_form(changeset))
      |> assign(card_loading: false)
-     |> assign(show_manual_form: false)}
+     |> assign(show_manual_form: false)
+     |> assign(:parent_pid, assigns[:parent_pid] || self())}
   end
 
   @impl true

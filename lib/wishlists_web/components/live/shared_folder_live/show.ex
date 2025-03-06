@@ -7,11 +7,12 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   require Logger
 
   def mount(%{"token" => token}, session, socket) do
+    socket = set_locale(socket, session)
+
     case Folders.get_shared_folder_by_token(token) do
       nil ->
         {:ok,
          socket
-         |> assign(:locale, session["locale"] || "en")
          |> put_flash(:error, "Invalid share link")
          |> redirect(to: "/")}
 
@@ -28,8 +29,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
   def mount(%{"slug" => slug}, session, socket) do
     Logger.debug("Mounting SharedFolderLive.Show with slug: #{slug}")
-    locale = session["locale"] || "en"
-    Gettext.put_locale(WishlistsWeb.Gettext, locale)
+    socket = set_locale(socket, session)
 
     case Folders.get_shared_folder_by_slug(slug) || Folders.get_shared_folder_by_token(slug) do
       nil ->
@@ -37,7 +37,6 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
         {:ok,
          socket
-         |> assign(:locale, locale)
          |> put_flash(:error, "Invalid share link")
          |> redirect(to: "/")}
 
@@ -48,6 +47,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
   defp handle_shared_folder_mount(shared_folder, session, socket) do
     Logger.debug("Found shared folder: #{inspect(shared_folder)}")
+
     locale = session["locale"] || "en"
     Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
@@ -425,5 +425,11 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
   defp format_price(price) do
     "#{Decimal.to_float(price) |> :erlang.float_to_binary(decimals: 0)} ₽"
+  end
+
+  defp set_locale(socket, session) do
+    locale = session["locale"] || "en"
+    Gettext.put_locale(WishlistsWeb.Gettext, locale)
+    assign(socket, :locale, locale)
   end
 end

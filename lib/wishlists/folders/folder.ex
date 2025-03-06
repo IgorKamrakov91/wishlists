@@ -1,5 +1,6 @@
 defmodule Wishlists.Folders.Folder do
   use Ecto.Schema
+  use Gettext, backend: WishlistsWeb.Gettext
   import Ecto.Changeset
 
   schema "folders" do
@@ -39,7 +40,7 @@ defmodule Wishlists.Folders.Folder do
         if Date.compare(date, Date.utc_today()) in [:gt, :eq] do
           changeset
         else
-          add_error(changeset, :event_date, "must be today or in the future")
+          add_error(changeset, :event_date, gettext("must be today or in the future"))
         end
     end
   end

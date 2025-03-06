@@ -110,7 +110,7 @@ msgstr ""
 msgid "New Collection"
 msgstr ""
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:289
+#: lib/wishlists_web/components/live/dashboard_live.ex:290
 #: lib/wishlists_web/components/live/dashboard_live.html.heex:223
 #, elixir-autogen, elixir-format
 msgid "No event date set"
@@ -272,7 +272,7 @@ msgstr ""
 msgid "Could not delete folder"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:258
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:260
 #, elixir-autogen, elixir-format
 msgid "Could not fetch data automatically. Please fill in the details manually."
 msgstr ""
@@ -326,7 +326,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:137
+#: lib/wishlists_web/components/live/dashboard_live.ex:138
 #, elixir-autogen, elixir-format
 msgid "Edit Card"
 msgstr ""
@@ -513,7 +513,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:138
+#: lib/wishlists_web/components/live/dashboard_live.ex:139
 #, elixir-autogen, elixir-format
 msgid "Save Changes"
 msgstr ""
@@ -699,7 +699,7 @@ msgstr ""
 msgid "Sign in to manage your wishlists and discover new items"
 msgstr ""
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:306
+#: lib/wishlists_web/components/live/dashboard_live.ex:307
 #, elixir-autogen, elixir-format
 msgid "%{days} days remaining"
 msgstr ""
@@ -729,22 +729,22 @@ msgstr ""
 msgid "Event Type"
 msgstr ""
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:297
+#: lib/wishlists_web/components/live/dashboard_live.ex:298
 #, elixir-autogen, elixir-format
 msgid "Event has passed %{icon}"
 msgstr ""
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:300
+#: lib/wishlists_web/components/live/dashboard_live.ex:301
 #, elixir-autogen, elixir-format
 msgid "Event is today %{icon}"
 msgstr ""
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:303
+#: lib/wishlists_web/components/live/dashboard_live.ex:304
 #, elixir-autogen, elixir-format
 msgid "Event is tomorrow %{icon}"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:325
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:327
 #, elixir-autogen, elixir-format
 msgid "Failed to assign card to folder"
 msgstr ""
@@ -1128,13 +1128,13 @@ msgstr ""
 msgid "Your friends can mark items as reserved, ensuring you get exactly what you want without duplicates."
 msgstr ""
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:121
+#: lib/wishlists_web/components/live/dashboard_live.ex:122
 #, elixir-autogen, elixir-format
 msgid "Failed to add wish to wishlist"
 msgstr ""
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:178
-#: lib/wishlists_web/components/live/dashboard_live.ex:200
+#: lib/wishlists_web/components/live/dashboard_live.ex:179
+#: lib/wishlists_web/components/live/dashboard_live.ex:201
 #, elixir-autogen, elixir-format
 msgid "Failed to delete wish"
 msgstr ""
@@ -1150,7 +1150,7 @@ msgstr ""
 msgid "Sign out"
 msgstr ""
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:127
+#: lib/wishlists_web/components/live/dashboard_live.ex:128
 #, elixir-autogen, elixir-format
 msgid "You don't have permission to add cards to this folder"
 msgstr ""
@@ -1270,7 +1270,48 @@ msgstr ""
 msgid "Start by adding new wishes or adding them from your dashboard"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:279
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:281
 #, elixir-autogen, elixir-format
 msgid "Unable to process deletion request"
+msgstr ""
+
+#: lib/wishlists/cards/card.ex:55
+#, elixir-autogen, elixir-format
+msgid "URL is too long (maximum is 2000 characters)"
+msgstr ""
+
+#: lib/wishlists/accounts/account.ex:20
+#, elixir-autogen, elixir-format
+msgid "Username already taken"
+msgstr ""
+
+#: lib/wishlists/accounts/user.ex:44
+#: lib/wishlists/accounts/user.ex:45
+#, elixir-autogen, elixir-format
+msgid "is already taken"
+msgstr ""
+
+#: lib/wishlists/cards/card.ex:56
+#, elixir-autogen, elixir-format
+msgid "must be a valid URL starting with http:// or https://"
+msgstr ""
+
+#: lib/wishlists/accounts/user.ex:51
+#, elixir-autogen, elixir-format
+msgid "must be at least 8 characters"
+msgstr ""
+
+#: lib/wishlists/accounts/user.ex:43
+#, elixir-autogen, elixir-format
+msgid "must be at most 160 characters"
+msgstr ""
+
+#: lib/wishlists/folders/folder.ex:43
+#, elixir-autogen, elixir-format
+msgid "must be today or in the future"
+msgstr ""
+
+#: lib/wishlists/accounts/user.ex:41
+#, elixir-autogen, elixir-format
+msgid "must have the @ sign and no spaces"
 msgstr ""

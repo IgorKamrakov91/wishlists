@@ -1,5 +1,6 @@
 defmodule Wishlists.Accounts.User do
   use Ecto.Schema
+  use Gettext, backend: WishlistsWeb.Gettext
   import Ecto.Changeset
 
   schema "users" do
@@ -36,16 +37,18 @@ defmodule Wishlists.Accounts.User do
   defp validate_email(changeset) do
     changeset
     |> validate_required([:email])
-    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
-    |> validate_length(:email, max: 160, message: "must be at most 160 characters")
-    |> unsafe_validate_unique(:email, Wishlists.Repo, message: "is already taken")
-    |> unique_constraint(:email, message: "is already taken")
+    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/,
+      message: gettext("must have the @ sign and no spaces")
+    )
+    |> validate_length(:email, max: 160, message: gettext("must be at most 160 characters"))
+    |> unsafe_validate_unique(:email, Wishlists.Repo, message: gettext("is already taken"))
+    |> unique_constraint(:email, message: gettext("is already taken"))
   end
 
   defp validate_password(changeset) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: 8, message: "must be at least 8 characters")
+    |> validate_length(:password, min: 8, message: gettext("must be at least 8 characters"))
   end
 
   defp hash_password(changeset) do

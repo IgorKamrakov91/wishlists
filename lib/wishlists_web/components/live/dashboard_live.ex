@@ -86,7 +86,8 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(:submit_button_text, gettext("Create"))
      |> assign(:action, :new)
      |> assign(:modal_type, :card)
-     |> assign(:show_modal, true)}
+     |> assign(:show_modal, true)
+     |> assign(:parent_pid, self())}
   end
 
   @impl true

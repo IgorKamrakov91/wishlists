@@ -1,5 +1,6 @@
 defmodule Wishlists.Cards.Card do
   use Ecto.Schema
+  use Gettext, backend: WishlistsWeb.Gettext
   import Ecto.Changeset
 
   schema "cards" do
@@ -51,8 +52,8 @@ defmodule Wishlists.Cards.Card do
     validate_change(changeset, field, fn _, url ->
       cond do
         is_nil(url) -> []
-        String.length(url) > 2000 -> [{field, "URL is too long (maximum is 2000 characters)"}]
-        !valid_url?(url) -> [{field, "must be a valid URL starting with http:// or https://"}]
+        String.length(url) > 2000 -> [{field, gettext("URL is too long (maximum is 2000 characters)")}]
+        !valid_url?(url) -> [{field, gettext("must be a valid URL starting with http:// or https://")}]
         true -> []
       end
     end)
