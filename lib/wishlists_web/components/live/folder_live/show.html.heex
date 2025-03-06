@@ -110,7 +110,7 @@
         </button>
       </div>
 
-<!-- Мобильная версия -->
+      <!-- Mobile version -->
       <div class="flex sm:hidden flex-col gap-3">
         <%= if @folder.event_date do %>
           <div class="flex items-center text-gray-600">
@@ -124,7 +124,9 @@
         <div class="flex items-center text-gray-600">
           <.icon name="hero-gift" class="h-5 w-5 mr-2" />
           <span class="text-sm">
-            {ngettext("1 item", "%{count} items", length(@cards), count: length(@cards))}
+            {length(@cards)} {if length(@cards) == 1,
+              do: gettext("item"),
+              else: gettext("items")}
           </span>
         </div>
 
