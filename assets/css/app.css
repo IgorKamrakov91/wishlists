@@ -2,24 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* This file is for your main application CSS */
-
-[draggable="true"] {
-  @apply cursor-grab transition-transform duration-200;
-}
-
-[draggable="true"]:active {
-  @apply cursor-grabbing scale-105;
-}
-
-[data-folder-id] .drag-target {
-  @apply opacity-0;
-}
-
-[data-folder-id].drag-over .drag-target {
-  @apply opacity-100;
-}
-
 /* Hide scrollbar but allow scrolling */
 .hide-scrollbar {
   -ms-overflow-style: none;
@@ -28,10 +10,6 @@
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
-}
-
-.drag-target.drag-over .drag-area {
-  opacity: 1;
 }
 
 .hide-scrollbar {
@@ -131,13 +109,6 @@
 
 .drag-over .drag-area {
   opacity: 1 !important;
-}
-
-@media (max-width: 767px) {
-  [data-card-id] {
-    touch-action: none;
-    user-select: none;
-  }
 }
 
 .animate-in {
@@ -498,5 +469,24 @@ body {
   100% {
     transform: scale(1);
     opacity: 0.3;
+  }
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  /* IE и Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari и Opera */
+}
+
+/* Добавим стили для тач-устройств */
+@media (hover: none) {
+  .group:active .opacity-0 {
+    opacity: 1;
   }
 }

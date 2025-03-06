@@ -1,10 +1,7 @@
 import "phoenix_html"
 import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
-import DragAndDrop from "./hooks/drag_and_drop"
-import DragOrder from "./hooks/drag_order"
 import FloatingBar from "./hooks/floating_bar"
-import SparkleEffect from "./hooks/sparkle_effect"
 import DeleteBucket from "./hooks/delete_bucket"
 import DragCard from "./hooks/drag_card"
 import LocaleHook from "./hooks/locale"
@@ -15,7 +12,6 @@ import HideableHeader from "./hooks/header"
 import ScrollButtons from "./hooks/scroll_buttons"
 
 let Hooks = {
-  DragAndDrop,
   FloatingBar,
   UserToken: {
     mounted() {
@@ -24,9 +20,6 @@ let Hooks = {
       })
     }
   },
-  DragOrder,
-  // SparkleEffect,
-  DragCard,
   DeleteBucket,
   ImageLoader,
   CopyToClipboard: {
