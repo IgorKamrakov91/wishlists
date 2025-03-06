@@ -11,11 +11,11 @@
     <div class="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8">
       <div class="relative h-full">
         <div class="absolute left-0 top-1/2 -translate-y-1/2">
-          <.link navigate={~p"/dashboard"} class="block">
-            <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-              <.icon name="hero-gift" class="h-5 w-5 text-white" />
-            </div>
-          </.link>
+        <.link navigate={~p"/dashboard"} class="block">
+          <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+            <.icon name="hero-gift" class="h-5 w-5 text-white" />
+          </div>
+        </.link>
         </div>
 
         <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -67,52 +67,6 @@
 
   <div class="h-16"></div>
 
-  <div
-    class="fixed top-0 left-0 right-0 bg-white backdrop-blur-sm shadow-lg transform transition-all duration-300 z-30 px-4 sm:px-0 border-b border-gray-200"
-    id="floating-folders-bar"
-    style="transform: translateY(-100%)"
-    phx-hook="FloatingBar"
-  >
-    <div class="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">
-      <div
-        class="flex space-x-4 overflow-x-auto hide-scrollbar pb-2"
-        id="floating-folders-container"
-        phx-hook="DragAndDrop"
-      >
-        <div class="flex-none">
-          <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl p-3">
-            <span class="text-sm font-medium">{gettext("Drop to add to:")}</span>
-          </div>
-        </div>
-        <%= for folder <- @folders do %>
-          <div class="flex-none">
-            <div
-              class="bg-white backdrop-blur-sm rounded-xl p-3 shadow-md hover:shadow-lg transition-all duration-200 drag-target transform hover:-translate-y-0.5"
-              data-folder-id={folder.id}
-              data-owner={if folder.user_id == @current_user.id, do: "true", else: "false"}
-              id={"floating-folder-#{folder.id}"}
-            >
-              <div class="flex items-center space-x-3">
-                <div class="h-6 w-6 bg-indigo-100 rounded-full flex items-center justify-center">
-                  <.icon name="hero-folder" class="h-4 w-4 text-indigo-600" />
-                </div>
-                <div class="flex items-center space-x-2">
-                  <span class="font-medium text-sm text-indigo-900">{folder.name}</span>
-                  <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full">
-                    {folder.card_count}
-                  </span>
-                </div>
-              </div>
-
-              <div class="absolute inset-0 border-2 border-dashed border-indigo-300 rounded-xl opacity-0 pointer-events-none drag-area">
-              </div>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-
   <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
     <!-- Wishlists Section -->
     <section class="space-y-6">
@@ -140,7 +94,7 @@
         </button>
       </div>
 
-<!-- Filters and Folders -->
+      <!-- Filters and Folders -->
       <div class="flex flex-col sm:flex-row gap-6">
         <!-- Filters -->
         <div class="w-full sm:w-48 bg-white/50 backdrop-blur-sm rounded-xl p-2 flex-shrink-0 mb-4">
@@ -205,7 +159,7 @@
         </div>
 
         <div class="flex-1 min-w-0">
-          <div class="relative" id="folders-container" phx-hook="DragAndDrop">
+          <div class="relative">
             <div class="overflow-x-auto hide-scrollbar -mr-4 min-h-[100px]">
               <div class="flex space-x-4 pb-4 pr-4">
                 <%= for folder <- filter_folders(@folders, @followed_folders, @current_filter) do %>
@@ -328,25 +282,14 @@
           </h3>
           <p class="text-indigo-600 mb-8">
             {gettext(
-              "Add your wish by clicking 'Make a Wish' button. Then you can drag it to any collection above!"
+              "Add your wish by clicking 'Make a Wish' button. Then you can add it to any collection above!"
             )}
           </p>
         </div>
       <% else %>
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-          id="cards-container"
-          phx-hook="DragOrder"
-        >
-          <%= for {card, index} <- Enum.with_index(@cards, 1) do %>
-            <div
-              data-card-id={card.id}
-              draggable="true"
-              data-position={index}
-              class="cursor-move touch-none w-[90%] mx-auto sm:w-full sm:mx-0"
-              id={"card-#{card.id}"}
-              phx-hook="DragCard"
-            >
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <%= for card <- @cards do %>
+            <div class="w-full mx-auto sm:w-full sm:mx-0">
               <div class="bg-white/80 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full relative">
                 <div
                   class="relative h-48 mb-4 overflow-hidden rounded-xl"
@@ -367,36 +310,70 @@
                     onerror="this.src='/images/gift.jpg'"
                   />
 
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  </div>
-
                   <button
-                    class="absolute top-2 right-2 bg-white/90 w-8 h-8 rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-50 flex items-center justify-center"
+                    class="absolute top-2 right-2 bg-white/90 w-8 h-8 rounded-full p-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-indigo-50 flex items-center justify-center"
                     phx-click="edit_card"
                     phx-value-id={card.id}
                   >
-                    <.icon name="hero-pencil" class="h-5 w-5 text-purple-600" />
+                    <.icon name="hero-pencil" class="h-5 w-5 text-indigo-600" />
                   </button>
                 </div>
 
-                <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">{card.title}</h3>
-
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between mb-8">
+                  <h3 class="text-xl font-bold text-indigo-900 line-clamp-1 mr-2">
+                    {card.title}
+                  </h3>
                   <%= if card.link_url do %>
                     <a
                       href={card.link_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
+                      class="flex-shrink-0 text-purple-600 hover:text-purple-800 flex items-center space-x-1 transition-colors duration-200"
                     >
-                      <span>{gettext("Visit Link")}</span>
-                      <.icon name="hero-arrow-top-right-on-square" class="h-4 w-4" />
+                      <.icon name="hero-arrow-top-right-on-square" class="h-5 w-5" />
                     </a>
                   <% end %>
+                </div>
 
-                  <div class="text-indigo-400 text-sm flex items-center space-x-1">
-                    <.icon name="hero-sparkles" class="h-4 w-4" />
-                    <span>{gettext("Drag to add to Collection")}</span>
+
+                <div class="absolute inset-x-0 -bottom-2 p-3">
+                  <div class="bg-white/80 rounded-2xl p-3">
+                    <div class="relative">
+                      <%= if @show_folders_for_card == Integer.to_string(card.id) do %>
+                        <div class="absolute left-0 right-0 -bottom-4 w-full my-1">
+                          <div class="overflow-x-auto hide-scrollbar w-full">
+                            <div class="flex space-x-2 min-w-min">
+                              <%= for folder <- @folders do %>
+                                <button
+                                  class="flex-none px-4 py-2 rounded-lg bg-white/80 hover:bg-indigo-100 transition-all duration-200 flex items-center space-x-2 cursor-pointer hover:shadow-sm transform hover:-translate-y-0.5"
+                                  phx-click="assign_card"
+                                  phx-value-card_id={card.id}
+                                  phx-value-folder_id={folder.id}
+                                >
+                                  <div class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-medium text-indigo-700">
+                                      {String.first(folder.name)}
+                                    </span>
+                                  </div>
+                                  <span class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                                    {folder.name}
+                                  </span>
+                                </button>
+                              <% end %>
+                            </div>
+                          </div>
+                        </div>
+                      <% else %>
+                        <button
+                          class="w-full flex items-center justify-center space-x-2 text-indigo-600 hover:text-indigo-800 transition-colors duration-200"
+                          phx-click="toggle_folders"
+                          phx-value-card_id={card.id}
+                        >
+                          <.icon name="hero-folder-plus" class="h-5 w-5" />
+                          <span class="text-sm font-medium">{gettext("Add to collection")}</span>
+                        </button>
+                      <% end %>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -404,36 +381,6 @@
           <% end %>
         </div>
       <% end %>
-
-      <div
-        class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8"
-        id="delete-bucket"
-        phx-hook="DeleteBucket"
-      >
-        <!-- Larger hit area for dropping -->
-        <div class="absolute inset-0 rounded-full" id="delete-bucket-dropzone"></div>
-
-        <div class="relative w-full h-full flex items-center justify-center">
-          <!-- Main bucket button -->
-          <div class="w-16 h-16 bg-red-500 rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:bg-red-600 transition-colors">
-            <.icon name="hero-trash" class="h-8 w-8 text-white" />
-          </div>
-
-<!-- Dashed border container - made larger -->
-          <div
-            class="absolute -inset-4 rounded-full border-2 border-dashed border-red-500 opacity-0 transition-all duration-300"
-            id="delete-bucket-border"
-          >
-          </div>
-
-<!-- Visual feedback overlay -->
-          <div
-            class="absolute inset-0 bg-red-600 rounded-full opacity-0 transition-all duration-300"
-            id="delete-bucket-overlay"
-          >
-          </div>
-        </div>
-      </div>
     </section>
   </main>
 
@@ -458,68 +405,8 @@
           modal_title={@modal_title}
           submit_button_text={@submit_button_text}
           current_user={@current_user}
+          parent_pid={@parent_pid}
         />
-      <% :delete_confirmation -> %>
-        <.modal id="delete-confirmation">
-          <div class="p-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">
-              {gettext("Are you sure you want to delete this wish?")}
-            </h3>
-            <p class="text-sm text-gray-500 mb-6">
-              {gettext("This action cannot be undone.")}
-            </p>
-            <div class="flex justify-end space-x-3">
-              <button
-                phx-click="cancel_delete"
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                {gettext("Cancel")}
-              </button>
-              <button
-                phx-click="confirm_delete"
-                phx-value-id={@card_to_delete.id}
-                class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                {gettext("Delete")}
-              </button>
-            </div>
-          </div>
-        </.modal>
     <% end %>
   <% end %>
-
-  <div
-    class="fixed right-4 bottom-24 flex flex-col gap-2 sm:hidden z-50"
-    id="scroll-buttons"
-    phx-hook="ScrollButtons"
-  >
-    <button
-      class="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 scroll-button relative overflow-hidden"
-      data-direction="up"
-      type="button"
-    >
-      <div class="fire-effect hidden">
-        <div class="flames-up">
-          <%= for _i <- 1..8 do %>
-            <div class="flame"></div>
-          <% end %>
-        </div>
-      </div>
-      <.icon name="hero-chevron-up" class="h-6 w-6 text-indigo-600 relative z-10" />
-    </button>
-    <button
-      class="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-all duration-200 scroll-button relative overflow-hidden"
-      data-direction="down"
-      type="button"
-    >
-      <div class="fire-effect hidden">
-        <div class="flames-down">
-          <%= for _i <- 1..8 do %>
-            <div class="flame"></div>
-          <% end %>
-        </div>
-      </div>
-      <.icon name="hero-chevron-down" class="h-6 w-6 text-indigo-600 relative z-10" />
-    </button>
-  </div>
 </div>

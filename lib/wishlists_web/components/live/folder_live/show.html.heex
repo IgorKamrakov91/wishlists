@@ -10,38 +10,26 @@
       <div class="relative h-full">
         <div class="absolute left-0 top-1/2 -translate-y-1/2">
           <.link navigate={~p"/dashboard"} class="block">
-            <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
               <.icon name="hero-gift" class="h-5 w-5 text-white" />
             </div>
           </.link>
         </div>
 
-        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-3">
-          <h1 class="text-lg font-semibold text-gray-900 whitespace-nowrap">
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <h1 class="text-lg font-semibold text-gray-900">
             {@folder.name}
           </h1>
-          <%= if @folder.event_date do %>
-            <span class="text-sm text-gray-500 whitespace-nowrap">
-              {Calendar.strftime(@folder.event_date, "%B %d, %Y")}
-            </span>
-          <% end %>
         </div>
 
-        <div class="absolute right-0 top-1/2 -translate-y-1/2 flex items-center space-x-2">
-          <button
-            phx-click="share_folder"
-            class="w-8 h-8 rounded-full flex items-center justify-center bg-emerald-100 hover:bg-emerald-200 text-emerald-700 transition-all duration-300"
-            onclick={"copyToClipboard(event, '#{@share_url}')"}
-          >
-            <.icon name="hero-share" class="h-4 w-4" />
-          </button>
-
+        <div class="absolute right-0 top-1/2 -translate-y-1/2">
           <div class="relative group">
             <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
               <.icon name="hero-ellipsis-horizontal" class="h-5 w-5 text-gray-600" />
             </button>
 
-            <div class="absolute h-3 w-full bottom-0 translate-y-full"></div>
+            <div class="absolute -bottom-3 left-0 right-0 h-3 bg-transparent group-hover:block hidden">
+            </div>
 
             <div class="hidden group-hover:block absolute right-0 top-[calc(100%+0.75rem)] w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
               <button
@@ -68,6 +56,111 @@
 
   <div class="h-16"></div>
 
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm p-4">
+      <div class="hidden sm:flex sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <%= if @folder.event_date do %>
+            <div class="flex items-center text-gray-600">
+              <.icon name="hero-calendar" class="h-5 w-5 mr-2" />
+              <span class="text-sm">
+                {Calendar.strftime(@folder.event_date, "%d.%m.%Y")}
+              </span>
+            </div>
+          <% end %>
+
+          <div class="flex items-center text-gray-600">
+            <.icon name="hero-gift" class="h-5 w-5 mr-2" />
+            <span class="text-sm">
+              {length(@cards)} {if length(@cards) == 1,
+                do: gettext("item"),
+                else: gettext("items")}
+            </span>
+          </div>
+
+          <%= if @folder.description && @folder.description != "" do %>
+            <div class="flex items-center text-gray-600">
+              <.icon name="hero-information-circle" class="h-5 w-5 mr-2" />
+              <span class="text-sm">
+                {@folder.description}
+              </span>
+            </div>
+          <% end %>
+
+          <%= if @folder.show_reserver_names do %>
+            <div class="flex items-center text-purple-600">
+              <.icon name="hero-eye" class="h-5 w-5 mr-2" />
+              <span class="text-sm font-medium">{gettext("Names visible")}</span>
+            </div>
+          <% else %>
+            <div class="flex items-center text-gray-600">
+              <.icon name="hero-eye-slash" class="h-5 w-5 mr-2" />
+              <span class="text-sm font-medium">{gettext("Names hidden")}</span>
+            </div>
+          <% end %>
+        </div>
+
+        <button
+          phx-click="share_folder"
+          class="flex items-center gap-2 px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-full transition-colors"
+          onclick={"copyToClipboard(event, '#{@share_url}')"}
+        >
+          <.icon name="hero-share" class="h-4 w-4" />
+          <span class="text-sm font-medium">{gettext("Share Wishlist")}</span>
+        </button>
+      </div>
+
+<!-- Мобильная версия -->
+      <div class="flex sm:hidden flex-col gap-3">
+        <%= if @folder.event_date do %>
+          <div class="flex items-center text-gray-600">
+            <.icon name="hero-calendar" class="h-5 w-5 mr-2" />
+            <span class="text-sm">
+              {Calendar.strftime(@folder.event_date, "%B %d, %Y")}
+            </span>
+          </div>
+        <% end %>
+
+        <div class="flex items-center text-gray-600">
+          <.icon name="hero-gift" class="h-5 w-5 mr-2" />
+          <span class="text-sm">
+            {ngettext("1 item", "%{count} items", length(@cards), count: length(@cards))}
+          </span>
+        </div>
+
+        <%= if @folder.description && @folder.description != "" do %>
+          <div class="flex items-center text-gray-600">
+            <.icon name="hero-information-circle" class="h-5 w-5 mr-2" />
+            <span class="text-sm">
+              {@folder.description}
+            </span>
+          </div>
+        <% end %>
+
+        <%= if @folder.show_reserver_names do %>
+          <div class="flex items-center text-purple-600">
+            <.icon name="hero-eye" class="h-5 w-5 mr-2" />
+            <span class="text-sm font-medium">{gettext("Names visible")}</span>
+          </div>
+        <% else %>
+          <div class="flex items-center text-gray-600">
+            <.icon name="hero-eye-slash" class="h-5 w-5 mr-2" />
+            <span class="text-sm font-medium">{gettext("Names hidden")}</span>
+          </div>
+        <% end %>
+
+        <button
+          phx-click="share_folder"
+          class="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-full transition-colors w-full mt-2"
+          onclick={"copyToClipboard(event, '#{@share_url}')"}
+        >
+          <.icon name="hero-share" class="h-4 w-4" />
+          <span class="text-sm font-medium">{gettext("Share Wishlist")}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
     <%= if Enum.empty?(@cards) do %>
       <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 sm:p-12 text-center">
@@ -78,7 +171,7 @@
           {gettext("This collection is empty")}
         </h3>
         <p class="text-indigo-600 mb-8">
-          {gettext("Start by adding new wishes or dragging them from your dashboard")}
+          {gettext("Start by adding new wishes or adding them from your dashboard")}
         </p>
         <div class="flex justify-center">
           <button
@@ -94,13 +187,12 @@
       <div
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
         id="folder-cards-container"
-        phx-hook="DragOrder"
       >
         <%= for {folder_card, index} <- Enum.with_index(@cards, 1) do %>
           <div
             data-card-id={folder_card.card.id}
             data-position={index}
-            class="group w-[90%] mx-auto sm:w-full sm:mx-0"
+            class="group w-full mx-auto sm:w-full sm:mx-0"
           >
             <div class={[
               "bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative",

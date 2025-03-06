@@ -150,7 +150,22 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
                     class="rounded-xl border-indigo-200 focus:border-purple-400 focus:ring focus:ring-purple-200"
                   />
 
-                  <div class="flex justify-end pt-4">
+                  <div class="flex justify-between items-center pt-4">
+                    <%= if @action == :edit do %>
+                      <button
+                        type="button"
+                        phx-click="delete_card"
+                        phx-value-id={@card.id}
+                        phx-target={@myself}
+                        class="flex items-center space-x-2 text-rose-600 hover:text-rose-700 transition-colors duration-200"
+                      >
+                        <.icon name="hero-trash" class="h-5 w-5" />
+                        <span>{gettext("Delete wish")}</span>
+                      </button>
+                    <% else %>
+                      <div></div>
+                    <% end %>
+
                     <.button
                       type="submit"
                       class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
@@ -251,6 +266,18 @@ defmodule WishlistsWeb.CardLive.CardFormComponent do
   def handle_event("close_modal", _, socket) do
     send(self(), :close_modal)
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("delete_card", %{"id" => id}, socket) do
+    if parent_pid = socket.assigns[:parent_pid] do
+      send(parent_pid, {:delete_card, id})
+      {:noreply, socket}
+    else
+      {:noreply,
+       socket
+       |> put_flash(:error, gettext("Unable to process deletion request"))}
+    end
   end
 
   defp save_card(socket, :edit, card_params) do

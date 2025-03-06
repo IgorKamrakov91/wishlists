@@ -56,18 +56,12 @@ msgstr "Закрыть"
 msgid "About Us"
 msgstr "О нас"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:161
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:115
 #, elixir-autogen, elixir-format
 msgid "All Collections"
 msgstr "Все"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:466
-#, elixir-autogen, elixir-format
-msgid "Are you sure you want to delete this wish?"
-msgstr "Вы уверены, что хотите удалить это желание?"
-
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:476
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:289
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:385
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr "Отмена"
@@ -82,27 +76,16 @@ msgstr "Контакты"
 msgid "Create and manage your wishlists effortlessly. Keep track of all the things you dream about!"
 msgstr "Создавайте и управляйте списками желаний без усилий. Отслеживайте все, о чем мечтаете!"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:483
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:60
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:282
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:48
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:378
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr "Удалить"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:399
-#, elixir-autogen, elixir-format
-msgid "Drag to add to Collection"
-msgstr "Перетащите в Коллекцию"
-
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:311
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:265
 #, elixir-autogen, elixir-format
 msgid "Dreams waiting to come true"
 msgstr "Мечты для исполнения"
-
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:84
-#, elixir-autogen, elixir-format
-msgid "Drop to add to:"
-msgstr ""
 
 #: lib/wishlists_web/components/live/page_live.ex:132
 #, elixir-autogen, elixir-format
@@ -119,38 +102,38 @@ msgstr "Подписывайтесь"
 msgid "Get Started"
 msgstr "Начать"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:122
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "My Wishlists"
 msgstr "Мои Списки Желаний"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:319
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:273
 #, elixir-autogen, elixir-format
 msgid "Make a Wish"
 msgstr "Загадать Желание"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:180
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:134
 #, elixir-autogen, elixir-format
 msgid "My Collections"
 msgstr "Мои "
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:139
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:93
 #, elixir-autogen, elixir-format
 msgid "New Collection"
 msgstr "Новая Коллекция"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:308
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:269
+#: lib/wishlists_web/components/live/dashboard_live.ex:289
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:223
 #, elixir-autogen, elixir-format
 msgid "No event date set"
 msgstr "Без даты"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:282
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:236
 #, elixir-autogen, elixir-format
 msgid "Open Collection"
 msgstr "Открыть Коллекцию"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:125
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "Organize your wishes into magical collections"
 msgstr "Организуйте свои желания в коллекции"
@@ -165,12 +148,12 @@ msgstr "Политика конфиденциальности"
 msgid "Quick Links"
 msgstr "Быстрые ссылки"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:199
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:153
 #, elixir-autogen, elixir-format
 msgid "Shared"
 msgstr "Общие"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:278
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Shared by"
 msgstr "Поделился"
@@ -180,14 +163,8 @@ msgstr "Поделился"
 msgid "Terms of Service"
 msgstr "Условия использования"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:469
-#, elixir-autogen, elixir-format
-msgid "This action cannot be undone."
-msgstr "Это действие нельзя отменить."
-
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:392
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:198
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:250
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:294
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:253
 #, elixir-autogen, elixir-format
 msgid "Visit Link"
 msgstr "Ссылка"
@@ -198,17 +175,19 @@ msgstr "Ссылка"
 msgid "Wishlists Manager"
 msgstr "Список Ваших Желаний"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:309
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:263
 #, elixir-autogen, elixir-format
 msgid "My Wishes"
 msgstr "Мои Желания"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:242
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:196
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "item"
 msgstr "шт."
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:243
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:197
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:77
 #, elixir-autogen, elixir-format
 msgid "items"
 msgstr "шт."
@@ -218,13 +197,13 @@ msgstr "шт."
 msgid "© 2025 Wishlists Manager."
 msgstr "© 2025 Менеджер Списков Желаний."
 
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:89
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:222
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:182
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:318
 #, elixir-autogen, elixir-format
 msgid "Add Wishes"
 msgstr "Добавить Желания"
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:52
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:51
 #, elixir-autogen, elixir-format
 msgid "Add manually instead"
 msgstr "Добавить вручную"
@@ -234,13 +213,13 @@ msgstr "Добавить вручную"
 msgid "Allow yourself to see who reserved items"
 msgstr "Хочу знать, кто дарит подарок"
 
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:170
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:156
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:266
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:157
 #, elixir-autogen, elixir-format
 msgid "Approve suggestion"
 msgstr "Одобрить предложение"
 
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:269
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:365
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this folder? This action cannot be undone, and all cards will be removed from this folder."
 msgstr ""
@@ -255,7 +234,7 @@ msgstr "Автоматическая Очистка"
 msgid "Can't reserve pending or rejected gifts"
 msgstr "Нельзя зарезервировать ожидающие или отклоненные подарки"
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:283
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:286
 #, elixir-autogen, elixir-format
 msgid "Cancel Reservation"
 msgstr "Отменить Резервацию"
@@ -280,7 +259,7 @@ msgstr "Подарок успешно предложен! Ожидает под�
 msgid "Card was already removed from folder"
 msgstr "Желание уже было удалено из коллекции"
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:305
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:309
 #, elixir-autogen, elixir-format
 msgid "Choose how you'd like to continue"
 msgstr "Выберите, как вы хотите продолжить"
@@ -290,7 +269,7 @@ msgstr "Выберите, как вы хотите продолжить"
 msgid "Collection Name"
 msgstr "Название Коллекции"
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:313
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:317
 #, elixir-autogen, elixir-format
 msgid "Continue as Guest"
 msgstr "Продолжить как Гость"
@@ -305,7 +284,7 @@ msgstr "Не удалось создать ссылку для sharing"
 msgid "Could not delete folder"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:243
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:258
 #, elixir-autogen, elixir-format
 msgid "Could not fetch data automatically. Please fill in the details manually."
 msgstr "Не удалось получить данные автоматически. Пожалуйста, заполните детали вручную."
@@ -325,28 +304,28 @@ msgstr "Не удалось зарезервировать желание"
 msgid "Could not unreserve card"
 msgstr "Не удалось зарезервировать желание"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:73
-#: lib/wishlists_web/components/live/dashboard_live.ex:85
+#: lib/wishlists_web/components/live/dashboard_live.ex:74
+#: lib/wishlists_web/components/live/dashboard_live.ex:86
 #: lib/wishlists_web/components/live/folder_live/show.ex:183
 #, elixir-autogen, elixir-format
 msgid "Create"
 msgstr "Создать"
 
 # Card Form Modal translations
-#: lib/wishlists_web/components/live/dashboard_live.ex:84
+#: lib/wishlists_web/components/live/dashboard_live.ex:85
 #: lib/wishlists_web/components/live/folder_live/show.ex:182
 #, elixir-autogen, elixir-format
 msgid "Create A Wish!"
 msgstr "Создать Желание!"
 
 # Collection Form Modal translations
-#: lib/wishlists_web/components/live/dashboard_live.ex:72
+#: lib/wishlists_web/components/live/dashboard_live.ex:73
 #, elixir-autogen, elixir-format
 msgid "Create New Folder"
 msgstr "Создать Новую Коллекцию"
 
 # Delete Modal translations
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:265
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:361
 #, elixir-autogen, elixir-format
 msgid "Delete Folder"
 msgstr "Удалить Коллекцию"
@@ -357,12 +336,12 @@ msgstr "Удалить Коллекцию"
 msgid "Description (optional)"
 msgstr "Описание (необязательно)"
 
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:52
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:40
 #, elixir-autogen, elixir-format
 msgid "Edit"
 msgstr "Редактировать"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:136
+#: lib/wishlists_web/components/live/dashboard_live.ex:137
 #, elixir-autogen, elixir-format
 msgid "Edit Card"
 msgstr "Редактировать Желание"
@@ -389,7 +368,6 @@ msgstr "Не удалось одобрить предложение подарк
 msgid "Failed to reject gift suggestion"
 msgstr "Не удалось отклонить предложение подарка"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:205
 #: lib/wishlists_web/components/live/folder_live/show.ex:148
 #, elixir-autogen, elixir-format
 msgid "Failed to reorder card"
@@ -400,7 +378,7 @@ msgstr "Не удалось переместить карточки"
 msgid "Failed to submit gift suggestion"
 msgstr "Не удалось отклонить предложение подарка"
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:65
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:64
 #, elixir-autogen, elixir-format
 msgid "Fetching"
 msgstr "Загрузка"
@@ -444,9 +422,9 @@ msgstr "Гость: %{name}"
 msgid "If you set an event date, this collection and all reserved items will be automatically deleted 24 hours after the event. Unreserved items will return to your general list."
 msgstr "Если вы установите дату события, эта коллекция и все зарезервированные предметы будут автоматически удалены через 24 часа после события. Незарезервированные предметы вернутся в общий список."
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:99
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:101
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:108
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:98
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:100
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:107
 #, elixir-autogen, elixir-format
 msgid "Image URL"
 msgstr "Ссылка на Изображение"
@@ -458,7 +436,7 @@ msgid "Invalid email or password"
 msgstr "Неверный email или пароль"
 
 # Share Modal/Notification translations
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:301
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:397
 #, elixir-autogen, elixir-format
 msgid "Link copied to clipboard!"
 msgstr "Ссылка скопирована в буфер обмена!"
@@ -468,24 +446,24 @@ msgstr "Ссылка скопирована в буфер обмена!"
 msgid "My Awesome Collection"
 msgstr "Моя Классная Коллекция"
 
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:187
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:260
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:283
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:263
 #, elixir-autogen, elixir-format
 msgid "No Price"
 msgstr "Без цены"
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:322
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:326
 #, elixir-autogen, elixir-format
 msgid "Or"
 msgstr "Или"
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:110
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:109
 #, elixir-autogen, elixir-format
 msgid "Paste image URL here"
 msgstr "Вставьте ссылку на изображение"
 
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:108
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:147
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:204
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:148
 #, elixir-autogen, elixir-format
 msgid "Pending Approval"
 msgstr "Ожидает Одобрения"
@@ -495,8 +473,8 @@ msgstr "Ожидает Одобрения"
 msgid "Price (in RUB)"
 msgstr "Цена (в рублях)"
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:39
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:118
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:38
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:117
 #, elixir-autogen, elixir-format
 msgid "Product URL"
 msgstr "Ссылка на Товар"
@@ -516,42 +494,42 @@ msgstr "Название товара"
 msgid "Registration failed"
 msgstr "Ошибка регистрации"
 
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:161
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:164
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:257
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:165
 #, elixir-autogen, elixir-format
 msgid "Reject suggestion"
 msgstr "Отклонить предложение"
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:273
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:276
 #, elixir-autogen, elixir-format
 msgid "Reserve"
 msgstr "Зарезервировать"
 
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:150
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:216
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:246
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:217
 #, elixir-autogen, elixir-format
 msgid "Reserved"
 msgstr "Зарезервировано"
 
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:146
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:212
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:223
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:242
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:213
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:224
 #, elixir-autogen, elixir-format
 msgid "Reserved by %{name}"
 msgstr "Зарезервировал(а) %{name}"
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:221
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:222
 #, elixir-autogen, elixir-format
 msgid "Reserved by you"
 msgstr "Зарезервировано вами"
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:159
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:174
 #: lib/wishlists_web/components/live/folder_live/show.ex:86
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Сохранить"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:137
+#: lib/wishlists_web/components/live/dashboard_live.ex:138
 #, elixir-autogen, elixir-format
 msgid "Save Changes"
 msgstr "Сохранить Изменения"
@@ -561,23 +539,23 @@ msgstr "Сохранить Изменения"
 msgid "Show Reserver Names"
 msgstr "Показывать имена резервирующих"
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:331
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:335
 #, elixir-autogen, elixir-format
 msgid "Sign In / Sign Up"
 msgstr "Войти / Зарегистрироваться"
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:349
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:353
 #, elixir-autogen, elixir-format
 msgid "Submit Suggestion"
 msgstr "Предложить"
 
 #: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:119
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:348
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:352
 #, elixir-autogen, elixir-format
 msgid "Suggest a Gift"
 msgstr "Предложить Подарок"
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:234
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:235
 #, elixir-autogen, elixir-format
 msgid "Suggested by: %{name}"
 msgstr "Предложил(а): %{name}"
@@ -587,7 +565,7 @@ msgstr "Предложил(а): %{name}"
 msgid "There are no wishes in this collection yet"
 msgstr "В этой коллекции пока нет желаний"
 
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:78
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:171
 #: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:130
 #, elixir-autogen, elixir-format
 msgid "This collection is empty"
@@ -605,7 +583,7 @@ msgid "Unknown"
 msgstr "Неизвестно"
 
 # Welcome Modal translations
-#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:302
+#: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:306
 #, elixir-autogen, elixir-format
 msgid "Welcome to Wishverse!"
 msgstr "Добро пожаловать во Вселенную Желаний!"
@@ -615,7 +593,7 @@ msgstr "Добро пожаловать во Вселенную Желаний!"
 msgid "What's this collection about?"
 msgstr "О чем эта коллекция?"
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:69
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:68
 #, elixir-autogen, elixir-format
 msgid "Woosh!"
 msgstr "Вжух!"
@@ -738,15 +716,10 @@ msgstr "Войти"
 msgid "Sign in to manage your wishlists and discover new items"
 msgstr "Войдите, чтобы управлять списками желаний и открывать новые товары"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:325
+#: lib/wishlists_web/components/live/dashboard_live.ex:306
 #, elixir-autogen, elixir-format
 msgid "%{days} days remaining"
 msgstr "%{days} дней осталось"
-
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:330
-#, elixir-autogen, elixir-format
-msgid "Add your wish by clicking 'Make a Wish' button. Then you can drag it to any collection above!"
-msgstr "Добавь свое желание, нажав кнопку 'Загадать Желание'. Затем ты сможешь перетащить его в любую коллекцию выше!"
 
 #: lib/wishlists_web/components/live/folder_live/folder_form_component.ex:206
 #, elixir-autogen, elixir-format
@@ -773,22 +746,22 @@ msgstr "Рождество"
 msgid "Event Type"
 msgstr "Тип События"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:316
+#: lib/wishlists_web/components/live/dashboard_live.ex:297
 #, elixir-autogen, elixir-format
 msgid "Event has passed %{icon}"
 msgstr "Событие прошло %{icon}"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:319
+#: lib/wishlists_web/components/live/dashboard_live.ex:300
 #, elixir-autogen, elixir-format
 msgid "Event is today %{icon}"
 msgstr "Событие сегодня %{icon}"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:322
+#: lib/wishlists_web/components/live/dashboard_live.ex:303
 #, elixir-autogen, elixir-format
 msgid "Event is tomorrow %{icon}"
 msgstr "Событие завтра %{icon}"
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:298
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:325
 #, elixir-autogen, elixir-format
 msgid "Failed to assign card to folder"
 msgstr "Не удалось добавить желание в коллекцию"
@@ -838,20 +811,15 @@ msgstr "День Свадьбы"
 msgid "Wedding celebration"
 msgstr "Празднование Свадьбы"
 
-#: lib/wishlists_web/components/live/dashboard_live.html.heex:327
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:281
 #, elixir-autogen, elixir-format
 msgid "Your wish list is empty"
 msgstr "Твой список желаний пуст"
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:40
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:39
 #, elixir-autogen, elixir-format
 msgid "https://example.com"
 msgstr "https://example.com"
-
-#: lib/wishlists_web/components/live/folder_live/show.html.heex:81
-#, elixir-autogen, elixir-format
-msgid "Start by adding new wishes or dragging them from your dashboard"
-msgstr "Начните с добавления новых желаний или перетащите их из панели управления"
 
 #: lib/wishlists_web/components/auth_component.ex:323
 #, elixir-autogen, elixir-format
@@ -1178,18 +1146,18 @@ msgstr "Добро пожаловать!"
 msgid "Your friends can mark items as reserved, ensuring you get exactly what you want without duplicates."
 msgstr "Ваш друзья могут отметить товары как выбранные, чтобы вы получили именно то, что хотите, без повторов."
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:120
+#: lib/wishlists_web/components/live/dashboard_live.ex:121
 #, elixir-autogen, elixir-format
 msgid "Failed to add wish to wishlist"
 msgstr "Не удалось добавить желание в вишлист"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:158
-#: lib/wishlists_web/components/live/dashboard_live.ex:191
+#: lib/wishlists_web/components/live/dashboard_live.ex:178
+#: lib/wishlists_web/components/live/dashboard_live.ex:200
 #, elixir-autogen, elixir-format
 msgid "Failed to delete wish"
 msgstr "Не удалось удалить желание"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:56
+#: lib/wishlists_web/components/live/dashboard_live.ex:57
 #, elixir-autogen, elixir-format
 msgid "Please log in to access this page"
 msgstr "Пожалуйста, войдите, чтобы получить доступ к этой странице"
@@ -1200,29 +1168,7 @@ msgstr "Пожалуйста, войдите, чтобы получить дос
 msgid "Sign out"
 msgstr "Выйти"
 
-#: lib/wishlists_web/components/live/dashboard_live.ex:115
-#, elixir-autogen, elixir-format
-msgid "Wish added to wishlist successfully"
-msgstr "Желание успешно добавлено в вишлист"
-
-#: lib/wishlists_web/components/live/dashboard_live.ex:245
-#: lib/wishlists_web/components/live/dashboard_live.ex:259
-#, elixir-autogen, elixir-format
-msgid "Wish created successfully"
-msgstr "Желание успешно создано"
-
-#: lib/wishlists_web/components/live/dashboard_live.ex:153
-#: lib/wishlists_web/components/live/dashboard_live.ex:183
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Wish deleted successfully"
-msgstr "Желание успешно создано"
-
-#: lib/wishlists_web/components/live/dashboard_live.ex:271
-#, elixir-autogen, elixir-format
-msgid "Wish updated successfully"
-msgstr "Желание успешно обновлено"
-
-#: lib/wishlists_web/components/live/dashboard_live.ex:126
+#: lib/wishlists_web/components/live/dashboard_live.ex:127
 #, elixir-autogen, elixir-format
 msgid "You don't have permission to add cards to this folder"
 msgstr "У вас нет разрешения на добавление карточек в эту папку"
@@ -1296,3 +1242,54 @@ msgstr "Посмотреть товар"
 #, elixir-autogen, elixir-format
 msgid "has suggested a gift for your wishlist"
 msgstr "предложил(а) подарок для вашего списка желаний"
+
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:127
+#, elixir-autogen, elixir-format, fuzzy
+msgid "1 item"
+msgid_plural "%{count} items"
+msgstr[0] "шт."
+msgstr[1] "шт."
+msgstr[2] "шт."
+
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:373
+#, elixir-autogen, elixir-format
+msgid "Add to collection"
+msgstr "Добавить в коллекцию"
+
+#: lib/wishlists_web/components/live/dashboard_live.html.heex:284
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Add your wish by clicking 'Make a Wish' button. Then you can add it to any collection above!"
+msgstr "Добавь свое желание, нажав кнопку 'Загадать Желание'. Затем ты сможешь перетащить его в любую коллекцию выше!"
+
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:163
+#, elixir-autogen, elixir-format
+msgid "Delete wish"
+msgstr "Удалить желание"
+
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:98
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:148
+#, elixir-autogen, elixir-format
+msgid "Names hidden"
+msgstr "Имена дарителей скрыты"
+
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:93
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:143
+#, elixir-autogen, elixir-format
+msgid "Names visible"
+msgstr "Имена дарителей видны"
+
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:109
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:158
+#, elixir-autogen, elixir-format
+msgid "Share Wishlist"
+msgstr "Поделиться"
+
+#: lib/wishlists_web/components/live/folder_live/show.html.heex:174
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Start by adding new wishes or adding them from your dashboard"
+msgstr "Начните с добавления новых желаний или перетащите их из панели управления"
+
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:279
+#, elixir-autogen, elixir-format
+msgid "Unable to process deletion request"
+msgstr ""

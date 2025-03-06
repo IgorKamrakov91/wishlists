@@ -49,7 +49,8 @@ defmodule WishlistsWeb.DashboardLive do
        |> assign(current_filter: "all")
        |> assign(show_folders_panel: false)
        |> assign(current_time: DateTime.utc_now())
-       |> assign(locale: locale)}
+       |> assign(locale: locale)
+       |> assign(show_folders_for_card: nil)}
     else
       {:ok,
        socket
@@ -89,8 +90,9 @@ defmodule WishlistsWeb.DashboardLive do
   end
 
   @impl true
-  def handle_event("assign_card", %{"card_id" => card_id, "folder_id" => folder_id}, socket) do
-    folder_id = String.to_integer(folder_id)
+  def handle_event("assign_card", params, socket) do
+    card_id = params["card_id"]
+    folder_id = String.to_integer(params["folder_id"])
     all_folders = socket.assigns.folders ++ socket.assigns.followed_folders
     folder = Enum.find(all_folders, &(&1.id == folder_id))
 
@@ -111,8 +113,7 @@ defmodule WishlistsWeb.DashboardLive do
              socket
              |> assign(cards: cards)
              |> assign(folders: folders_with_counts)
-             |> push_event("trigger_card_confetti", %{})
-             |> put_flash(:info, gettext("Wish added to wishlist successfully"))}
+             |> assign(:show_folders_for_card, nil)}
 
           {:error, _changeset} ->
             {:noreply,
@@ -137,81 +138,8 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(:submit_button_text, gettext("Save Changes"))
      |> assign(:action, :edit)
      |> assign(:modal_type, :card)
-     |> assign(:show_modal, true)}
-  end
-
-  def handle_event("delete_card", %{"id" => id}, socket) do
-    card = Cards.get_card!(id)
-
-    case Cards.delete_card(card) do
-      {:ok, _deleted_card} ->
-        cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
-
-        {:noreply,
-         socket
-         |> assign(:cards, cards)
-         |> put_flash(:info, gettext("Wish deleted successfully"))}
-
-      {:error, _changeset} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, gettext("Failed to delete wish"))}
-    end
-  end
-
-  def handle_event("cancel_delete", _, socket) do
-    {:noreply,
-     socket
-     |> assign(:show_modal, false)
-     |> assign(:modal_type, nil)
-     |> assign(:card_to_delete, nil)}
-  end
-
-  def handle_event("confirm_delete", %{"id" => id}, socket) do
-    card = Cards.get_card!(id)
-
-    case Cards.delete_card(card) do
-      {:ok, _deleted_card} ->
-        cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
-
-        {:noreply,
-         socket
-         |> assign(:cards, cards)
-         |> assign(:show_modal, false)
-         |> assign(:modal_type, nil)
-         |> assign(:card_to_delete, nil)
-         |> put_flash(:info, gettext("Wish deleted successfully"))}
-
-      {:error, _changeset} ->
-        {:noreply,
-         socket
-         |> assign(:show_modal, false)
-         |> assign(:modal_type, nil)
-         |> assign(:card_to_delete, nil)
-         |> put_flash(:error, gettext("Failed to delete wish"))}
-    end
-  end
-
-  def handle_event("reorder_card", %{"card_id" => card_id, "position" => position}, socket) do
-    card_id = String.to_integer(card_id)
-
-    # Handle any return value from reorder_card
-    with :ok <- Cards.reorder_card(card_id, position) do
-      cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
-      {:noreply, assign(socket, :cards, cards)}
-    else
-      {:error, reason} ->
-        Logger.error("Failed to reorder card: #{inspect(reason)}")
-        {:noreply, put_flash(socket, :error, gettext("Failed to reorder card"))}
-    end
-  end
-
-  def handle_event(
-        "card_dropped",
-        %{"card_data" => %{"cardId" => card_id}, "folder_id" => folder_id},
-        socket
-      ) do
-    handle_event("assign_card", %{"card_id" => card_id, "folder_id" => folder_id}, socket)
+     |> assign(:show_modal, true)
+     |> assign(:parent_pid, self())}
   end
 
   def handle_event("filter_folders", %{"filter" => filter}, socket) do
@@ -220,6 +148,57 @@ defmodule WishlistsWeb.DashboardLive do
 
   def handle_event("show_error", %{"message" => message}, socket) do
     {:noreply, put_flash(socket, :error, message)}
+  end
+
+  def handle_event("toggle_folders", %{"card_id" => card_id}, socket) do
+    current_card = socket.assigns.show_folders_for_card
+    new_card = if current_card == card_id, do: nil, else: card_id
+
+    {:noreply, assign(socket, :show_folders_for_card, new_card)}
+  end
+
+  def handle_event("delete_card", %{"id" => id, "value" => _}, socket) do
+    card = Cards.get_card!(id)
+
+    case Cards.delete_card(card) do
+      {:ok, _deleted_card} ->
+        cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
+
+        {:noreply,
+         socket
+         |> assign(:cards, cards)
+         |> assign(:show_modal, false)
+         |> assign(:modal_type, nil)}
+
+      {:error, _changeset} ->
+        {:noreply,
+         socket
+         |> assign(:show_modal, false)
+         |> assign(:modal_type, nil)
+         |> put_flash(:error, gettext("Failed to delete wish"))}
+    end
+  end
+
+  def handle_info({:delete_card, id}, socket) do
+    card = Cards.get_card!(id)
+
+    case Cards.delete_card(card) do
+      {:ok, _deleted_card} ->
+        cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
+
+        {:noreply,
+         socket
+         |> assign(:cards, cards)
+         |> assign(:show_modal, false)
+         |> assign(:modal_type, nil)}
+
+      {:error, _changeset} ->
+        {:noreply,
+         socket
+         |> assign(:show_modal, false)
+         |> assign(:modal_type, nil)
+         |> put_flash(:error, gettext("Failed to delete wish"))}
+    end
   end
 
   @impl true
@@ -241,8 +220,7 @@ defmodule WishlistsWeb.DashboardLive do
      socket
      |> assign(folders: folders_with_counts)
      |> assign(show_modal: false)
-     |> assign(modal_type: nil)
-     |> put_flash(:info, gettext("Wish created successfully"))}
+     |> assign(modal_type: nil)}
   end
 
   @impl true
@@ -255,8 +233,7 @@ defmodule WishlistsWeb.DashboardLive do
      |> assign(show_modal: false)
      |> assign(modal_type: nil)
      |> push_event("trigger_card_confetti", %{})
-     |> push_event("init_new_card", %{})
-     |> put_flash(:info, gettext("Wish created successfully"))}
+     |> push_event("init_new_card", %{})}
   end
 
   @impl true
@@ -267,8 +244,7 @@ defmodule WishlistsWeb.DashboardLive do
      socket
      |> assign(cards: cards)
      |> assign(show_modal: false)
-     |> assign(modal_type: nil)
-     |> put_flash(:info, gettext("Wish updated successfully"))}
+     |> assign(modal_type: nil)}
   end
 
   def handle_info({:new_notification}, socket) do
@@ -277,6 +253,11 @@ defmodule WishlistsWeb.DashboardLive do
 
   def handle_info(:update_times, socket) do
     {:noreply, assign(socket, current_time: DateTime.utc_now())}
+  end
+
+  # Оставляем стандартный update для других случаев
+  def update(assigns, socket) do
+    {:ok, assign(socket, assigns)}
   end
 
   defp filter_folders(folders, followed_folders, "all"), do: folders ++ followed_folders
