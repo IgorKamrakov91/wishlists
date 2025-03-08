@@ -10,7 +10,7 @@ defmodule Wishlists.Accounts.User do
     field :confirmed_at, :naive_datetime
     field :reset_password_token, :string
     field :reset_password_sent_at, :naive_datetime
-    field :locale, :string, default: "en"
+    field :locale, :string, default: "ru"
 
     field :notification_preferences, :map,
       default: %{

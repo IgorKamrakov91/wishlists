@@ -5,7 +5,7 @@ defmodule Wishlists.Accounts do
 
   def register_user(attrs \\ %{}) do
     %User{}
-    |> User.registration_changeset(attrs)
+    |> User.registration_changeset(Map.put(attrs, "locale", "ru"))
     |> Ecto.Changeset.cast_assoc(:account, with: &Account.changeset/2)
     |> Repo.insert()
     |> case do

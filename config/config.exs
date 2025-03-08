@@ -67,7 +67,7 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :wishlists, WishlistsWeb.Gettext,
-  default_locale: "en",
+  default_locale: "ru",
   locales: ~w(en ru)
 
 # Import environment specific config. This must remain at the bottom

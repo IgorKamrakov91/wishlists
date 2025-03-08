@@ -5,7 +5,7 @@ defmodule Wishlists.Email.EmailService do
   require Logger
 
   def send_welcome_email(user) do
-    Gettext.with_locale(user.locale || "en", fn ->
+    Gettext.with_locale(user.locale || "ru", fn ->
       user
       |> EmailTemplates.welcome_email()
       |> deliver()
@@ -13,7 +13,7 @@ defmodule Wishlists.Email.EmailService do
   end
 
   def send_reset_password_email(user) do
-    Gettext.with_locale(user.locale || "en", fn ->
+    Gettext.with_locale(user.locale || "ru", fn ->
       user
       |> EmailTemplates.reset_password_email()
       |> deliver()
@@ -24,7 +24,7 @@ defmodule Wishlists.Email.EmailService do
     folder = Wishlists.Repo.preload(folder, :user)
 
     if get_in(folder.user.notification_preferences, ["reservation_notifications"]) do
-      Gettext.with_locale(folder.user.locale || "en", fn ->
+      Gettext.with_locale(folder.user.locale || "ru", fn ->
         token = Wishlists.Accounts.generate_unsubscribe_token(folder.user)
 
         folder
@@ -43,7 +43,7 @@ defmodule Wishlists.Email.EmailService do
 
     with true <- get_in(folder.user.notification_preferences, ["cleanup_notifications"]),
          false <- already_notified?(folder) do
-      Gettext.with_locale(folder.user.locale || "en", fn ->
+      Gettext.with_locale(folder.user.locale || "ru", fn ->
         token = Wishlists.Accounts.generate_unsubscribe_token(folder.user)
 
         folder.user
@@ -62,7 +62,7 @@ defmodule Wishlists.Email.EmailService do
   def send_suggestion_notification(folder, folder_card, suggester_name) do
     folder = Wishlists.Repo.preload(folder, :user)
 
-    Gettext.with_locale(folder.user.locale || "en", fn ->
+    Gettext.with_locale(folder.user.locale || "ru", fn ->
       token = Wishlists.Accounts.generate_unsubscribe_token(folder.user)
 
       folder

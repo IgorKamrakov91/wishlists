@@ -40,6 +40,7 @@ defmodule Wishlists.Folders.CleanupWorker do
   end
 
   defp cleanup_expired_folders do
+    Gettext.put_locale("ru")
     today = Date.utc_today()
 
     # notify_query =
