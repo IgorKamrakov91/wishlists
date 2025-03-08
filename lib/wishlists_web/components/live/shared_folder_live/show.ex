@@ -6,6 +6,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   alias Wishlists.Accounts.Guardian
   require Logger
 
+  @impl true
   def mount(%{"token" => token}, session, socket) do
     socket = set_locale(socket, session)
 
