@@ -1259,7 +1259,7 @@ msgstr "Добавить в коллекцию"
 #: lib/wishlists_web/components/live/dashboard_live.html.heex:284
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Add your wish by clicking 'Make a Wish' button. Then you can add it to any collection above!"
-msgstr "Добавь свое желание, нажав кнопку 'Загадать Желание'. Затем ты сможешь перетащить его в любую коллекцию выше!"
+msgstr "Добавь свое желание, нажав кнопку 'Загадать Желание'. Затем ты сможешь добавить его в любую коллекцию!"
 
 #: lib/wishlists_web/components/live/card_live/card_form_component.ex:163
 #, elixir-autogen, elixir-format

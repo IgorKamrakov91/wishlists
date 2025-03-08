@@ -67,6 +67,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
       {:ok,
        socket
        |> assign(:locale, locale)
+       |> assign(:show_dropdown, false)
        |> redirect(to: ~p"/folders/#{folder.id}")}
     else
       is_following = current_user && Folders.is_following?(current_user.id, folder.id)
@@ -89,6 +90,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
         |> assign(:show_suggest_modal, false)
         |> assign(:suggested_card, %Cards.Card{})
         |> assign(:is_suggestion, false)
+        |> assign(:show_dropdown, false)
 
       if current_user && !is_following do
         Folders.follow_folder(current_user.id, folder.id)
@@ -271,7 +273,6 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
       {:ok, _card} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Card suggested successfully! Waiting for approval."))
          |> assign(:show_suggest_modal, false)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -288,8 +289,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
         {:noreply,
          socket
-         |> assign(:cards, cards)
-         |> put_flash(:info, gettext("Gift suggestion approved successfully!"))}
+         |> assign(:cards, cards)}
 
       {:error, _} ->
         {:noreply,
@@ -307,14 +307,22 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
         {:noreply,
          socket
-         |> assign(:cards, cards)
-         |> put_flash(:info, gettext("Gift suggestion rejected successfully!"))}
+         |> assign(:cards, cards)}
 
       {:error, _} ->
         {:noreply,
          socket
          |> put_flash(:error, gettext("Failed to reject gift suggestion"))}
     end
+  end
+
+  @impl true
+  def handle_event("toggle_dropdown", _, socket) do
+    {:noreply, assign(socket, :show_dropdown, !socket.assigns.show_dropdown)}
+  end
+
+  def handle_event("close_dropdown", _, socket) do
+    {:noreply, assign(socket, :show_dropdown, false)}
   end
 
   defp can_unreserve?(reservation, current_user, guest_viewer) do
@@ -326,6 +334,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
     end
   end
 
+  @impl true
   def handle_info({:login_error, message}, socket) do
     {:noreply,
      socket
@@ -404,21 +413,6 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
      socket
      |> assign(:cards, cards)
      |> assign(:show_suggest_modal, false)}
-  end
-
-  defp get_suggester_name(card) do
-    cond do
-      card.suggested_by_user_id ->
-        user = Wishlists.Accounts.get_user!(card.suggested_by_user_id)
-        user.email
-
-      card.suggested_by_guest_id ->
-        guest = Wishlists.Accounts.get_guest_viewer!(card.suggested_by_guest_id)
-        gettext("Guest: %{name}", name: guest.name)
-
-      true ->
-        gettext("Unknown")
-    end
   end
 
   defp format_price(price) when is_nil(price) or price <= 0, do: nil

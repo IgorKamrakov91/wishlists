@@ -96,7 +96,6 @@ defmodule WishlistsWeb.FolderLive.Show do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, gettext("Folder deleted successfully"))
          |> redirect(to: ~p"/dashboard")}
 
       {:error, _} ->
@@ -160,8 +159,7 @@ defmodule WishlistsWeb.FolderLive.Show do
 
         {:noreply,
          socket
-         |> assign(:cards, cards)
-         |> put_flash(:info, gettext("Card removed from folder"))}
+         |> assign(:cards, cards)}
 
       {:error, :not_found} ->
         {:noreply,
@@ -218,8 +216,7 @@ defmodule WishlistsWeb.FolderLive.Show do
 
         {:noreply,
          socket
-         |> assign(:cards, cards)
-         |> put_flash(:info, gettext("Gift suggestion approved successfully!"))}
+         |> assign(:cards, cards)}
 
       {:error, _} ->
         {:noreply,
@@ -237,8 +234,7 @@ defmodule WishlistsWeb.FolderLive.Show do
 
         {:noreply,
          socket
-         |> assign(:cards, cards)
-         |> put_flash(:info, gettext("Gift suggestion rejected successfully!"))}
+         |> assign(:cards, cards)}
 
       {:error, _} ->
         {:noreply,
@@ -266,8 +262,7 @@ defmodule WishlistsWeb.FolderLive.Show do
     {:noreply,
      socket
      |> assign(folder: folder)
-     |> assign(show_modal: false)
-     |> put_flash(:info, gettext("Folder updated successfully"))}
+     |> assign(show_modal: false)}
   end
 
   def handle_info({:new_notification}, socket) do
@@ -281,8 +276,7 @@ defmodule WishlistsWeb.FolderLive.Show do
      socket
      |> assign(cards: cards)
      |> assign(show_modal: false)
-     |> assign(modal_type: nil)
-     |> put_flash(:info, gettext("Card created successfully"))}
+     |> assign(modal_type: nil)}
   end
 
   def get_suggester_name(card) do

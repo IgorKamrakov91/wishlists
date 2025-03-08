@@ -1,54 +1,61 @@
-<div class="min-h-screen bg-gradient-to-b from-indigo-100 via-purple-50 to-pink-100">
+<div
+  class="min-h-screen bg-gradient-to-b from-indigo-100 via-purple-50 to-pink-100"
+  phx-hook="CopyToClipboard"
+  id="clipboard-container"
+>
   <header class="fixed top-0 left-0 right-0 z-40 bg-white shadow-sm h-16">
     <div class="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8">
       <div class="relative h-full">
         <div class="absolute left-0 top-1/2 -translate-y-1/2">
           <%= if @current_user do %>
             <.link navigate={~p"/dashboard"} class="block">
-              <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+              <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
                 <.icon name="hero-gift" class="h-5 w-5 text-white" />
               </div>
             </.link>
           <% else %>
             <.link navigate={~p"/"} class="block">
-              <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+              <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
                 <.icon name="hero-gift" class="h-5 w-5 text-white" />
               </div>
             </.link>
           <% end %>
         </div>
 
-        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-3">
-          <h1 class="text-lg font-semibold text-gray-900 whitespace-nowrap">
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[60%] sm:max-w-[50%]">
+          <h1 class="text-lg font-semibold text-gray-900 text-center leading-tight line-clamp-2">
             {@folder.name}
           </h1>
-          <%= if @folder.event_date do %>
-            <span class="text-sm text-gray-500 whitespace-nowrap">
-              {Calendar.strftime(@folder.event_date, "%B %d, %Y")}
-            </span>
-          <% end %>
         </div>
-
         <div class="absolute right-0 top-1/2 -translate-y-1/2">
           <%= cond do %>
             <% @current_user -> %>
               <div class="relative group">
-                <button class="w-auto px-3 h-12 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
-                  <div class="flex items-center space-x-2">
+                <button class="flex items-center justify-center hover:bg-gray-100 transition-colors rounded-full">
+                  <!-- Desktop version -->
+                  <div class="hidden sm:flex items-center space-x-2 px-3 h-10">
                     <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                       <span class="text-sm font-medium text-gray-600">
                         {String.first(@current_user.account.username)}
                       </span>
                     </div>
-                    <span class="text-sm font-medium text-gray-600">
+                    <span class="text-sm font-medium text-gray-700">
                       {@current_user.account.username}
+                    </span>
+                  </div>
+
+<!-- Mobile version -->
+                  <div class="sm:hidden w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                    <span class="text-sm font-medium text-gray-600">
+                      {String.first(@current_user.account.username)}
                     </span>
                   </div>
                 </button>
 
-                <div class="absolute h-3 w-full bottom-0 translate-y-full"></div>
+                <div class="absolute -bottom-3 left-0 right-0 h-3 bg-transparent group-hover:block hidden">
+                </div>
 
-                <div class="hidden group-hover:block absolute right-0 top-[calc(100%+0.75rem)] w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                <div class="hidden group-hover:block absolute right-0 top-[calc(100%+0.75rem)] w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                   <div class="px-4 py-2 border-b border-gray-100">
                     <p class="text-sm font-medium text-gray-900">
                       {@current_user.account.username}
@@ -68,25 +75,53 @@
                 </div>
               </div>
             <% @guest_viewer -> %>
-              <div class="flex items-center space-x-2">
-                <div class="flex items-center space-x-2 px-3 h-10 bg-purple-100 text-purple-700 rounded-full">
-                  <.icon name="hero-user" class="h-4 w-4" />
-                  <span class="text-sm font-medium">
-                    {gettext("Guest: %{name}", name: @guest_viewer.name)}
-                  </span>
-                </div>
+              <div class="relative" phx-click-away="close_dropdown" id="guest-dropdown">
                 <button
-                  type="button"
-                  phx-click="logout_guest"
-                  class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                  class="flex items-center justify-center hover:bg-gray-100 transition-colors rounded-full"
+                  phx-click="toggle_dropdown"
                 >
-                  <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" />
+                  <div class="hidden sm:flex items-center space-x-2 px-3 h-10">
+                    <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
+                      <span class="text-sm font-medium text-white">
+                        {String.first(@guest_viewer.name)}
+                      </span>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700">
+                      {gettext("Guest: %{name}", name: @guest_viewer.name)}
+                    </span>
+                  </div>
+
+                  <div class="sm:hidden w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                    <span class="text-sm font-medium text-gray-600">
+                      {String.first(@guest_viewer.name)}
+                    </span>
+                  </div>
                 </button>
+
+                <div class={[
+                  "absolute right-0 top-[calc(100%+0.75rem)] w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 transition-all duration-100",
+                  (@show_dropdown && "opacity-100 visible") || "opacity-0 invisible"
+                ]}>
+                  <div class="px-4 py-2 border-b border-gray-100">
+                    <p class="text-sm font-medium text-gray-900">
+                      {gettext("Guest: %{name}", name: @guest_viewer.name)}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    phx-click="logout_guest"
+                    class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+                  >
+                    <.icon name="hero-arrow-right-on-rectangle" class="h-4 w-4" />
+                    <span>{gettext("Sign out")}</span>
+                  </button>
+                </div>
               </div>
             <% true -> %>
               <button
                 phx-click="open_auth_modal"
-                class="flex items-center space-x-2 px-4 h-10 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-full transition-all duration-300"
+                class="flex items-center space-x-2 px-4 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
               >
                 <.icon name="hero-user" class="h-4 w-4" />
                 <span class="font-medium text-sm">{gettext("Sign In")}</span>
@@ -99,150 +134,227 @@
 
   <div class="h-16"></div>
 
-  <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <div class="px-4 sm:px-0">
-      <div class="mb-6 flex justify-between items-center">
-        <h2 class="text-xl font-semibold text-indigo-900">
-          <%= if @current_user && @current_user.id == @folder.user_id do %>
-            {length(Enum.filter(@cards, &(&1.card.status == "pending")))} {gettext(
-              "pending suggestions"
-            )}
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm p-4">
+      <div class="hidden sm:flex sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <%= if @folder.event_date do %>
+            <div class="flex items-center text-gray-600">
+              <.icon name="hero-calendar" class="h-5 w-5 mr-2" />
+              <span class="text-sm">
+                {Calendar.strftime(@folder.event_date, "%d.%m.%Y")}
+              </span>
+            </div>
           <% end %>
-        </h2>
+
+          <div class="flex items-center text-gray-600">
+            <.icon name="hero-gift" class="h-5 w-5 mr-2" />
+            <span class="text-sm">
+              {length(@cards)} {if length(@cards) == 1,
+                do: gettext("item"),
+                else: gettext("items")}
+            </span>
+          </div>
+
+          <%= if @folder.description && @folder.description != "" do %>
+            <div class="flex items-center text-gray-600">
+              <.icon name="hero-information-circle" class="h-5 w-5 mr-2" />
+              <span class="text-sm">
+                {@folder.description}
+              </span>
+            </div>
+          <% end %>
+
+          <%= if @folder.show_reserver_names do %>
+            <div class="flex items-center text-purple-600">
+              <.icon name="hero-eye" class="h-5 w-5 mr-2" />
+              <span class="text-sm font-medium">{gettext("Names visible")}</span>
+            </div>
+          <% else %>
+            <div class="flex items-center text-gray-600">
+              <.icon name="hero-eye-slash" class="h-5 w-5 mr-2" />
+              <span class="text-sm font-medium">{gettext("Names hidden")}</span>
+            </div>
+          <% end %>
+        </div>
 
         <%= if (@current_user || @guest_viewer) && @current_user != @folder.user_id do %>
           <button
             phx-click="suggest_card"
-            class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2"
+            class="flex items-center gap-2 px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-full transition-colors"
           >
-            <.icon name="hero-gift" class="h-5 w-5" />
-            <span>{gettext("Suggest a Gift")}</span>
+            <.icon name="hero-gift" class="h-4 w-4" />
+            <span class="text-sm font-medium">{gettext("Suggest a Gift")}</span>
           </button>
         <% end %>
       </div>
 
-      <%= if Enum.empty?(@cards) do %>
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-12 text-center">
-          <div class="mx-auto h-24 w-24 text-indigo-300 mb-6">
-            <.icon name="hero-folder-open" class="h-24 w-24" />
+      <div class="flex sm:hidden flex-col gap-3">
+        <%= if @folder.event_date do %>
+          <div class="flex items-center text-gray-600">
+            <.icon name="hero-calendar" class="h-5 w-5 mr-2" />
+            <span class="text-sm">
+              {Calendar.strftime(@folder.event_date, "%d.%m.%Y")}
+            </span>
           </div>
-          <h3 class="text-2xl font-bold text-indigo-900 mb-4">
-            {gettext("This collection is empty")}
-          </h3>
-          <p class="text-indigo-600 mb-8">
-            {gettext("There are no wishes in this collection yet")}
-          </p>
+        <% end %>
+
+        <div class="flex items-center text-gray-600">
+          <.icon name="hero-gift" class="h-5 w-5 mr-2" />
+          <span class="text-sm">
+            {length(@cards)} {if length(@cards) == 1,
+              do: gettext("item"),
+              else: gettext("items")}
+          </span>
         </div>
-      <% else %>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <%= for folder_card <- @cards do %>
-            <div class="w-[90%] mx-auto sm:w-full sm:mx-0">
-              <%= if folder_card.card do %>
-                <div class={[
-                  "relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1",
-                  folder_card.card.status == "pending" && "opacity-75 bg-gray-100/80",
-                  folder_card.reservation && "bg-purple-50/80"
-                ]}>
-                  <%= if folder_card.card.status == "pending" do %>
-                    <div class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium z-10">
-                      {gettext("Pending Approval")}
-                    </div>
 
-                    <%= if @current_user && @current_user.id == @folder.user_id do %>
-                      <div class="absolute top-2 left-2 flex space-x-2 z-10">
-                        <button
-                          phx-click="approve_card"
-                          phx-value-id={folder_card.card.id}
-                          class="bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600 transition-colors duration-200 flex items-center space-x-1"
-                          title={gettext("Approve suggestion")}
-                        >
-                          <.icon name="hero-check" class="h-4 w-4" />
-                        </button>
-                        <button
-                          phx-click="reject_card"
-                          phx-value-id={folder_card.card.id}
-                          class="bg-rose-500 text-white p-2 rounded-full hover:bg-rose-600 transition-colors duration-200 flex items-center space-x-1"
-                          title={gettext("Reject suggestion")}
-                        >
-                          <.icon name="hero-x-mark" class="h-4 w-4" />
-                        </button>
-                      </div>
-                    <% end %>
-                  <% end %>
+        <%= if @folder.description && @folder.description != "" do %>
+          <div class="flex items-center text-gray-600">
+            <.icon name="hero-information-circle" class="h-5 w-5 mr-2" />
+            <span class="text-sm">
+              {@folder.description}
+            </span>
+          </div>
+        <% end %>
 
-                  <div class="relative h-48 mb-4">
-                    <%= if folder_card.card.link_url do %>
-                      <a
-                        href={folder_card.card.link_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="block h-full"
+        <%= if @folder.show_reserver_names do %>
+          <div class="flex items-center text-purple-600">
+            <.icon name="hero-eye" class="h-5 w-5 mr-2" />
+            <span class="text-sm font-medium">{gettext("Names visible")}</span>
+          </div>
+        <% else %>
+          <div class="flex items-center text-gray-600">
+            <.icon name="hero-eye-slash" class="h-5 w-5 mr-2" />
+            <span class="text-sm font-medium">{gettext("Names hidden")}</span>
+          </div>
+        <% end %>
+
+        <%= if (@current_user || @guest_viewer) && @current_user != @folder.user_id do %>
+          <button
+            phx-click="suggest_card"
+            class="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-full transition-colors w-full"
+          >
+            <.icon name="hero-gift" class="h-4 w-4" />
+            <span class="text-sm font-medium">{gettext("Suggest a Gift")}</span>
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <%= if Enum.empty?(@cards) do %>
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 sm:p-12 text-center">
+        <div class="mx-auto h-24 w-24 text-indigo-300 mb-6">
+          <.icon name="hero-folder-open" class="h-24 w-24" />
+        </div>
+        <h3 class="text-2xl font-bold text-indigo-900 mb-4">
+          {gettext("This collection is empty")}
+        </h3>
+        <p class="text-indigo-600 mb-8">
+          {gettext("There are no wishes in this collection yet")}
+        </p>
+      </div>
+    <% else %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <%= for folder_card <- @cards do %>
+          <div class="w-full mx-auto sm:w-full sm:mx-0">
+            <%= if folder_card.card do %>
+              <div class={[
+                "bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative",
+                folder_card.card.status == "pending" && "bg-gray-50/90",
+                folder_card.reservation && "bg-purple-50/90"
+              ]}>
+                <%= if folder_card.card.status == "pending" do %>
+                  <div class="absolute top-2 left-2 bg-yellow-600 text-white px-3 py-1 rounded-full text-sm z-10">
+                    {gettext("Pending Approval")}
+                  </div>
+
+                  <%= if @current_user && @current_user.id == @folder.user_id do %>
+                    <div class="absolute top-2 right-2 flex space-x-2">
+                      <button
+                        phx-click="approve_card"
+                        phx-value-id={folder_card.card.id}
+                        class="bg-emerald-500 text-white p-2 rounded-full hover:bg-emerald-600 transition-colors duration-200"
+                        title={gettext("Approve suggestion")}
                       >
-                        <img
-                          src={
-                            if folder_card.card.image_url && folder_card.card.image_url != "",
-                              do: folder_card.card.image_url,
-                              else: "/images/gift.jpg"
-                          }
-                          alt={folder_card.card.title}
-                          class="w-full h-full object-cover rounded-xl cursor-pointer"
-                          loading="lazy"
-                          phx-hook="ImageLoader"
-                          id={"image-#{folder_card.card.id}"}
-                        />
-                      </a>
-                    <% else %>
+                        <.icon name="hero-check" class="h-4 w-4" />
+                      </button>
+                      <button
+                        phx-click="reject_card"
+                        phx-value-id={folder_card.card.id}
+                        class="bg-rose-500 text-white p-2 rounded-full hover:bg-rose-600 transition-colors duration-200"
+                        title={gettext("Reject suggestion")}
+                      >
+                        <.icon name="hero-x-mark" class="h-4 w-4" />
+                      </button>
+                    </div>
+                  <% end %>
+                <% end %>
+
+                <div class="relative h-48 mb-4 overflow-hidden rounded-xl">
+                  <%= if folder_card.card.link_url do %>
+                    <a
+                      href={folder_card.card.link_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="block h-full"
+                    >
                       <img
-                        src={
-                          if folder_card.card.image_url && folder_card.card.image_url != "",
-                            do: folder_card.card.image_url,
-                            else: "/images/gift.jpg"
-                        }
+                        src={folder_card.card.image_url || "/images/gift.jpg"}
                         alt={folder_card.card.title}
-                        class="w-full h-full object-cover rounded-xl"
+                        class="w-full h-full object-cover rounded-xl transition-transform duration-300 hover:scale-105"
                         loading="lazy"
                         phx-hook="ImageLoader"
                         id={"image-#{folder_card.card.id}"}
+                        onerror="this.src='/images/gift.jpg'"
                       />
-                    <% end %>
-
-                    <%= if folder_card.reservation do %>
-                      <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
-                        <%= if @current_user && @current_user.id == @folder.user_id do %>
-                          <%= if @folder.show_reserver_names do %>
-                            {gettext("Reserved by %{name}",
-                              name: folder_card.reservation.reserver_name
-                            )}
-                          <% else %>
-                            {gettext("Reserved")}
-                          <% end %>
-                        <% else %>
-                          <%= if (@current_user && folder_card.reservation.reserved_by_user_id == @current_user.id) ||
-                            (@guest_viewer && folder_card.reservation.reserved_by_guest_id == @guest_viewer.id) do %>
-                            {gettext("Reserved by you")}
-                          <% else %>
-                            {gettext("Reserved by %{name}",
-                              name: folder_card.reservation.reserver_name
-                            )}
-                          <% end %>
-                        <% end %>
-                      </div>
-                    <% end %>
-                  </div>
-
-                  <%= if folder_card.card.status == "pending" do %>
-                    <div class="mb-3 text-sm text-gray-500">
-                      {gettext("Suggested by: %{name}",
-                        name: get_suggester_name(folder_card.card)
-                      )}
-                    </div>
+                    </a>
+                  <% else %>
+                    <img
+                      src={folder_card.card.image_url || "/images/gift.jpg"}
+                      alt={folder_card.card.title}
+                      class="w-full h-full object-cover rounded-xl"
+                      loading="lazy"
+                      phx-hook="ImageLoader"
+                      id={"image-#{folder_card.card.id}"}
+                      onerror="this.src='/images/gift.jpg'"
+                    />
                   <% end %>
 
-                  <h3 class="text-xl font-bold text-indigo-900 mb-4 line-clamp-1">
-                    {folder_card.card.title}
-                  </h3>
+                  <%= if folder_card.reservation do %>
+                    <div class="absolute inset-0 bg-black/5 backdrop-blur-[2px]"></div>
+                    <div class="absolute top-2 left-2 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
+                      <%= if @current_user && @current_user.id == @folder.user_id && @folder.show_reserver_names do %>
+                        {gettext("Reserved by %{name}",
+                          name: folder_card.reservation.reserver_name
+                        )}
+                      <% else %>
+                        <%= if (@current_user && folder_card.reservation.reserved_by_user_id == @current_user.id) ||
+                              (@guest_viewer && folder_card.reservation.reserved_by_guest_id == @guest_viewer.id) do %>
+                          {gettext("Reserved by you")}
+                        <% else %>
+                          {gettext("Reserved")}
+                        <% end %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
 
-                  <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
+                  {folder_card.card.title}
+                </h3>
+
+                <div class="flex items-center justify-between">
+                  <span class="text-indigo-600 font-medium">
+                    <%= if folder_card.card.price && folder_card.card.price > 0 do %>
+                      {format_price(folder_card.card.price)}
+                    <% else %>
+                      <span class="text-gray-400 text-sm">{gettext("No Price")}</span>
+                    <% end %>
+                  </span>
+
+                  <div class="flex items-center space-x-4">
                     <%= if folder_card.card.link_url do %>
                       <a
                         href={folder_card.card.link_url}
@@ -255,85 +367,103 @@
                       </a>
                     <% end %>
 
-                    <div class="flex items-center space-x-1">
-                      <span class="text-indigo-600 font-medium">
-                        <%= if folder_card.card.price && folder_card.card.price > 0 do %>
-                          {format_price(folder_card.card.price)}
-                        <% else %>
-                          <span class="text-indigo-400 text-sm">{gettext("No Price")}</span>
-                        <% end %>
-                      </span>
-                    </div>
+                    <%= if folder_card.card.status == "approved" && !folder_card.reservation do %>
+                      <button
+                        phx-click="reserve_card"
+                        phx-value-card_id={folder_card.id}
+                        class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
+                      >
+                        <.icon name="hero-gift" class="h-4 w-4" />
+                        <span>{gettext("Reserve")}</span>
+                      </button>
+                    <% end %>
 
-                    <%= if folder_card.card.status == "approved" do %>
-                      <%= if !folder_card.reservation do %>
-                        <button
-                          phx-click="reserve_card"
-                          phx-value-card_id={folder_card.id}
-                          class="text-purple-600 hover:text-purple-800 text-sm flex items-center space-x-1"
-                        >
-                          <.icon name="hero-gift" class="h-4 w-4" />
-                          <span>{gettext("Reserve")}</span>
-                        </button>
-                      <% else %>
-                        <%= if can_unreserve?(folder_card.reservation, @current_user, @guest_viewer) do %>
-                          <button
-                            phx-click="unreserve_card"
-                            phx-value-card_id={folder_card.id}
-                            class="text-rose-600 hover:text-rose-800 text-sm flex items-center space-x-1"
-                          >
-                            <.icon name="hero-x-mark" class="h-4 w-4" />
-                            <span>{gettext("Cancel Reservation")}</span>
-                          </button>
-                        <% end %>
-                      <% end %>
+                    <%= if can_unreserve?(folder_card.reservation, @current_user, @guest_viewer) do %>
+                      <button
+                        phx-click="unreserve_card"
+                        phx-value-card_id={folder_card.id}
+                        class="text-rose-600 hover:text-rose-800 text-sm flex items-center space-x-1"
+                      >
+                        <.icon name="hero-x-mark" class="h-4 w-4" />
+                        <span>{gettext("Cancel")}</span>
+                      </button>
                     <% end %>
                   </div>
                 </div>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </main>
 
   <%= if @show_name_modal do %>
-    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg p-8 max-w-md w-full">
-        <div class="mb-6">
-          <h2 class="text-2xl font-bold text-center text-indigo-900">
-            {gettext("Welcome to Wishverse!")}
-          </h2>
-          <p class="text-center text-gray-600 mt-2">
-            {gettext("Choose how you'd like to continue")}
-          </p>
-        </div>
-
-        <div class="space-y-4">
-          <.form :let={f} for={%{}} as={:guest_viewer} phx-submit="save_viewer_name">
-            <.input field={f[:name]} type="text" required placeholder="Your name" />
-            <.button type="submit" class="mt-4 w-full">
-              {gettext("Continue as Guest")}
-            </.button>
-          </.form>
-
-          <div class="relative">
-            <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-gray-300"></div>
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity z-50">
+      <div class="fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+          <div class="relative bg-white w-full max-w-md rounded-xl shadow-2xl transform transition-all">
+            <div class="absolute -top-4 -right-4 w-24 h-24 bg-indigo-100 rounded-full blur-xl opacity-60">
             </div>
-            <div class="relative flex justify-center text-sm">
-              <span class="px-2 bg-white text-gray-500">{gettext("Or")}</span>
+            <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-purple-100 rounded-full blur-xl opacity-60">
+            </div>
+
+            <div class="relative p-8">
+              <div class="text-center mb-8">
+                <div class="flex justify-center mb-4">
+                  <div class="p-2 bg-indigo-100 rounded-xl">
+                    <.icon name="hero-gift-solid" class="h-8 w-8 text-indigo-600" />
+                  </div>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                  {gettext("Welcome to Wishverse!")}
+                </h2>
+                <p class="text-sm text-gray-500">
+                  {gettext("Choose how you'd like to continue")}
+                </p>
+              </div>
+
+              <div class="space-y-6">
+                <.form :let={f} for={%{}} as={:guest_viewer} phx-submit="save_viewer_name">
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <.icon name="hero-user" class="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      name="guest_viewer[name]"
+                      required
+                      class="pl-10 w-full rounded-lg border-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+                      placeholder={gettext("Choose a username")}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    class="w-full px-4 py-3 mt-4 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:from-indigo-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-[1.02]"
+                  >
+                    {gettext("Continue as Guest")}
+                  </button>
+                </.form>
+
+                <div class="relative">
+                  <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                  </div>
+                  <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">{gettext("Or")}</span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  phx-click="open_auth_modal"
+                  class="w-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:from-indigo-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-[1.02]"
+                >
+                  {gettext("Sign In / Sign Up")}
+                </button>
+              </div>
             </div>
           </div>
-
-          <button
-            type="button"
-            phx-click="open_auth_modal"
-            class="w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            {gettext("Sign In / Sign Up")}
-          </button>
         </div>
       </div>
     </div>
