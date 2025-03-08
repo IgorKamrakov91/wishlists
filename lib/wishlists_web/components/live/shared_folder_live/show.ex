@@ -216,11 +216,13 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
 
       case Cards.reserve_card(folder_card_id, attrs) do
         {:ok, _reservation} ->
-          Wishlists.Notifications.notify_reservation(
-            folder,
-            folder_card,
-            reserver_name
-          )
+          Task.start(fn ->
+            Wishlists.Notifications.notify_reservation(
+              folder,
+              folder_card,
+              reserver_name
+            )
+          end)
 
           cards = Cards.list_folder_cards(folder.id)
           {:noreply, assign(socket, :cards, cards)}
