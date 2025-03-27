@@ -9,7 +9,7 @@ defmodule WishlistsWeb.AuthController do
   end
 
   def set_session(conn, %{"token" => token}) do
-    set_session(conn, %{"token" => token, "locale" => "en"})
+    set_session(conn, %{"token" => token, "locale" => "ru"})
   end
 
   def sign_out(conn, _params) do

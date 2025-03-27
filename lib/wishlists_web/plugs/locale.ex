@@ -21,7 +21,7 @@ defmodule WishlistsWeb.Plugs.Locale do
           parse_accept_language(accept_language)
 
         true ->
-          "en"
+          "ru"
       end
 
     conn
@@ -29,14 +29,14 @@ defmodule WishlistsWeb.Plugs.Locale do
     |> assign(:locale, locale)
   end
 
-  defp parse_accept_language(nil), do: "en"
+  defp parse_accept_language(nil), do: "ru"
 
   defp parse_accept_language(accept_language) do
     accept_language
     |> String.split(",")
     |> Enum.map(&parse_language_option/1)
     |> Enum.sort(&(&1.quality > &2.quality))
-    |> Enum.find_value("en", fn lang ->
+    |> Enum.find_value("ru", fn lang ->
       if lang.code in @supported_locales, do: lang.code
     end)
   end

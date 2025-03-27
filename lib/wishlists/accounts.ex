@@ -113,7 +113,7 @@ defmodule Wishlists.Accounts do
   def update_user_locale(_user, _locale), do: {:error, "Invalid locale"}
 
   def get_user_locale(user) do
-    user.locale || "en"
+    user.locale || "ru"
   end
 
   @doc """

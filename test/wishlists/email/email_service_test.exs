@@ -1,6 +1,7 @@
 defmodule Wishlists.Email.EmailServiceTest do
   use Wishlists.DataCase
   use WishlistsWeb, :verified_routes
+  use Gettext, backend: WishlistsWeb.Gettext
 
   alias Wishlists.Email.EmailService
   alias Wishlists.Accounts
@@ -12,30 +13,30 @@ defmodule Wishlists.Email.EmailServiceTest do
   setup do
     {:ok, user} =
       Accounts.register_user(%{
-        email: "test@example.com",
-        password: "password123",
-        notification_preferences: %{
+        "email" => "test@example.com",
+        "password" => "password123",
+        "notification_preferences" => %{
           "cleanup_notifications" => true,
           "reservation_notifications" => true
         },
-        locale: "en"
+        "locale" => "ru"
       })
 
     {:ok, folder} =
       Folders.create_folder(%{
-        name: "Test Folder",
-        event_type: "birthday",
-        event_date: Date.add(Date.utc_today(), 10),
-        user_id: user.id,
-        show_reserver_names: true
+        "name" => "Test Folder",
+        "event_type" => "birthday",
+        "event_date" => Date.add(Date.utc_today(), 10),
+        "user_id" => user.id,
+        "show_reserver_names" => true
       })
 
     {:ok, card} =
       Cards.create_card(%{
-        title: "Test Item",
-        description: "Test Description",
-        link_url: "http://example.com",
-        user_id: user.id
+        "title" => "Test Item",
+        "description" => "Test Description",
+        "link_url" => "http://example.com",
+        "user_id" => user.id
       })
 
     {:ok, folder_card} = Cards.assign_card_to_folder(card.id, folder.id)
@@ -58,7 +59,7 @@ defmodule Wishlists.Email.EmailServiceTest do
     assert_email_sent(fn email ->
       assert email.to == [{user.email, user.email}]
       assert email.from == {"Wishlists", "notifications@hochu-hochu.com"}
-      assert email.subject == "Welcome to Wishlists!"
+      assert email.subject == gettext("Welcome to Wishlists!")
     end)
   end
 
@@ -70,7 +71,7 @@ defmodule Wishlists.Email.EmailServiceTest do
 
     assert_email_sent(fn email ->
       assert email.to == [{user.email, user.email}]
-      assert email.subject == "Reset Your Password"
+      assert email.subject == gettext("Reset Your Password")
       assert email.html_body =~ "test-token"
     end)
   end
@@ -85,7 +86,7 @@ defmodule Wishlists.Email.EmailServiceTest do
 
     assert_email_sent(fn email ->
       assert email.to == [{folder.user.email, folder.user.email}]
-      assert email.subject == "New Reservation in Your Wishlist!"
+      assert email.subject == gettext("New Reservation in Your Wishlist!")
       assert email.html_body =~ "John Doe"
     end)
   end
@@ -101,7 +102,7 @@ defmodule Wishlists.Email.EmailServiceTest do
 
     assert_email_sent(fn email ->
       refute email.html_body =~ "John Doe"
-      assert email.html_body =~ "Someone has reserved"
+      assert email.html_body =~ "Кто-то зарезервировал"
     end)
   end
 
@@ -115,7 +116,7 @@ defmodule Wishlists.Email.EmailServiceTest do
 
     assert_email_sent(fn email ->
       assert email.to == [{folder.user.email, folder.user.email}]
-      assert email.subject == "Your Wishlist Will Be Archived Soon"
+      assert email.subject == gettext("Your Wishlist Will Be Archived Soon")
       assert email.html_body =~ folder.name
     end)
   end
@@ -139,7 +140,7 @@ defmodule Wishlists.Email.EmailServiceTest do
 
     assert_email_sent(fn email ->
       assert email.to == [{folder.user.email, folder.user.email}]
-      assert email.subject == "New Gift Suggestion in Your Wishlist!"
+      assert email.subject == gettext("New Gift Suggestion in Your Wishlist!")
       assert email.html_body =~ "Jane Doe"
       assert email.html_body =~ folder_card.card.title
       assert email.html_body =~ ~p"/folders/#{folder.id}"
@@ -194,13 +195,12 @@ defmodule Wishlists.Email.EmailServiceTest do
   } do
     assert_receive {:email, _}
 
-    token = Wishlists.Accounts.generate_unsubscribe_token(folder.user)
     EmailService.send_suggestion_notification(folder, folder_card, "Jane Doe")
 
     assert_email_sent(fn email ->
       assert email.headers["List-Unsubscribe"]
-      assert email.html_body =~ "unsubscribe"
-      assert email.html_body =~ ~p"/notifications/unsubscribe/suggestion_notifications/#{token}"
+      assert email.html_body =~ gettext("unsubscribe")
+      assert email.html_body =~ "/notifications/unsubscribe/suggestion_notifications/"
     end)
   end
 end

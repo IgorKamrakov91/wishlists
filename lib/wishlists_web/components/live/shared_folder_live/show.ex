@@ -49,7 +49,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   defp handle_shared_folder_mount(shared_folder, session, socket) do
     Logger.debug("Found shared folder: #{inspect(shared_folder)}")
 
-    locale = session["locale"] || "en"
+    locale = session["locale"] || "ru"
     Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
     folder = Folders.get_folder!(shared_folder.folder_id)
@@ -425,7 +425,7 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   end
 
   defp set_locale(socket, session) do
-    locale = session["locale"] || "en"
+    locale = session["locale"] || "ru"
     Gettext.put_locale(WishlistsWeb.Gettext, locale)
     assign(socket, :locale, locale)
   end

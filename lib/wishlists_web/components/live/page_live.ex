@@ -19,7 +19,7 @@ defmodule WishlistsWeb.PageLive do
           session["locale"]
 
         true ->
-          "en"
+          "ru"
       end
 
     Gettext.put_locale(WishlistsWeb.Gettext, locale)
@@ -80,7 +80,7 @@ defmodule WishlistsWeb.PageLive do
   end
 
   def handle_info({:login_success, user, token}, socket) do
-    current_locale = socket.assigns.locale || "en"
+    current_locale = socket.assigns.locale || "ru"
 
     {:ok, _updated_user} = Wishlists.Accounts.update_user_locale(user, current_locale)
 

@@ -10,7 +10,7 @@ defmodule WishlistsWeb.DashboardLive do
   @impl true
   def mount(_params, session, socket) do
     if socket.assigns.current_user do
-      locale = session["locale"] || "en"
+      locale = session["locale"] || "ru"
       Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
       current_user =

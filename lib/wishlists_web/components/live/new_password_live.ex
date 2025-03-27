@@ -9,7 +9,7 @@ defmodule WishlistsWeb.NewPasswordLive do
      |> assign(:password, "")
      |> assign(:error_message, nil)
      |> assign(:success, false)
-     |> assign(:locale, "en")}
+     |> assign(:locale, "ru")}
   end
 
   def handle_event("reset_password", %{"password" => password}, socket) do

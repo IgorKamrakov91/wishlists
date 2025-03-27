@@ -68,8 +68,8 @@ defmodule WishlistsWeb.Router do
   end
 
   defp put_locale(conn, _opts) do
-    locale = conn.params["locale"] || get_session(conn, :locale) || "en"
-    locale = if locale in ["en", "ru"], do: locale, else: "en"
+    locale = conn.params["locale"] || get_session(conn, :locale) || "ru"
+    locale = if locale in ["en", "ru"], do: locale, else: "ru"
 
     conn
     |> put_session(:locale, locale)

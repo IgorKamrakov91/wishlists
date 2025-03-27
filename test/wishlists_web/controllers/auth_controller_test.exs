@@ -4,8 +4,8 @@ defmodule WishlistsWeb.AuthControllerTest do
   setup %{conn: conn} do
     {:ok, user} =
       Wishlists.Accounts.register_user(%{
-        email: "test@example.com",
-        password: "password123"
+        "email" => "test@example.com",
+        "password" => "password123"
       })
 
     %{user: user, conn: conn}
@@ -21,12 +21,12 @@ defmodule WishlistsWeb.AuthControllerTest do
       assert redirected_to(conn) == ~p"/dashboard"
     end
 
-    test "defaults to en locale when none provided", %{conn: conn} do
+    test "defaults to ru locale when none provided", %{conn: conn} do
       token = "test_token"
 
       conn = get(conn, ~p"/auth/set_session?token=#{token}")
 
-      assert get_session(conn, :locale) == "en"
+      assert get_session(conn, :locale) == "ru"
       assert redirected_to(conn) == ~p"/dashboard"
     end
   end

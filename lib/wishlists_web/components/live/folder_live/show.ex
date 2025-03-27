@@ -6,7 +6,7 @@ defmodule WishlistsWeb.FolderLive.Show do
 
   @impl true
   def mount(%{"id" => folder_id}, session, socket) do
-    locale = session["locale"] || "en"
+    locale = session["locale"] || "ru"
     Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
     case Guardian.decode_and_verify(session["guardian_default_token"]) do
