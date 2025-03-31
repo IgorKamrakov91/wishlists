@@ -7,7 +7,13 @@ defmodule WishlistsWeb.AuthComponent do
      socket
      |> assign(view: :sign_in)
      |> assign(
-       form_data: %{"email" => "", "password" => "", "username" => "", "show_password" => false}
+       form_data: %{
+         "email" => "",
+         "password" => "",
+         "username" => "",
+         "show_password" => false,
+         "remember_me" => false
+       }
      )
      |> assign(form: to_form(%{}, as: :user))
      |> assign(error_message: nil)
@@ -110,6 +116,9 @@ defmodule WishlistsWeb.AuthComponent do
       <%= if @view == :sign_up do %>
         <.username_input form_data={@form_data} myself={@myself} />
       <% end %>
+      <%= if @view == :sign_in do %>
+        <.remember_me_checkbox form_data={@form_data} myself={@myself} />
+      <% end %>
       <.submit_button view={@view} />
       <%= if @view == :sign_in do %>
         <.reset_password myself={@myself} view={@view} />
@@ -179,6 +188,25 @@ defmodule WishlistsWeb.AuthComponent do
           password_requirement_met={@password_requirement_met}
         />
       </div>
+    </div>
+    """
+  end
+
+  defp remember_me_checkbox(assigns) do
+    ~H"""
+    <div class="flex items-center">
+      <input
+        id="remember-me"
+        name="remember_me"
+        type="checkbox"
+        checked={@form_data["remember_me"]}
+        phx-click="toggle_remember_me"
+        phx-target={@myself}
+        class="h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+      />
+      <label for="remember-me" class="ml-2 block text-sm text-gray-600">
+        {gettext("Remember me")}
+      </label>
     </div>
     """
   end
@@ -268,7 +296,7 @@ defmodule WishlistsWeb.AuthComponent do
     """
   end
 
-  # Event handlers remain the same
+  # Event handlers
   def handle_event("close_modal", _, socket) do
     send(self(), :close_modal)
     {:noreply, socket}
@@ -281,7 +309,11 @@ defmodule WishlistsWeb.AuthComponent do
              socket.assigns.form_data["password"]
            ) do
         {:ok, user} ->
-          case Wishlists.Accounts.Guardian.encode_and_sign(user) do
+          # Используем новую функцию из Guardian
+          case Wishlists.Accounts.Guardian.generate_user_token(
+                 user,
+                 socket.assigns.form_data["remember_me"]
+               ) do
             {:ok, token, _claims} ->
               send(self(), {:login_success, user, token})
               {:noreply, socket}
@@ -304,7 +336,7 @@ defmodule WishlistsWeb.AuthComponent do
 
       case Accounts.register_user(user_params) do
         {:ok, user} ->
-          case Wishlists.Accounts.Guardian.encode_and_sign(user) do
+          case Wishlists.Accounts.Guardian.generate_user_token(user, false) do
             {:ok, token, _claims} ->
               send(self(), {:login_success, user, token})
               {:noreply, socket}
@@ -339,6 +371,18 @@ defmodule WishlistsWeb.AuthComponent do
      socket
      |> assign(password_requirement_met: requirement_met)
      |> assign(form_data: form_data)}
+  end
+
+  def handle_event("toggle_remember_me", _params, socket) do
+    form_data =
+      Map.update(
+        socket.assigns.form_data,
+        "remember_me",
+        true,
+        &(!&1)
+      )
+
+    {:noreply, assign(socket, form_data: form_data)}
   end
 
   def handle_event("switch_to_signup", _, socket) do

@@ -259,7 +259,7 @@ msgstr ""
 msgid "Could not delete folder"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:260
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:259
 #, elixir-autogen, elixir-format
 msgid "Could not fetch data automatically. Please fill in the details manually."
 msgstr ""
@@ -269,12 +269,12 @@ msgstr ""
 msgid "Could not remove card from folder"
 msgstr ""
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.ex:229
+#: lib/wishlists_web/components/live/shared_folder_live/show.ex:231
 #, elixir-autogen, elixir-format
 msgid "Could not reserve card"
 msgstr ""
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.ex:243
+#: lib/wishlists_web/components/live/shared_folder_live/show.ex:245
 #, elixir-autogen, elixir-format
 msgid "Could not unreserve card"
 msgstr ""
@@ -302,7 +302,7 @@ msgstr ""
 msgid "Delete Folder"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:136
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:135
 #: lib/wishlists_web/components/live/folder_live/folder_form_component.ex:44
 #, elixir-autogen, elixir-format
 msgid "Description (optional)"
@@ -329,13 +329,13 @@ msgid "Event Date (optional)"
 msgstr ""
 
 #: lib/wishlists_web/components/live/folder_live/show.ex:224
-#: lib/wishlists_web/components/live/shared_folder_live/show.ex:298
+#: lib/wishlists_web/components/live/shared_folder_live/show.ex:300
 #, elixir-autogen, elixir-format
 msgid "Failed to approve gift suggestion"
 msgstr ""
 
 #: lib/wishlists_web/components/live/folder_live/show.ex:242
-#: lib/wishlists_web/components/live/shared_folder_live/show.ex:316
+#: lib/wishlists_web/components/live/shared_folder_live/show.ex:318
 #, elixir-autogen, elixir-format
 msgid "Failed to reject gift suggestion"
 msgstr ""
@@ -345,7 +345,7 @@ msgstr ""
 msgid "Failed to reorder card"
 msgstr ""
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.ex:406
+#: lib/wishlists_web/components/live/shared_folder_live/show.ex:408
 #, elixir-autogen, elixir-format
 msgid "Failed to submit gift suggestion"
 msgstr ""
@@ -355,7 +355,7 @@ msgstr ""
 msgid "Fetching"
 msgstr ""
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.ex:400
+#: lib/wishlists_web/components/live/shared_folder_live/show.ex:402
 #, elixir-autogen, elixir-format
 msgid "Gift suggestion submitted successfully! Waiting for approval."
 msgstr ""
@@ -379,7 +379,7 @@ msgstr ""
 msgid "Image URL"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:294
+#: lib/wishlists_web/components/auth_component.ex:326
 #: lib/wishlists_web/components/live/shared_folder_live/show.ex:157
 #, elixir-autogen, elixir-format
 msgid "Invalid email or password"
@@ -417,7 +417,7 @@ msgstr ""
 msgid "Pending Approval"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:145
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:144
 #, elixir-autogen, elixir-format
 msgid "Price (in RUB)"
 msgstr ""
@@ -428,12 +428,12 @@ msgstr ""
 msgid "Product URL"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:138
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:137
 #, elixir-autogen, elixir-format
 msgid "Product description"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:129
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:128
 #, elixir-autogen, elixir-format
 msgid "Product title"
 msgstr ""
@@ -471,7 +471,7 @@ msgstr ""
 msgid "Reserved by you"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:174
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:173
 #: lib/wishlists_web/components/live/folder_live/show.ex:86
 #, elixir-autogen, elixir-format
 msgid "Save"
@@ -515,7 +515,7 @@ msgstr ""
 msgid "This collection is empty"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:127
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:126
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr ""
@@ -575,81 +575,81 @@ msgstr ""
 msgid "WISH RESERVED! \"%{title}\" in %{folder_name}"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:244
+#: lib/wishlists_web/components/auth_component.ex:272
 #, elixir-autogen, elixir-format
 msgid "Already have an account?"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:190
+#: lib/wishlists_web/components/auth_component.ex:218
 #, elixir-autogen, elixir-format
 msgid "At least 8 characters"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:290
-#: lib/wishlists_web/components/auth_component.ex:313
+#: lib/wishlists_web/components/auth_component.ex:322
+#: lib/wishlists_web/components/auth_component.ex:345
 #, elixir-autogen, elixir-format
 msgid "Authentication failed"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:221
+#: lib/wishlists_web/components/auth_component.ex:249
 #: lib/wishlists_web/components/live/shared_folder_live/show.html.heex:437
 #, elixir-autogen, elixir-format
 msgid "Choose a username"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:73
+#: lib/wishlists_web/components/auth_component.ex:79
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:88
+#: lib/wishlists_web/components/auth_component.ex:94
 #: lib/wishlists_web/components/live/page_live.ex:136
 #, elixir-autogen, elixir-format
 msgid "Create Your Wishlist"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:233
+#: lib/wishlists_web/components/auth_component.ex:261
 #, elixir-autogen, elixir-format
 msgid "Create account"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:251
+#: lib/wishlists_web/components/auth_component.ex:279
 #, elixir-autogen, elixir-format
 msgid "Create an account"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:135
+#: lib/wishlists_web/components/auth_component.ex:144
 #, elixir-autogen, elixir-format
 msgid "Email address"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:93
+#: lib/wishlists_web/components/auth_component.ex:99
 #, elixir-autogen, elixir-format
 msgid "Join us to create and share your perfect wishlist"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:243
+#: lib/wishlists_web/components/auth_component.ex:271
 #, elixir-autogen, elixir-format
 msgid "New to Wishlists?"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:156
+#: lib/wishlists_web/components/auth_component.ex:165
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:189
+#: lib/wishlists_web/components/auth_component.ex:217
 #, elixir-autogen, elixir-format
 msgid "Password requirement:"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:233
-#: lib/wishlists_web/components/auth_component.ex:251
+#: lib/wishlists_web/components/auth_component.ex:261
+#: lib/wishlists_web/components/auth_component.ex:279
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:92
+#: lib/wishlists_web/components/auth_component.ex:98
 #, elixir-autogen, elixir-format
 msgid "Sign in to manage your wishlists and discover new items"
 msgstr ""
@@ -699,12 +699,12 @@ msgstr ""
 msgid "Event is tomorrow %{icon}"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:327
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:326
 #, elixir-autogen, elixir-format
 msgid "Failed to assign card to folder"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:265
+#: lib/wishlists_web/components/auth_component.ex:293
 #, elixir-autogen, elixir-format
 msgid "Forgot your password?"
 msgstr ""
@@ -759,12 +759,12 @@ msgstr ""
 msgid "https://example.com"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:323
+#: lib/wishlists_web/components/auth_component.ex:355
 #, elixir-autogen, elixir-format
 msgid "This email is already registered"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:320
+#: lib/wishlists_web/components/auth_component.ex:352
 #, elixir-autogen, elixir-format
 msgid "This username is already taken"
 msgstr ""
@@ -1073,7 +1073,7 @@ msgstr ""
 msgid "Try It Now"
 msgstr ""
 
-#: lib/wishlists_web/components/auth_component.ex:88
+#: lib/wishlists_web/components/auth_component.ex:94
 #, elixir-autogen, elixir-format
 msgid "Welcome!"
 msgstr ""
@@ -1116,7 +1116,7 @@ msgstr ""
 msgid "Sign In"
 msgstr ""
 
-#: lib/wishlists_web/components/live/shared_folder_live/show.ex:379
+#: lib/wishlists_web/components/live/shared_folder_live/show.ex:381
 #, elixir-autogen, elixir-format
 msgid "Anonymous"
 msgstr ""
@@ -1191,7 +1191,7 @@ msgstr ""
 msgid "Add your wish by clicking 'Make a Wish' button. Then you can add it to any collection above!"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:163
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:162
 #, elixir-autogen, elixir-format
 msgid "Delete wish"
 msgstr ""
@@ -1223,7 +1223,7 @@ msgstr ""
 msgid "Start by adding new wishes or adding them from your dashboard"
 msgstr ""
 
-#: lib/wishlists_web/components/live/card_live/card_form_component.ex:281
+#: lib/wishlists_web/components/live/card_live/card_form_component.ex:280
 #, elixir-autogen, elixir-format
 msgid "Unable to process deletion request"
 msgstr ""
@@ -1267,4 +1267,9 @@ msgstr ""
 #: lib/wishlists/accounts/user.ex:41
 #, elixir-autogen, elixir-format
 msgid "must have the @ sign and no spaces"
+msgstr ""
+
+#: lib/wishlists_web/components/auth_component.ex:208
+#, elixir-autogen, elixir-format
+msgid "Remember me"
 msgstr ""

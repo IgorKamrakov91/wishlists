@@ -17,4 +17,18 @@ defmodule Wishlists.Accounts.Guardian do
   end
 
   def resource_from_claims(_), do: {:error, :invalid_claims}
+
+  @doc """
+  Generate a token for a user with appropriate TTL based on remember_me flag.
+  """
+  def generate_user_token(user, remember_me \\ false) do
+    encode_and_sign(
+      user,
+      %{},
+      ttl: get_token_ttl(remember_me)
+    )
+  end
+
+  defp get_token_ttl(true), do: {30, :day}
+  defp get_token_ttl(_), do: {1, :day}
 end
