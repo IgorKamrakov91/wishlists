@@ -1,6 +1,5 @@
 defmodule MarketplaceScrapper do
   @api_url "https://api.openai.com/v1/chat/completions"
-  @api_key "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"
 
   # def fetch_and_extract(url) do
   #   {:error, :not_implemented}
