@@ -66,7 +66,13 @@ if config_env() == :prod do
     check_origin: [
       "https://hochu-hochu.com",
       "https://www.hochu-hochu.com",
-      "https://hochu-hochu.fly.dev"
+      "https://hochu-hochu.fly.dev",
+      # Add Telegram in-app browser origins
+      "https://web.telegram.org",
+      "https://telegram.org",
+      "https://t.me",
+      # protocol-relative
+      "//t.me"
     ]
 
   # ## SSL Support
