@@ -1,23 +1,5 @@
 defmodule MarketplaceScrapper do
   @api_url "https://api.openai.com/v1/chat/completions"
-  @api_key System.get_env("OPENAI_API_KEY")
-
-  # def fetch_and_extract(url) do
-  #   {:error, :not_implemented}
-  # end
-
-  # def fetch_and_extract(url) do
-  #   # 5 second delay
-  #   Process.sleep(5000)
-
-  #   {:ok,
-  #    %{
-  #      "description" => "Джемпер Mango ALMIBAR - белый",
-  #      "image" => "https://a.lmcdn.ru/img600x866/R/T/RTLADP936901_24358938_1_v1.jpg",
-  #      "price" => "0.0",
-  #      "title" => "Джемпер Mango ALMIBAR"
-  #    }}
-  # end
 
   def fetch_and_extract(url) do
     case Req.get(url, finch: Wishlists.Finch) do
@@ -100,7 +82,7 @@ defmodule MarketplaceScrapper do
     IO.inspect(data, label: "Input Data")
 
     body = %{
-      model: "gpt-3.5-turbo",
+      model: "gpt-5-nano",
       messages: [
         %{
           role: "system",
@@ -113,8 +95,10 @@ defmodule MarketplaceScrapper do
 
     IO.inspect(body, label: "Request Body")
 
+    api_key = System.get_env("OPENAI_API_KEY")
+
     headers = [
-      {"Authorization", "Bearer #{@api_key}"},
+      {"Authorization", "Bearer #{api_key}"},
       {"Content-Type", "application/json"}
     ]
 

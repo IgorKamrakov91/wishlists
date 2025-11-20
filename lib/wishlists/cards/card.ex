@@ -51,10 +51,17 @@ defmodule Wishlists.Cards.Card do
   defp validate_url(changeset, field) do
     validate_change(changeset, field, fn _, url ->
       cond do
-        is_nil(url) -> []
-        String.length(url) > 2000 -> [{field, gettext("URL is too long (maximum is 2000 characters)")}]
-        !valid_url?(url) -> [{field, gettext("must be a valid URL starting with http:// or https://")}]
-        true -> []
+        is_nil(url) ->
+          []
+
+        String.length(url) > 2000 ->
+          [{field, gettext("URL is too long (maximum is 2000 characters)")}]
+
+        !valid_url?(url) ->
+          [{field, gettext("must be a valid URL starting with http:// or https://")}]
+
+        true ->
+          []
       end
     end)
   end

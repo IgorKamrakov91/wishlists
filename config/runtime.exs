@@ -20,6 +20,12 @@ if System.get_env("PHX_SERVER") do
   config :wishlists, WishlistsWeb.Endpoint, server: true
 end
 
+telegram_init_ttl_seconds =
+  String.to_integer(System.get_env("TELEGRAM_INIT_TTL_SECONDS") || "86400")
+
+config :wishlists, :telegram_bot_token, System.get_env("TELEGRAM_BOT_TOKEN")
+config :wishlists, :telegram_init_ttl_seconds, telegram_init_ttl_seconds
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

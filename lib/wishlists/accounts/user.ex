@@ -3,6 +3,8 @@ defmodule Wishlists.Accounts.User do
   use Gettext, backend: WishlistsWeb.Gettext
   import Ecto.Changeset
 
+  @auth_providers ~w(email telegram)
+
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true
@@ -11,6 +13,10 @@ defmodule Wishlists.Accounts.User do
     field :reset_password_token, :string
     field :reset_password_sent_at, :naive_datetime
     field :locale, :string, default: "ru"
+    field :telegram_id, :integer
+    field :telegram_username, :string
+    field :telegram_photo_url, :string
+    field :auth_provider, :string, default: "email"
 
     field :notification_preferences, :map,
       default: %{
@@ -28,10 +34,22 @@ defmodule Wishlists.Accounts.User do
     |> cast(attrs, [:email, :password])
     |> validate_required([:email, :password], message: "is required")
     |> validate_inclusion(:locale, ["en", "ru"])
+    |> put_default_auth_provider("email")
+    |> validate_auth_provider()
     |> validate_email()
     |> validate_password()
     |> hash_password()
     |> put_account_username()
+  end
+
+  def telegram_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:telegram_id, :telegram_username, :telegram_photo_url, :auth_provider])
+    |> put_default_auth_provider("telegram")
+    |> validate_required([:telegram_id])
+    |> validate_number(:telegram_id, greater_than: 0)
+    |> validate_auth_provider()
+    |> unique_constraint(:telegram_id)
   end
 
   defp validate_email(changeset) do
@@ -111,6 +129,18 @@ defmodule Wishlists.Accounts.User do
     else
       changeset
     end
+  end
+
+  defp put_default_auth_provider(changeset, provider) do
+    case get_change(changeset, :auth_provider) || get_field(changeset, :auth_provider) do
+      nil -> put_change(changeset, :auth_provider, provider)
+      value when value in @auth_providers -> changeset
+      _ -> put_change(changeset, :auth_provider, provider)
+    end
+  end
+
+  defp validate_auth_provider(changeset) do
+    validate_inclusion(changeset, :auth_provider, @auth_providers)
   end
 
   defp ensure_unique_username(base_username) do

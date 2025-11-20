@@ -24,6 +24,35 @@ defmodule Wishlists.Accounts do
     Repo.get_by(User, email: email)
   end
 
+  def get_user_by_telegram_id(nil), do: nil
+
+  def get_user_by_telegram_id(telegram_id) when is_integer(telegram_id) do
+    Repo.get_by(User, telegram_id: telegram_id)
+  end
+
+  def upsert_telegram_user(attrs) when is_map(attrs) do
+    with {:ok, telegram_id} <- fetch_telegram_id(attrs) do
+      normalized_attrs = put_telegram_id(attrs, telegram_id)
+
+      Repo.transaction(fn ->
+        case insert_or_update_telegram_user(normalized_attrs, telegram_id) do
+          {:ok, user} ->
+            case ensure_account_for_user(user, normalized_attrs) do
+              {:ok, user_with_account} -> user_with_account
+              {:error, changeset} -> Repo.rollback(changeset)
+            end
+
+          {:error, changeset} ->
+            Repo.rollback(changeset)
+        end
+      end)
+      |> case do
+        {:ok, user} -> {:ok, user}
+        {:error, reason} -> {:error, reason}
+      end
+    end
+  end
+
   def get_user!(id), do: Repo.get!(User, id)
   def get_user(id), do: Repo.get(User, id)
 
@@ -176,5 +205,103 @@ defmodule Wishlists.Accounts do
   defp reset_password_token_expired?(user) do
     hours_ago = NaiveDateTime.add(NaiveDateTime.utc_now(), -24, :hour)
     NaiveDateTime.compare(user.reset_password_sent_at, hours_ago) == :lt
+  end
+
+  defp fetch_telegram_id(attrs) do
+    attrs
+    |> fetch_attr(:telegram_id)
+    |> normalize_telegram_id()
+    |> case do
+      nil -> {:error, :invalid_telegram_id}
+      id -> {:ok, id}
+    end
+  end
+
+  defp normalize_telegram_id(nil), do: nil
+
+  defp normalize_telegram_id(id) when is_integer(id), do: id
+
+  defp normalize_telegram_id(id) when is_binary(id) do
+    case Integer.parse(id) do
+      {value, _} -> value
+      :error -> nil
+    end
+  end
+
+  defp insert_or_update_telegram_user(attrs, telegram_id) do
+    case get_user_by_telegram_id(telegram_id) do
+      nil ->
+        %User{}
+        |> User.telegram_changeset(attrs)
+        |> Repo.insert()
+
+      %User{} = user ->
+        user
+        |> User.telegram_changeset(attrs)
+        |> Repo.update()
+    end
+  end
+
+  defp ensure_account_for_user(user, attrs) do
+    user = Repo.preload(user, :account)
+
+    case user.account do
+      nil ->
+        username =
+          attrs
+          |> fetch_attr(:telegram_username)
+          |> build_account_username(user.telegram_id)
+
+        %Account{}
+        |> Account.changeset(%{username: username, user_id: user.id})
+        |> Repo.insert()
+        |> case do
+          {:ok, _account} -> {:ok, Repo.preload(user, :account)}
+          {:error, changeset} -> {:error, changeset}
+        end
+
+      _account ->
+        {:ok, user}
+    end
+  end
+
+  defp build_account_username(nil, telegram_id), do: "tg_#{telegram_id}"
+  defp build_account_username("", telegram_id), do: "tg_#{telegram_id}"
+
+  defp build_account_username(username, telegram_id) do
+    username
+    |> normalize_username()
+    |> ensure_username_length(telegram_id)
+  end
+
+  defp normalize_username(nil), do: ""
+
+  defp normalize_username(username) do
+    username
+    |> to_string()
+    |> String.replace(~r/[^a-zA-Z0-9_]/, "")
+    |> String.downcase()
+  end
+
+  defp ensure_username_length("", telegram_id), do: "tg_#{telegram_id}"
+
+  defp ensure_username_length(username, telegram_id) do
+    trimmed = String.slice(username, 0, 20)
+
+    if String.length(trimmed) < 3 do
+      "tg_#{telegram_id}"
+    else
+      trimmed
+    end
+  end
+
+  defp fetch_attr(attrs, key) do
+    Map.get(attrs, key) || Map.get(attrs, Atom.to_string(key))
+  end
+
+  defp put_telegram_id(attrs, telegram_id) do
+    attrs
+    |> Map.put(:telegram_id, telegram_id)
+    |> Map.put("telegram_id", telegram_id)
   end
 end

@@ -25,6 +25,10 @@ defmodule WishlistsWeb.Router do
     plug(Guardian.Plug.EnsureAuthenticated)
   end
 
+  pipeline :telegram_init do
+    plug(WishlistsWeb.Plugs.TelegramAuth)
+  end
+
   scope "/", WishlistsWeb do
     pipe_through(:browser)
 
@@ -60,6 +64,13 @@ defmodule WishlistsWeb.Router do
       NotificationSettingsController,
       :unsubscribe
     )
+  end
+
+  scope "/twa", WishlistsWeb do
+    pipe_through([:browser, :auth, :telegram_init, :ensure_auth])
+
+    live("/", DashboardLive, :home)
+    live("/folders/:id", FolderLive.Show, :show)
   end
 
   live_session :notifications,
