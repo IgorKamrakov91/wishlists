@@ -9,8 +9,14 @@ defmodule WishlistsWeb.UserAuth do
       %{"guardian_default_token" => token} ->
         case Guardian.decode_and_verify(token) do
           {:ok, claims} ->
-            {:ok, user} = Guardian.resource_from_claims(claims)
-            {:cont, assign(socket, :current_user, user)}
+            case Guardian.resource_from_claims(claims) do
+              {:ok, user} ->
+                {:cont, assign(socket, :current_user, user)}
+
+              {:error, _reason} ->
+                # Token is valid but user not found - clear invalid session
+                {:cont, assign(socket, :current_user, nil)}
+            end
 
           _ ->
             {:cont, assign(socket, :current_user, nil)}

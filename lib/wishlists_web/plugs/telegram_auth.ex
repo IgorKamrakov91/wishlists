@@ -16,6 +16,12 @@ defmodule WishlistsWeb.Plugs.TelegramAuth do
         conn
         |> assign(:telegram_mode, true)
 
+      has_web_session?(conn) ->
+        # Allow access if user is logged in via web (for dev/testing)
+        # but don't set telegram_mode
+        conn
+        |> assign(:telegram_mode, false)
+
       true ->
         authenticate(conn)
     end
@@ -25,19 +31,40 @@ defmodule WishlistsWeb.Plugs.TelegramAuth do
     get_session(conn, :telegram_mode) && Guardian.Plug.current_resource(conn)
   end
 
+  defp has_web_session?(conn) do
+    case Guardian.Plug.current_resource(conn) do
+      %Wishlists.Accounts.User{} = user ->
+        # User is authenticated via web, allow access
+        true
+
+      _ ->
+        false
+    end
+  end
+
   defp authenticate(conn) do
-    with {:ok, init_data} <- fetch_init_data(conn),
-         {:ok, params} <- verify_init_data(init_data),
-         {:ok, user_attrs} <- build_user_attrs(params),
-         {:ok, user} <- Accounts.upsert_telegram_user(user_attrs) do
-      conn
-      |> Guardian.Plug.sign_in(Wishlists.Accounts.Guardian, user)
-      |> assign(:telegram_mode, true)
-      |> assign(:current_user, user)
-      |> put_session(:telegram_mode, true)
-    else
-      {:error, reason} ->
-        Logger.warning("Telegram authentication failed: #{inspect(reason)}")
+    case fetch_init_data(conn) do
+      {:ok, init_data} ->
+        with {:ok, params} <- verify_init_data(init_data),
+             {:ok, user_attrs} <- build_user_attrs(params),
+             {:ok, user} <- Accounts.upsert_telegram_user(user_attrs) do
+          conn
+          |> Guardian.Plug.sign_in(Wishlists.Accounts.Guardian, user)
+          |> assign(:telegram_mode, true)
+          |> assign(:current_user, user)
+          |> put_session(:telegram_mode, true)
+        else
+          {:error, reason} ->
+            Logger.warning("Telegram authentication failed: #{inspect(reason)}")
+
+            conn
+            |> send_resp(:unauthorized, "Invalid Telegram session")
+            |> halt()
+        end
+
+      {:error, :missing_init_data} ->
+        # No initData provided and no web session - require authentication
+        Logger.warning("Telegram authentication failed: :missing_init_data")
 
         conn
         |> send_resp(:unauthorized, "Invalid Telegram session")

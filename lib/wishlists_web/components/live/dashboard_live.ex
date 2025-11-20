@@ -9,54 +9,49 @@ defmodule WishlistsWeb.DashboardLive do
 
   @impl true
   def mount(_params, session, socket) do
-    if socket.assigns.current_user do
-      locale = session["locale"] || "ru"
-      Gettext.put_locale(WishlistsWeb.Gettext, locale)
+    # on_mount :ensure_authenticated already verified authentication
+    # so current_user should always be present here
+    locale = session["locale"] || "ru"
+    Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
-      current_user =
-        socket.assigns.current_user
-        |> Wishlists.Repo.preload(:account)
+    current_user =
+      socket.assigns.current_user
+      |> Wishlists.Repo.preload(:account)
 
-      folders = Folders.list_user_folders(socket.assigns.current_user.id)
-      followed_folders = Folders.list_followed_folders(socket.assigns.current_user.id)
+    folders = Folders.list_user_folders(socket.assigns.current_user.id)
+    followed_folders = Folders.list_followed_folders(socket.assigns.current_user.id)
 
-      folders_with_counts =
-        Enum.map(folders, fn folder ->
-          card_count = Folders.get_folder_card_count(folder.id)
-          Map.put(folder, :card_count, card_count)
-        end)
+    folders_with_counts =
+      Enum.map(folders, fn folder ->
+        card_count = Folders.get_folder_card_count(folder.id)
+        Map.put(folder, :card_count, card_count)
+      end)
 
-      followed_folders_with_counts =
-        Enum.map(followed_folders, fn folder ->
-          card_count = Folders.get_folder_card_count(folder.id)
-          Map.put(folder, :card_count, card_count)
-        end)
+    followed_folders_with_counts =
+      Enum.map(followed_folders, fn folder ->
+        card_count = Folders.get_folder_card_count(folder.id)
+        Map.put(folder, :card_count, card_count)
+      end)
 
-      cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
+    cards = Cards.list_unassigned_cards(socket.assigns.current_user.id)
 
-      if connected?(socket) do
-        :timer.send_interval(60_000, self(), :update_times)
-      end
-
-      {:ok,
-       socket
-       |> assign(current_user: current_user)
-       |> assign(folders: folders_with_counts)
-       |> assign(followed_folders: followed_folders_with_counts)
-       |> assign(cards: cards)
-       |> assign(show_modal: false)
-       |> assign(modal_type: nil)
-       |> assign(current_filter: "all")
-       |> assign(show_folders_panel: false)
-       |> assign(current_time: DateTime.utc_now())
-       |> assign(locale: locale)
-       |> assign(show_folders_for_card: nil)}
-    else
-      {:ok,
-       socket
-       |> put_flash(:error, gettext("Please log in to access this page"))
-       |> redirect(to: ~p"/")}
+    if connected?(socket) do
+      :timer.send_interval(60_000, self(), :update_times)
     end
+
+    {:ok,
+     socket
+     |> assign(current_user: current_user)
+     |> assign(folders: folders_with_counts)
+     |> assign(followed_folders: followed_folders_with_counts)
+     |> assign(cards: cards)
+     |> assign(show_modal: false)
+     |> assign(modal_type: nil)
+     |> assign(current_filter: "all")
+     |> assign(show_folders_panel: false)
+     |> assign(current_time: DateTime.utc_now())
+     |> assign(locale: locale)
+     |> assign(show_folders_for_card: nil)}
   end
 
   # Add this handler

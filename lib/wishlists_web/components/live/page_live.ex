@@ -27,10 +27,12 @@ defmodule WishlistsWeb.PageLive do
     case Guardian.decode_and_verify(session["guardian_default_token"]) do
       {:ok, claims} ->
         case Guardian.resource_from_claims(claims) do
-          {:ok, _user} ->
-            {:ok, push_navigate(socket, to: "/dashboard")}
+          {:ok, user} ->
+            # Only redirect if we have a valid user
+            {:ok, push_navigate(socket, to: ~p"/dashboard")}
 
           {:error, _reason} ->
+            # Token is valid but user not found - clear invalid session
             {:ok,
              socket
              |> assign(show_auth_modal: false)
