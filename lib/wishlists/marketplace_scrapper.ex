@@ -1,3 +1,4 @@
+# TODO: remove this functionality
 defmodule MarketplaceScrapper do
   @api_url "https://api.openai.com/v1/chat/completions"
 
@@ -9,6 +10,9 @@ defmodule MarketplaceScrapper do
         IO.inspect(data, label: "DATA")
 
         case extract_data_from_html(data) do
+          %{"title" => "", "description" => "", "image" => ""} ->
+            {:error, :parse_failed}
+
           %{"title" => _, "description" => _, "image" => _} = extracted_data ->
             {:ok, extracted_data}
 
