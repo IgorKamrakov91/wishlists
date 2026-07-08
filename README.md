@@ -7,6 +7,18 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
+## Environment
+
+Copy `.env.example` to `.env` for local development notes, then replace the
+placeholder secrets with real values in your shell or deployment environment.
+Important variables include:
+
+  * `DATABASE_URL` and `SECRET_KEY_BASE` for production releases
+  * `TELEGRAM_BOT_TOKEN` for Telegram bot integrations
+  * `RESEND_API_KEY` for email delivery
+  * `OPENAI_API_KEY` for marketplace scraping helpers
+  * `PHX_HOST`, `PORT`, and `POOL_SIZE` for runtime configuration
+
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
 ## Learn more
