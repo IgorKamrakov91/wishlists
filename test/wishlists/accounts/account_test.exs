@@ -40,6 +40,17 @@ defmodule Wishlists.Accounts.AccountTest do
     end
   end
 
+  describe "upsert_telegram_user/1" do
+    test "rejects a partially numeric telegram_id" do
+      assert Accounts.upsert_telegram_user(%{telegram_id: "123abc"}) ==
+               {:error, :invalid_telegram_id}
+    end
+
+    test "rejects a blank telegram_id" do
+      assert Accounts.upsert_telegram_user(%{telegram_id: ""}) == {:error, :invalid_telegram_id}
+    end
+  end
+
   describe "user locale" do
     setup do
       {:ok, user} =

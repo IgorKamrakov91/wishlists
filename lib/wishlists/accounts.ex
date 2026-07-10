@@ -223,7 +223,8 @@ defmodule Wishlists.Accounts do
 
   defp normalize_telegram_id(id) when is_binary(id) do
     case Integer.parse(id) do
-      {value, _} -> value
+      {value, ""} -> value
+      {_value, _remainder} -> nil
       :error -> nil
     end
   end
