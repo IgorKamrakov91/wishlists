@@ -61,15 +61,12 @@ defmodule Wishlists.Accounts do
 
     cond do
       user && valid_password?(user, password) ->
-        IO.puts("Authentication successful for user: #{user.email}")
         {:ok, user}
 
       user ->
-        IO.puts("Invalid password for user: #{user.email}")
         {:error, :invalid_password}
 
       true ->
-        IO.puts("No user found with email: #{email}")
         Bcrypt.no_user_verify()
         {:error, :invalid_credentials}
     end
