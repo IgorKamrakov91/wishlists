@@ -1,13 +1,13 @@
 # TODO: remove this functionality
 defmodule MarketplaceScrapper do
+  require Logger
+
   @api_url "https://api.openai.com/v1/chat/completions"
 
   def fetch_and_extract(url) do
     case Req.get(url, finch: Wishlists.Finch) do
       {:ok, %Req.Response{body: html}} ->
         data = extract_relevant_data(html)
-
-        IO.inspect(data, label: "DATA")
 
         case extract_data_from_html(data) do
           %{"title" => "", "description" => "", "image" => ""} ->
@@ -33,7 +33,7 @@ defmodule MarketplaceScrapper do
 
     # Combine both searches
     price =
-      case Floki.find(document, "[itemprop=price], [class*='price'], [class*='Price'") do
+      case Floki.find(document, "[itemprop=price], [class*='price'], [class*='Price']") do
         [] ->
           case Floki.find(document, "[aria-label='Итоговая цена']") do
             [] -> "0.0"
@@ -41,8 +41,6 @@ defmodule MarketplaceScrapper do
           end
 
         elements ->
-          IO.inspect(elements, label: "elements")
-
           elements
           |> Enum.map(fn element ->
             cond do
@@ -83,8 +81,6 @@ defmodule MarketplaceScrapper do
   end
 
   def extract_data_from_html(data) do
-    IO.inspect(data, label: "Input Data")
-
     body = %{
       model: "gpt-5-nano",
       messages: [
@@ -97,46 +93,40 @@ defmodule MarketplaceScrapper do
       ]
     }
 
-    IO.inspect(body, label: "Request Body")
+    with api_key when is_binary(api_key) and api_key != "" <- System.get_env("OPENAI_API_KEY") do
+      headers = [
+        {"Authorization", "Bearer #{api_key}"},
+        {"Content-Type", "application/json"}
+      ]
 
-    api_key = System.get_env("OPENAI_API_KEY")
+      case Req.post(@api_url, json: body, headers: headers, finch: Wishlists.Finch) do
+        {:ok, %Req.Response{status: status, body: body}} when status in 200..299 ->
+          case body do
+            %{"choices" => [%{"message" => %{"content" => content}}]} ->
+              Jason.decode!(content)
 
-    headers = [
-      {"Authorization", "Bearer #{api_key}"},
-      {"Content-Type", "application/json"}
-    ]
+            other ->
+              Logger.warning("Unexpected marketplace parser response: #{inspect(other)}")
+              :error
+          end
 
-    IO.inspect(headers, label: "Request Headers")
+        {:ok, %Req.Response{status: status}} ->
+          Logger.warning("Marketplace parser request failed with status #{status}")
+          :error
 
-    case Req.post(@api_url, json: body, headers: headers, finch: Wishlists.Finch) do
-      {:ok, %Req.Response{status: status, body: body} = _response} ->
-        IO.inspect(status, label: "Response Status")
-        IO.inspect(body, label: "Response Body")
+        {:error, reason} ->
+          Logger.warning("Marketplace parser request failed: #{inspect(reason)}")
+          :error
+      end
+    else
+      _ ->
+        Logger.warning("OPENAI_API_KEY is not configured for marketplace parser")
 
-        case body do
-          %{"choices" => [%{"message" => %{"content" => content}}]} ->
-            IO.inspect(content, label: "GPT Content")
-            parsed = Jason.decode!(content)
-            IO.inspect(parsed, label: "Parsed Content")
-            parsed
-
-          other ->
-            IO.inspect(other, label: "Unexpected Response Format")
-            :error
-        end
-
-      {:error, %Req.Response{status: status} = response} ->
-        IO.inspect(status, label: "Error Status")
-        IO.inspect(response, label: "Error Response")
-        :error
-
-      {:error, reason} ->
-        IO.inspect(reason, label: "Request Error")
         :error
     end
   rescue
     error ->
-      IO.inspect(error, label: "Rescue Error")
+      Logger.warning("Marketplace parser failed: #{Exception.message(error)}")
       :error
   end
 end
