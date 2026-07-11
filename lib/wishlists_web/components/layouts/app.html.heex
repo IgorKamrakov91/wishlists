@@ -1,6 +1,6 @@
 <main class="w-full h-full">
   <.flash_group flash={@flash} />
-  <%= @inner_content %>
+  {@inner_content}
 
   <%= if assigns[:current_user] do %>
     <.live_component
@@ -11,4 +11,5 @@
   <% end %>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js">
+</script>
