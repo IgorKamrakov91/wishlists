@@ -33,7 +33,7 @@ defmodule WishlistsWeb.Plugs.TelegramAuth do
 
   defp has_web_session?(conn) do
     case Guardian.Plug.current_resource(conn) do
-      %Wishlists.Accounts.User{} = user ->
+      %Wishlists.Accounts.User{} ->
         # User is authenticated via web, allow access
         true
 
