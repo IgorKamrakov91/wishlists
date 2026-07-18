@@ -83,4 +83,35 @@ defmodule Wishlists.Accounts.UserTest do
       assert "is invalid" in errors_on(changeset).locale
     end
   end
+
+  describe "notification_preferences_changeset/2" do
+    test "accepts supported boolean notification preferences" do
+      attrs = %{
+        notification_preferences: %{
+          "cleanup_notifications" => false,
+          "reservation_notifications" => true
+        }
+      }
+
+      changeset = User.notification_preferences_changeset(%User{}, attrs)
+
+      assert changeset.valid?
+    end
+
+    test "rejects unsupported preference keys" do
+      attrs = %{notification_preferences: %{"weekly_digest" => true}}
+
+      changeset = User.notification_preferences_changeset(%User{}, attrs)
+
+      assert "contains invalid notification preferences" in errors_on(changeset).notification_preferences
+    end
+
+    test "rejects non-boolean preference values" do
+      attrs = %{notification_preferences: %{"cleanup_notifications" => "yes"}}
+
+      changeset = User.notification_preferences_changeset(%User{}, attrs)
+
+      assert "contains invalid notification preferences" in errors_on(changeset).notification_preferences
+    end
+  end
 end

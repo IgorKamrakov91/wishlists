@@ -113,10 +113,15 @@ defmodule Wishlists.Accounts.User do
       fn :notification_preferences, preferences ->
         valid_keys = ["cleanup_notifications", "reservation_notifications"]
 
-        if Enum.all?(Map.keys(preferences), &(&1 in valid_keys)) do
+        valid_preferences? =
+          Enum.all?(preferences, fn {key, value} ->
+            key in valid_keys and is_boolean(value)
+          end)
+
+        if valid_preferences? do
           []
         else
-          [notification_preferences: "contains invalid notification types"]
+          [notification_preferences: "contains invalid notification preferences"]
         end
       end
     )
