@@ -14,5 +14,14 @@ defmodule Wishlists.Accounts.GuestViewerTest do
       assert changeset.changes.viewer_token
       assert String.length(changeset.changes.viewer_token) > 0
     end
+
+    test "keeps an existing viewer token when updating the name" do
+      viewer = %GuestViewer{name: "Guest", viewer_token: "existing-token"}
+
+      changeset = GuestViewer.changeset(viewer, %{name: "Updated guest"})
+
+      refute Map.has_key?(changeset.changes, :viewer_token)
+      assert Ecto.Changeset.get_field(changeset, :viewer_token) == "existing-token"
+    end
   end
 end

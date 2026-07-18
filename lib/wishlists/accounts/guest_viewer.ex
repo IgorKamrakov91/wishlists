@@ -13,7 +13,14 @@ defmodule Wishlists.Accounts.GuestViewer do
     guest_viewer
     |> cast(attrs, [:name])
     |> validate_required([:name])
-    |> put_change(:viewer_token, generate_viewer_token())
+    |> maybe_put_viewer_token()
+  end
+
+  defp maybe_put_viewer_token(changeset) do
+    case get_field(changeset, :viewer_token) do
+      nil -> put_change(changeset, :viewer_token, generate_viewer_token())
+      _token -> changeset
+    end
   end
 
   defp generate_viewer_token do
