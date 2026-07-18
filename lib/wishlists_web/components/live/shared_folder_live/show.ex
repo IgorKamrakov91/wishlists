@@ -29,13 +29,10 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   end
 
   def mount(%{"slug" => slug}, session, socket) do
-    Logger.debug("Mounting SharedFolderLive.Show with slug: #{slug}")
     socket = set_locale(socket, session)
 
     case Folders.get_shared_folder_by_slug(slug) || Folders.get_shared_folder_by_token(slug) do
       nil ->
-        Logger.debug("No shared folder found for slug: #{slug}")
-
         {:ok,
          socket
          |> put_flash(:error, "Invalid share link")
@@ -47,8 +44,6 @@ defmodule WishlistsWeb.SharedFolderLive.Show do
   end
 
   defp handle_shared_folder_mount(shared_folder, session, socket) do
-    Logger.debug("Found shared folder: #{inspect(shared_folder)}")
-
     locale = session["locale"] || "ru"
     Gettext.put_locale(WishlistsWeb.Gettext, locale)
 
