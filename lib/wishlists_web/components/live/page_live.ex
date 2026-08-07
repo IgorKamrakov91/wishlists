@@ -15,7 +15,7 @@ defmodule WishlistsWeb.PageLive do
         socket.assigns[:current_user] ->
           Accounts.get_user_locale(socket.assigns.current_user)
 
-        session["locale"] ->
+        session["locale"] in ["en", "ru"] ->
           session["locale"]
 
         true ->

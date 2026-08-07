@@ -40,6 +40,14 @@ defmodule WishlistsWeb.PageLiveTest do
       assert_redirect(view, "/auth/set_session?token=test_token&locale=en")
     end
 
+    test "ignores unsupported session locales", %{conn: conn} do
+      conn = init_test_session(conn, %{locale: "de"})
+
+      {:ok, _view, html} = live(conn, "/")
+
+      assert html =~ "Wishlists Manager"
+    end
+
     test "handles locale switch", %{conn: conn} do
       {:ok, view, _html} = live(conn, "/")
 
